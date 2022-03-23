@@ -67,6 +67,7 @@ class FormUtil {
         s = parseInt(s);
         return s;
     }
+    
     addChangeCallback(elName, fun, scope = null) {
         var el = document.getElementById(elName);
         if (scope == null) {

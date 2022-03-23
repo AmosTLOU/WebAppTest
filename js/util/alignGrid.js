@@ -72,7 +72,8 @@ class AlignGrid {
         for (var i = 0; i < this.config.rows; i++) {
             for (var j = 0; j < this.config.cols; j++) {
                 var numText = this.scene.add.text(0, 0, count, {
-                    color: '#ff0000'
+                    color: '#ff0000',
+                    fontSize: '16px'
                 });
                 numText.setOrigin(0.5, 0.5);
                 this.placeAtIndex(count, numText);

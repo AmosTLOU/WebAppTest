@@ -2,21 +2,32 @@ var isMobile;
 var game;
 var testObj;
 
-window.onload = function() {
+window.onload = function() 
+{
     isMobile = navigator.userAgent.indexOf("Mobile");
-    if (isMobile == -1) {
+    if (isMobile == -1) 
+    {
         isMobile = navigator.userAgent.indexOf("Tablet");
     }
-    if (isMobile == -1) {
-        var config = {
+    // non-mobile
+    if (isMobile == -1) 
+    {
+        var config = 
+        {
             type: Phaser.AUTO,
-            width: 480,
-            height: 640,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            // width: 480,
+            // height: 640,
             parent: 'phaser-game',
             scene: [SceneMain]
         };
-    } else {
-        var config = {
+    } 
+    // mobile
+    else 
+    {
+        var config = 
+        {
             type: Phaser.AUTO,
             width: window.innerWidth,
             height: window.innerHeight,
