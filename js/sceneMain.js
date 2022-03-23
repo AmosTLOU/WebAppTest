@@ -41,7 +41,7 @@ class SceneMain extends Phaser.Scene
         circle1.setInteractive();
         circle1.on('pointerover', () => { text_circle1.setStyle({ color: '#F00000', }); });
         circle1.on('pointerout', () => { text_circle1.setStyle({ color: '#F8F8FF', }); });
-        circle1.on('pointerup', () => { window.location.href = "part10.html";});
+        circle1.on('pointerup', () => { window.location.href = "index2.html";});
         circle1.on('pointerdown', () => { console.log('pointerdown'); });
 
 
