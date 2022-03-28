@@ -3,7 +3,13 @@ class SceneMain extends Phaser.Scene
     constructor() 
     {
         super('SceneMain');
+        this.arrayAllObj = undefined;
+        this.conManager = new ConManager();
+        // window with and window height
+        this.ww = window.innerWidth;
+        this.wh = window.innerHeight;
     }
+
     preload() 
     {
         this.load.image('bg', 'assets/Mockup/background.png');
@@ -11,39 +17,26 @@ class SceneMain extends Phaser.Scene
         this.load.image('clipboard', 'assets/Mockup/clipboard.png');
         this.load.image('microphone', 'assets/Mockup/microphone.png');
         this.load.image('circle', 'assets/Mockup/circle1.png');
+        this.load.image('profileIcon', 'assets/Mockup/profile_Icon.png');
                 
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
-    create() {
-        // window with and window height
-        var ww = window.innerWidth;
-        var wh = window.innerHeight;
-        
-        this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
-        this.add.image(ww * 0.25, wh * 0.55, 'demoCharacter').setDisplaySize(ww * 0.25, wh * 0.9); 
-        this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
-        this.add.image(ww * 0.67, wh * 0.9, 'microphone').setDisplaySize(wh*0.1, wh * 0.1); 
-        this.add.text(ww * 0.028, wh * 0.17, "Profile", {
+
+    create() 
+    {        
+        let bg = this.add.image(this.ww * 0.5, this.wh * 0.5, 'bg').setDisplaySize(this.ww, this.wh);
+        this.add.image(this.ww * 0.25, this.wh * 0.55, 'demoCharacter').setDisplaySize(this.ww * 0.25, this.wh * 0.9); 
+        this.add.image(this.ww * 0.05, this.wh * 0.1, 'clipboard').setDisplaySize(this.ww * 0.035, this.wh * 0.1); 
+        let img_mic = this.add.image(this.ww * 0.67, this.wh * 0.9, 'microphone').setDisplaySize(this.wh*0.1, this.wh * 0.1); 
+        img_mic.setInteractive();
+        img_mic.on('pointerup', () => { this.returnToQuickqQuestions() });
+        this.add.text(this.ww * 0.028, this.wh * 0.17, "Profile", {
             fontFamily: 'open sans',
             color: '#F8F8FF',
             fontSize: '34px'            
         });
-        let circle1 = this.add.image(ww * 0.47, wh * 0.35, 'circle').setDisplaySize(wh * 0.3, wh * 0.3); 
-        let text_circle1 = this.add.text(ww * 0.44, wh * 0.35, "Bubble_1", {
-            color: '#F8F8FF',
-            fontSize: '24px'      
-        });
-        this.add.image(ww * 0.58, wh * 0.15, 'circle').setDisplaySize(wh * 0.2, wh * 0.2); 
-        this.add.image(ww * 0.71, wh * 0.35, 'circle').setDisplaySize(wh * 0.4, wh * 0.4); 
-        this.add.image(ww * 0.88, wh * 0.20, 'circle').setDisplaySize(wh * 0.28, wh * 0.28); 
-
-
-        circle1.setInteractive();
-        circle1.on('pointerover', () => { text_circle1.setStyle({ color: '#F00000', }); });
-        circle1.on('pointerout', () => { text_circle1.setStyle({ color: '#F8F8FF', }); });
-        circle1.on('pointerup', () => { window.location.href = "index2.html";});
-        circle1.on('pointerdown', () => { console.log('pointerdown'); });
-
+        
+        this.createBubbles();
 
         this.anims.create({
             key: 'left',
@@ -65,7 +58,7 @@ class SceneMain extends Phaser.Scene
             repeat: -1
         });
 
-        var avatar = this.add.sprite(ww * 0.02, wh * 0.95, 'dude');
+        var avatar = this.add.sprite(this.ww * 0.02, this.wh * 0.95, 'dude');
         avatar.anims.play('left', true);
         avatar.setInteractive();
         avatar.on('pointerover', () => 
@@ -95,17 +88,6 @@ class SceneMain extends Phaser.Scene
 
         // this.formUtil.showNumbers();
 
-        // var el = document.getElementById("JumpButton");
-        // el.style.position = "absolute"; 
-        // let dst_left = ww*0.52;
-        // el.style.top = 650 + "px";
-        // el.style.left = dst_left + "px";
-        // el.style.width = 5 + "%";
-        // el.style.height = 5 + "%";
-        
-        // this.formUtil.scaleToGameW("myText", .3);
-        // this.formUtil.placeElementAt(16, 'myText', true);
-
         // this.formUtil.scaleToGameW("area51", .4);
         // this.formUtil.scaleToGameH("area51", .4);
         // this.formUtil.placeElementAt(274, "area51", true, true);
@@ -113,17 +95,25 @@ class SceneMain extends Phaser.Scene
         
         var el = document.getElementById("area51");
         el.style.position = "absolute"; 
-        el.style.top = 650 + "px";
-        el.style.left = ww*0.52 + "px";
+        el.style.top = this.wh*0.65 + "px";
+        el.style.left = this.ww*0.52 + "px";
         el.style.width = 600 + "px";
         el.style.height = 100 + "px";
         el.onchange = this.textAreaChanged;
         el.onfocus = () => el.value = "";
         // el.oninput = this.outputText;
         el.onmouseout = () => el.blur();
+
+        // // not working currently
+        // this.input.on('wheel', function (pointer, gameObjects, deltaX, deltaY, deltaZ) {
+        //     // this.ConManager.scroll(deltaX * 0.5);
+        //     // this.ConManager.scroll(deltaY * 0.5);
+        //     console.log("wheel rotating");    
+        // });
     }
 
-    textAreaChanged() {
+    textAreaChanged() 
+    {
         let el = document.getElementById("area51");
     	var text = el.value;
 
@@ -151,15 +141,102 @@ class SceneMain extends Phaser.Scene
     	
     }
 
-    outputText() {
+    outputText() 
+    {
         let el = document.getElementById("area51");
     	var text = el.value;
     	console.log(text);
     }
 
+    createBubbles()
+    {
+        let circles = new Array();
+        let texts = new Array();
+        circles[0] = this.add.image(this.ww * 0.47, this.wh * 0.35, 'circle').setDisplaySize(this.wh * 0.3, this.wh * 0.3); 
+        texts[0] = this.add.text(this.ww * 0.44, this.wh * 0.35, "Bubble_1", {
+            color: '#F8F8FF',
+            fontSize: '24px'      
+        });
+        
+        circles[1] = this.add.image(this.ww * 0.58, this.wh * 0.15, 'circle').setDisplaySize(this.wh * 0.2, this.wh * 0.2); 
+        circles[2] = this.add.image(this.ww * 0.71, this.wh * 0.35, 'circle').setDisplaySize(this.wh * 0.4, this.wh * 0.4); 
+        circles[3] = this.add.image(this.ww * 0.88, this.wh * 0.20, 'circle').setDisplaySize(this.wh * 0.28, this.wh * 0.28); 
+
+        this.arrayAllObj = [circles, texts];
+
+        circles[0].setInteractive();
+        circles[0].on('pointerover', () => { texts[0].setStyle({ color: '#F00000', }); });
+        circles[0].on('pointerout', () => { texts[0].setStyle({ color: '#F8F8FF', }); });
+        // circles[0].on('pointerup', () => { window.location.href = "index2.html";});
+        circles[0].on('pointerup', () => { this.answerQuickQuestion(0) });
+        circles[0].on('pointerdown', () => { console.log('pointerdown'); });
+    }
+
+    changeVisibility()
+    {
+        let arr = this.arrayAllObj;
+        for (let i = 0; i < arr.length; i++)
+        {
+            for (let j = 0; j < arr[i].length; j++)
+            {
+                arr[i][j].visible = !arr[i][j].visible;
+            }
+        }
+    }
+
+    answerQuickQuestion(indexQuestion)
+    {        
+        this.changeVisibility();
+        if(indexQuestion == 0)
+        {
+            let phaser_txt = this.createTxt("I got a muscle pain", 0.8, 0.5);
+            let phaser_img = this.createImg('profileIcon', 0.8, 0.5, 0.1, 0.1);
+            let msg = new ConMsg(phaser_txt, phaser_img, 1);
+            this.conManager.addMsg(msg);
+            phaser_txt = this.createTxt("Here is the solution", 0.55, 0.55);
+            phaser_img = this.createImg('profileIcon', 0.55, 0.55, 0.1, 0.1);
+            msg = new ConMsg(phaser_txt, phaser_img, 1);
+            this.conManager.addMsg(msg);
+
+            this.conManager.show();
+        }
+    }
+
+    returnToQuickqQuestions()
+    {
+        this.changeVisibility();
+        this.conManager.hide();
+    }
+
+    createTxt(text, per_x, per_y)
+    {
+        let txt = this.add.text(this.ww * per_x, this.wh * per_y, text, {
+            color: '#F8F8FF',
+            fontSize: '14px'      
+        });
+        return txt;
+    }
+
+    createImg(label, per_x, per_y, per_w, per_h)
+    {
+        let img = this.add.image(this.ww * per_x, this.wh * per_y, label).setDisplaySize(this.wh * per_w, this.wh * per_h); 
+        return img;
+    }
+
     update() 
     {
-        
+        let cursors = this.input.keyboard.createCursorKeys();
+        let offset = 2;
+        if (cursors.up.isDown)
+        {
+            console.log("Up");
+            this.conManager.scroll(-offset);
+        }
+        else if (cursors.down.isDown)
+        {
+            console.log("Down");
+            this.conManager.scroll(offset);
+        }
     }
     
 }
