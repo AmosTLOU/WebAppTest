@@ -17,7 +17,7 @@ class SceneMain extends Phaser.Scene
         this.load.image('clipboard', 'assets/Mockup/clipboard.png');
         this.load.image('microphone', 'assets/Mockup/microphone.png');
         this.load.image('circle', 'assets/Mockup/circle1.png');
-        this.load.image('profileIcon', 'assets/Mockup/profile_Icon.png');
+        this.load.image('profileIcon', 'assets/Mockup/Profile_Icon.png');
                 
         this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
