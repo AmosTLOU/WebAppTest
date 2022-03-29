@@ -104,12 +104,17 @@ class SceneMain extends Phaser.Scene
         // el.oninput = this.outputText;
         el.onmouseout = () => el.blur();
 
-        // // not working currently
-        // this.input.on('wheel', function (pointer, gameObjects, deltaX, deltaY, deltaZ) {
-        //     // this.ConManager.scroll(deltaX * 0.5);
-        //     // this.ConManager.scroll(deltaY * 0.5);
-        //     console.log("wheel rotating");    
-        // });
+        // phaser built-in wheel is not working, have to use js built-in wheel instead
+        // window.onwheel = wheelResponse;
+        
+        window.onwheel = this.wheelResponse;
+    }    
+    
+
+    wheelResponse() 
+    {
+        console.log("hh");
+        this.conManager.hide();
     }
 
     textAreaChanged() 
@@ -225,18 +230,18 @@ class SceneMain extends Phaser.Scene
 
     update() 
     {
-        let cursors = this.input.keyboard.createCursorKeys();
-        let offset = 2;
-        if (cursors.up.isDown)
-        {
-            console.log("Up");
-            this.conManager.scroll(-offset);
-        }
-        else if (cursors.down.isDown)
-        {
-            console.log("Down");
-            this.conManager.scroll(offset);
-        }
+        // let cursors = this.input.keyboard.createCursorKeys();
+        // let offset = 2;
+        // if (cursors.up.isDown)
+        // {
+        //     console.log("Up");
+        //     this.conManager.scroll(-offset);
+        // }
+        // else if (cursors.down.isDown)
+        // {
+        //     console.log("Down");
+        //     this.conManager.scroll(offset);
+        // }
     }
     
 }

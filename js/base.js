@@ -106,4 +106,9 @@ class ConManager // conversation manager
                 
         }
     }
+
+    test()
+    {
+        console.log("test");
+    }
 }
