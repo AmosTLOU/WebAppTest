@@ -207,13 +207,13 @@ class SceneMain extends Phaser.Scene
             this.state = 1;
         }  
         
-        let img = this.CreateImg('msgBG', 0.8, 0.5, 0.1, 0.1);
-        let txt = this.CreateTxt(text, 0.8, 0.5);
+        let img = this.CreateImg('msgBG', 0.1, 0.1);
+        let txt = this.CreateTxt(text);
         let msg = new ConMsg(txt, img, 1);
         this.conManager.addMsg(msg);
         
-        img = this.CreateImg('msgBG', 0.55, 0.55, 0.1, 0.1);
-        txt = this.CreateTxt("Here is the solution", 0.55, 0.55);
+        img = this.CreateImg('msgBG', 0.1, 0.1);
+        txt = this.CreateTxt("Here is the solution");
         msg = new ConMsg(txt, img, 0);
         this.conManager.addMsg(msg);        
     }
@@ -230,14 +230,14 @@ class SceneMain extends Phaser.Scene
         {
             for(let i = 0; i < 8; i++)
             {                
-                let phaser_img = this.CreateImg('msgBG', 0.8, 0.5, 0.1, 0.1);
-                let phaser_txt = this.CreateTxt("I got a muscle pain " + i);
-                let msg = new ConMsg(phaser_txt, phaser_img, 1);
+                let img = this.CreateImg('msgBG', 0.1, 0.1);
+                let txt = this.CreateTxt("I got a muscle pain " + i);
+                let msg = new ConMsg(txt, img, 1);
                 this.conManager.addMsg(msg);
                 
-                phaser_img = this.CreateImg('msgBG', 0.55, 0.55, 0.1, 0.1);
-                phaser_txt = this.CreateTxt("Here is the solution " + i);
-                msg = new ConMsg(phaser_txt, phaser_img, 0);
+                img = this.CreateImg('msgBG', 0.1, 0.1);
+                txt = this.CreateTxt("Here is the solution " + i);
+                msg = new ConMsg(txt, img, 0);
                 this.conManager.addMsg(msg);   
             }         
         }
@@ -261,11 +261,14 @@ class SceneMain extends Phaser.Scene
         return txt;
     }
 
-    CreateImg(label, per_x, per_y, per_w, per_h)
+    CreateImg(label, rW=-1, rH=-1, rX=0, rY=0)
     {
-        let img = this.add.image(ww * per_x, wh * per_y, label).setDisplaySize(wh * per_w, wh * per_h); 
+        let img = this.add.image(ww * rX, wh * rY, label);
+        if(rW != -1 && rH != -1)
+            img.setDisplaySize(wh * rW, wh * rH); 
         return img;
     }
+
 
     update() 
     {
