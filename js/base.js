@@ -1,36 +1,98 @@
-class Coord
-{
-    constructor()
-    {
-        this.x = 0;
-        this.y = 0;
-        this.width = 0;
-        this.height = 0;
-    }
-}
-
+var ww = window.innerWidth;
+var wh = window.innerHeight;
 
 class ConMsg  // conversation message  includes phaser text and phaser image(bg)
 {
     constructor(i_phaserText, i_phaserImg, i_side) 
     {
+        this.rX = undefined;
+        this.rY = undefined;
+
         this.txt = i_phaserText;
-        this.txt.visible = false;
+        this.txt.visible = true;
         this.bg = i_phaserImg;
-        this.bg.visible = false;
-        this.side = i_side;
-        // this.coord = new Coord();   
+        this.bg.visible = true;
+        this.side = i_side;        
+
+        this.padding_rX = 0.01;
+        this.padding_rY = 0.01;
+        this.padding_pX = this.padding_rX * ww;        
+        this.padding_pY = this.padding_rY * wh;
+
+        this.rW_bg = 0.22;
+        this.rH_bg = 0.1;
+        this.pW_bg = this.rW_bg * ww;
+        this.pH_bg = this.rH_bg * wh;
+
+        this.rX_rightBoundary = 0.98;
+        this.rX_leftBoundary = 0.52;
+        this.rY_topBoundary = 0.1;
+        this.rY_bottomBoundary = 0.55;
+
+        this.bg.setDisplaySize(this.pW_bg, this.pH_bg); 
         
-        this.ww = window.innerWidth;
-        this.wh = window.innerHeight;
+
+        this.per_TopY = 0.1;
+        this.per_BottomY = 0.55;
     }
 
-    show(per_y) 
+    RX()
+    {
+        return this.rX;
+    }
+
+    RY()
+    {
+        return this.rY;
+    }    
+
+    // return pixel height of background image
+    pH()
+    {
+        return this.pH_bg;
+    }
+
+    // return ratio height of background image
+    rH()
+    {
+        return this.rH_bg;
+    }
+
+    Enable() 
     {
         this.txt.visible = true;
-        this.txt.setY(this.wh * per_y);
-        this.bg.visible = true;
-        this.bg.setY(this.wh * per_y);
+        this.bg.visible = true;        
+    }
+
+    // updatePosY(per_y)
+    // {
+    //     this.txt.setY(wh * per_y);
+    //     this.bg.setY(wh * per_y);
+    // }
+
+    UpdatePos(i_rY)
+    {
+        this.rY = i_rY;
+        if(this.side == 0)
+        {
+            this.rX = this.rX_leftBoundary * ww;
+        }
+        else if(this.side == 1)
+        {
+            this.rX = this.rX_rightBoundary * ww - this.pW_bg;
+        }      
+            
+        let pY = this.rY * wh;
+        this.txt.setX(this.rX + this.padding_pX);
+        this.txt.setY(pY + this.padding_pY);        
+
+        this.bg.setX(this.rX + this.pW_bg * 0.5);
+        this.bg.setY(pY + this.pH_bg * 0.5);
+
+        if(this.rY < 0 || 0.6 < this.rY)
+            this.hide();
+        else
+            this.Enable();
     }
 
     hide()
@@ -39,50 +101,99 @@ class ConMsg  // conversation message  includes phaser text and phaser image(bg)
         this.bg.visible = false;
     }
 
-    translate(offset)
+    // return -1 reach top;  1 reach bottom;  0 inbetween
+    translate(rOffset)
     {
-        let posY_txt = this.txt.y + offset;
-        if(posY_txt/this.wh < 0.55)
-            this.txt.setY(posY_txt);
-        else
-            return false;
+        this.UpdatePos(this.rY + rOffset);
+        return 0;
+    }
 
-        let posY_bg = this.bg.y + offset;
-        if(posY_bg/this.wh < 0.55)
-            this.bg.setY(posY_bg);
+    inVisibleRange()
+    {        
+        let perY = this.txt.y/wh;
+        if( this.per_TopY <= perY && perY <= this.per_BottomY )
+            return true;
         else
             return false;
         
-        return true;
+    }
+
+    inTopRange()
+    {
+        let perY = this.txt.y/wh;
+        let biasPercent = 0.2
+        if( this.per_TopY*(1-biasPercent) <= perY && perY <= this.per_TopY*(1+biasPercent) )
+            return true;
+        else
+            return false;
+    }
+
+    inBottomRange()
+    {
+        let perY = this.txt.y/wh;
+        let biasPercent = 0.1
+        if( this.per_BottomY*(1-biasPercent) <= perY && perY <= this.per_BottomY*(1+biasPercent) )
+            return true;
+        else
+            return false;
     }
 }
 
-
-class ConManager // conversation manager
+// conversation manager
+class ConManager 
 {
     constructor() 
     {
         this.MsgHistory = new Array();
-        this.ww = window.innerWidth;
-        this.wh = window.innerHeight;
+        // ww = window.innerWidth;
+        // wh = window.innerHeight;
+
+        this.rX_rightBoundary = 0.8;
+        this.rX_leftBoundary = 0.5;
+        this.rY_topBoundary = 0.1;
+        this.rY_bottomBoundary = 0.55;
+    }
+
+    CountMsg()
+    {
+        return this.MsgHistory.length;
     }
 
     addMsg(conMsg)
     {
         this.MsgHistory[this.MsgHistory.length] = conMsg;
+        this.UpdateMsgPos();
     }
 
-    show()
+    EnableAllMsg()
+    {
+        for(let i = this.MsgHistory.length-1; 0 <= i ; i--)
+        {         
+            this.MsgHistory[i].Enable();
+        }
+    }
+
+    UpdateMsgPos()
     {
         let bottomY = 0.55;
         let per_y = bottomY;
         for(let i = this.MsgHistory.length-1; 0 <= i ; i--)
-        {
-            if(per_y < 0)
-                break;            
-            this.MsgHistory[i].show(per_y);
-            per_y -= 0.075;
+        {         
+            let rH = this.MsgHistory[i].rH();
+            let rY = per_y - rH;
+            this.MsgHistory[i].UpdatePos(rY);
+            per_y -= 0.1;
         }
+
+        // if(this.MsgHistory[0].inVisibleRange())
+        // {
+        //     per_y = 0.1;
+        //     for(let i = 0; i < this.MsgHistory.length ; i++)
+        //     {         
+        //         this.MsgHistory[i].updatePosY(per_y);
+        //         per_y += 0.075;
+        //     }
+        // }
     }
 
     hide()
@@ -93,16 +204,50 @@ class ConManager // conversation manager
         }
     }
 
-    scroll(offset)
+    ableToScroll(rOffset)
+    {        
+        let indFinalMsg = this.MsgHistory.length-1;
+        // no matter offset is positive or negative, if the first and the last one are both visible, then don't allow scrolling
+        if(this.MsgHistory[0].inVisibleRange() && this.MsgHistory[indFinalMsg].inVisibleRange())
+            return false;
+        // when move up, the last one couldn't move above the bottom range
+        if(rOffset < 0)
+        {      
+            let prospective_rY_lastOne = this.MsgHistory[indFinalMsg].RY() + rOffset;
+            if(prospective_rY_lastOne < this.rY_bottomBoundary)
+            {
+                console.log("Bottom msg cannot move up anymore");
+                return false;
+            }                
+        }
+        // when move down, the first one couldn't move below the top range
+        else if(0 < rOffset)
+        {            
+            if(this.MsgHistory[0].inTopRange())
+            {
+                console.log("Top msg cannot move down anymore");
+                return false;
+            }
+                
+        }
+        return true;
+    }
+
+    scroll(rOffset)
     {
+        if(this.MsgHistory.length <= 0 || !this.ableToScroll(rOffset))
+        {            
+            return;
+        }            
+
         for(let i = this.MsgHistory.length-1; 0 <= i ; i--)
         {
-            let success = this.MsgHistory[i].translate(offset);
-            if(!success)
-            {
-                console.log("Dialogue can't move anymore!");
-                break;
-            }
+            let result = this.MsgHistory[i].translate(rOffset);
+            // if(result != 0)
+            // {
+            //     console.log("Dialogue can't move anymore!");
+            //     break;
+            // }
                 
         }
     }
