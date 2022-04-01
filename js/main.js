@@ -1,6 +1,9 @@
 var isMobile;
 var game;
-var testObj;
+
+// window with and window height
+var ww = window.innerWidth;
+var wh = window.innerHeight;
 
 window.onload = function() 
 {
@@ -15,10 +18,10 @@ window.onload = function()
         var config = 
         {
             type: Phaser.AUTO,
-            width: window.innerWidth,
-            height: window.innerHeight,
             // width: 480,
             // height: 640,
+            width: ww,
+            height: wh,
             parent: 'phaser-game',
             scene: [SceneMain]
         };
@@ -26,13 +29,15 @@ window.onload = function()
     // mobile
     else 
     {
+        ww = window.innerHeight;
+        wh = window.innerWidth;
         var config = 
         {
             type: Phaser.AUTO,
             // width: window.innerWidth,
             // height: window.innerHeight,
-            width: window.innerHeight,
-            height: window.innerWidth,
+            width: ww,
+            height: wh,
             parent: 'phaser-game',
             scene: [SceneMain]
         };

@@ -1,7 +1,3 @@
-// window with and window height
-var ww = window.innerWidth;
-var wh = window.innerHeight;
-
 var w_avatarFrame = 448;
 var h_avatarFrame = 770;
 
@@ -153,7 +149,7 @@ class SceneMain extends Phaser.Scene
     SetInputField()
     {
         let scene_self = this;
-        let nameInputField = "area51";
+        let nameInputField = "inputField_v0";
         let el = document.getElementById(nameInputField);
         el.style.position = "absolute"; 
         el.style.top = wh*0.65 + "px";
