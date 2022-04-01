@@ -2,6 +2,9 @@
 var ww = window.innerWidth;
 var wh = window.innerHeight;
 
+var w_avatarFrame = 448;
+var h_avatarFrame = 770;
+
 class SceneMain extends Phaser.Scene 
 {
     constructor() 
@@ -9,6 +12,7 @@ class SceneMain extends Phaser.Scene
         super('SceneMain');
         this.quickQuestions = undefined;
         this.conManager = new ConManager();
+        this.avatar = undefined;
         
         // 0 Bubbles of Quick Questions; 1 Conversation
         this.state = 0;  
@@ -26,8 +30,8 @@ class SceneMain extends Phaser.Scene
         this.load.image('profileIcon', 'assets/Mockup/Profile_Icon.png');
                 
         this.load.spritesheet('dude', 'assets/at.jpg', { frameWidth: 124, frameHeight: 179 });
-        this.load.spritesheet('avatar_idle', 'assets/Mockup/Idel_sprite_sheet.png', { frameWidth: 448, frameHeight: 770 });
-        this.load.spritesheet('avatar_speak', 'assets/Mockup/speak_sprite_sheet.png', { frameWidth: 448, frameHeight: 770 });
+        this.load.spritesheet('avatar_idle', 'assets/Mockup/Idel_sprite_sheet.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
+        this.load.spritesheet('avatar_speak', 'assets/Mockup/speak_sprite_sheet.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
         
     }
 
@@ -141,9 +145,9 @@ class SceneMain extends Phaser.Scene
             repeat: -1
         });
 
-        let avatar = this.add.sprite(ww * 0.25, wh * 1, 'avatar_speak').setScale(1.5);
-        avatar.anims.play('speak', true);
-        avatar.setInteractive();
+        this.avatar = this.add.sprite(ww * 0.25, wh * 1, 'avatar_idle').setScale(1.5 * wh/h_avatarFrame);
+        this.avatar.anims.play('idle', true);
+        // this.avatar.setInteractive();
     }
 
     SetInputField()
@@ -242,6 +246,7 @@ class SceneMain extends Phaser.Scene
         if(this.state != 1)
         {
             this.SetVisibilityOfQuickQuestions(false);
+            this.avatar.anims.play('speak', true);
             this.state = 1;
         }  
         
@@ -262,6 +267,7 @@ class SceneMain extends Phaser.Scene
         if(this.state != 1)
         {
             this.SetVisibilityOfQuickQuestions(false);
+            this.avatar.anims.play('speak', true);
             this.state = 1;
         }            
         if(indexQuestion == 0)
@@ -338,6 +344,7 @@ Follow your doctor's instructions");
         {
             this.SetVisibilityOfQuickQuestions(true);
             this.conManager.hide();
+            this.avatar.anims.play('idle', true);
             this.state = 0;
         }        
     }

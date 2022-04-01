@@ -29,8 +29,10 @@ window.onload = function()
         var config = 
         {
             type: Phaser.AUTO,
-            width: window.innerWidth,
-            height: window.innerHeight,
+            // width: window.innerWidth,
+            // height: window.innerHeight,
+            width: window.innerHeight,
+            height: window.innerWidth,
             parent: 'phaser-game',
             scene: [SceneMain]
         };
