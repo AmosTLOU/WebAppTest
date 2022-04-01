@@ -11,7 +11,7 @@ class ConMsg  // conversation message  includes phaser text and phaser image(bg)
         this.txt = i_phaserText;
         this.txt.visible = true;
         this.bg = i_phaserImg;
-        this.bg.visible = true;
+        this.bg.visible = false;
         this.side = i_side;        
 
         this.padding_rX = 0.01;
@@ -21,11 +21,13 @@ class ConMsg  // conversation message  includes phaser text and phaser image(bg)
 
         this.rW_bg = 0.22;
         this.rH_bg = 0.1;
+        if(this.side == 1)
+            this.rH_bg = 0.05;
         this.pW_bg = this.rW_bg * ww;
         this.pH_bg = this.rH_bg * wh;
 
-        this.rX_rightBoundary = 0.98;
-        this.rX_leftBoundary = 0.52;
+        this.rX_rightBoundary = 1;
+        this.rX_leftBoundary = 0.5;
         this.rY_topBoundary = 0.1;
         this.rY_bottomBoundary = 0.55;
 
@@ -61,7 +63,7 @@ class ConMsg  // conversation message  includes phaser text and phaser image(bg)
     Enable() 
     {
         this.txt.visible = true;
-        this.bg.visible = true;        
+        // this.bg.visible = true;        
     }
 
     // updatePosY(per_y)
@@ -98,7 +100,7 @@ class ConMsg  // conversation message  includes phaser text and phaser image(bg)
     hide()
     {
         this.txt.visible = false;
-        this.bg.visible = false;
+        // this.bg.visible = false;
     }
 
     // return -1 reach top;  1 reach bottom;  0 inbetween
@@ -151,7 +153,7 @@ class ConManager
         this.rX_rightBoundary = 0.8;
         this.rX_leftBoundary = 0.5;
         this.rY_topBoundary = 0.1;
-        this.rY_bottomBoundary = 0.55;
+        this.rY_bottomBoundary = 0.45;
     }
 
     CountMsg()
@@ -182,7 +184,7 @@ class ConManager
             let rH = this.MsgHistory[i].rH();
             let rY = per_y - rH;
             this.MsgHistory[i].UpdatePos(rY);
-            per_y -= 0.1;
+            per_y -= 0.13;
         }
 
         // if(this.MsgHistory[0].inVisibleRange())

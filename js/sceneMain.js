@@ -25,22 +25,25 @@ class SceneMain extends Phaser.Scene
         this.load.image('bubble', 'assets/Mockup/bubble.png');
         this.load.image('profileIcon', 'assets/Mockup/Profile_Icon.png');
                 
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('dude', 'assets/at.jpg', { frameWidth: 124, frameHeight: 179 });
+        this.load.spritesheet('avatar_idle', 'assets/Mockup/Idel_sprite_sheet.png', { frameWidth: 448, frameHeight: 770 });
+        this.load.spritesheet('avatar_speak', 'assets/Mockup/speak_sprite_sheet.png', { frameWidth: 448, frameHeight: 770 });
+        
     }
 
     CreateMainElements()
     {
         this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
-        this.add.image(ww * 0.25, wh * 0.55, 'demoCharacter').setDisplaySize(ww * 0.25, wh * 0.9); 
+        // this.add.image(ww * 0.25, wh * 0.55, 'demoCharacter').setDisplaySize(ww * 0.25, wh * 0.9); 
         this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
         let img_mic = this.add.image(ww * 0.67, wh * 0.9, 'microphone').setDisplaySize(wh*0.1, wh * 0.1); 
         img_mic.setInteractive();
         img_mic.on('pointerup', () => { this.ReturnToQuickQuestions() });
-        this.add.text(ww * 0.028, wh * 0.17, "Profile", {
+        this.add.text(ww * 0.05, wh * 0.2, "Profile", {
             fontFamily: 'open sans',
             color: '#F8F8FF',
             fontSize: '34px'            
-        });
+        }).setOrigin(0.5);
     }
 
     CreateQuickQuestions()
@@ -48,23 +51,36 @@ class SceneMain extends Phaser.Scene
         let bubbles = new Array();
         let texts = new Array();
         bubbles[0] = this.add.image(ww * 0.47, wh * 0.35, 'bubble').setDisplaySize(wh * 0.3, wh * 0.3); 
-        texts[0] = this.add.text(ww * 0.44, wh * 0.35, "Bubble_1", {
+        texts[0] = this.add.text(ww * 0.47, wh * 0.35, "What are \nstatins?", {
             color: '#F8F8FF',
             fontSize: '24px'      
-        });
-        
+        }).setOrigin(0.5);        
         bubbles[1] = this.add.image(ww * 0.58, wh * 0.15, 'bubble').setDisplaySize(wh * 0.2, wh * 0.2); 
+        texts[1] = this.add.text(ww * 0.58, wh * 0.15, "Target\n User", {
+            color: '#F8F8FF',
+            fontSize: '22px'      
+        }).setOrigin(0.5);
         bubbles[2] = this.add.image(ww * 0.71, wh * 0.35, 'bubble').setDisplaySize(wh * 0.4, wh * 0.4); 
+        texts[2] = this.add.text(ww * 0.71, wh * 0.35, "How and when\n do I take?", {
+            color: '#F8F8FF',
+            fontSize: '30px'      
+        }).setOrigin(0.5);
         bubbles[3] = this.add.image(ww * 0.88, wh * 0.20, 'bubble').setDisplaySize(wh * 0.28, wh * 0.28); 
+        texts[3] = this.add.text(ww * 0.88, wh * 0.20, "Side effects", {
+            color: '#F8F8FF',
+            fontSize: '24px'      
+        }).setOrigin(0.5);
 
         this.quickQuestions = [bubbles, texts];
 
-        bubbles[0].setInteractive();
-        bubbles[0].on('pointerover', () => { texts[0].setStyle({ color: '#F00000', }); });
-        bubbles[0].on('pointerout', () => { texts[0].setStyle({ color: '#F8F8FF', }); });
-        // bubbles[0].on('pointerup', () => { window.location.href = "index2.html";});
-        bubbles[0].on('pointerup', () => { this.AnswerQuickQuestion(0) });
-        bubbles[0].on('pointerdown', () => { console.log('pointerdown'); });
+        for(let i = 0; i < 4; i++)
+        {
+            bubbles[i].setInteractive();
+            bubbles[i].on('pointerover', () => { texts[i].setStyle({ color: '#F00000', }); });
+            bubbles[i].on('pointerout', () => { texts[i].setStyle({ color: '#F8F8FF', }); });
+            bubbles[i].on('pointerup', () => { this.AnswerQuickQuestion(i) });
+            // bubbles[i].on('pointerdown', () => { console.log('pointerdown'); });
+        }        
     }
 
     CreateTestAnim()
@@ -109,6 +125,27 @@ class SceneMain extends Phaser.Scene
         });
     }
 
+    CreateAvatar()
+    {
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('avatar_idle', { start: 0, end: 284 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'speak',
+            frames: this.anims.generateFrameNumbers('avatar_speak', { start: 0, end: 280 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        let avatar = this.add.sprite(ww * 0.25, wh * 1, 'avatar_speak').setScale(1.5);
+        avatar.anims.play('speak', true);
+        avatar.setInteractive();
+    }
+
     SetInputField()
     {
         let scene_self = this;
@@ -116,9 +153,9 @@ class SceneMain extends Phaser.Scene
         let el = document.getElementById(nameInputField);
         el.style.position = "absolute"; 
         el.style.top = wh*0.65 + "px";
-        el.style.left = ww*0.52 + "px";
-        el.style.width = 600 + "px";
-        el.style.height = 100 + "px";
+        el.style.left = ww*0.5 + "px";
+        el.style.width = ww*0.4 + "px";
+        el.style.height = wh*0.1 + "px";
         el.onchange = function(){ scene_self.InputFieldChanged(nameInputField); };
         el.onfocus = function()
             { 
@@ -136,7 +173,8 @@ class SceneMain extends Phaser.Scene
     {        
         this.CreateMainElements();
         this.CreateQuickQuestions();
-        this.CreateTestAnim();   
+        // this.CreateTestAnim(); 
+        this.CreateAvatar();
         
         this.SetInputField();
 
@@ -213,7 +251,7 @@ class SceneMain extends Phaser.Scene
         this.conManager.addMsg(msg);
         
         img = this.CreateImg('msgBG', 0.1, 0.1);
-        txt = this.CreateTxt("Here is the solution");
+        txt = this.CreateTxt("Here is the solution:\nXXXXXXXXXXXX");
         msg = new ConMsg(txt, img, 0);
         this.conManager.addMsg(msg);        
     }
@@ -228,18 +266,69 @@ class SceneMain extends Phaser.Scene
         }            
         if(indexQuestion == 0)
         {
-            for(let i = 0; i < 8; i++)
-            {                
-                let img = this.CreateImg('msgBG', 0.1, 0.1);
-                let txt = this.CreateTxt("I got a muscle pain " + i);
-                let msg = new ConMsg(txt, img, 1);
-                this.conManager.addMsg(msg);
-                
-                img = this.CreateImg('msgBG', 0.1, 0.1);
-                txt = this.CreateTxt("Here is the solution " + i);
-                msg = new ConMsg(txt, img, 0);
-                this.conManager.addMsg(msg);   
-            }         
+            let img = this.CreateImg('msgBG', 0.1, 0.1);
+            let txt = this.CreateTxt("What are statins?");
+            let msg = new ConMsg(txt, img, 1);
+            this.conManager.addMsg(msg);
+            
+            img = this.CreateImg('msgBG', 0.1, 0.1);
+            txt = this.CreateTxt(
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n\
+(4) Help protect your heart from futu");
+            msg = new ConMsg(txt, img, 0);
+            this.conManager.addMsg(msg);          
+        }
+        else if(indexQuestion == 1)
+        {
+            let img = this.CreateImg('msgBG', 0.1, 0.1);
+            let txt = this.CreateTxt("Who should use?");
+            let msg = new ConMsg(txt, img, 1);
+            this.conManager.addMsg(msg);
+            
+            img = this.CreateImg('msgBG', 0.1, 0.1);
+            txt = this.CreateTxt(
+"You should take a statin if you have an increased risk \n\
+of heart attack or stroke.Studies show that statins  \n\
+can reduce the risk of a heart attack or stroke by 30\-45%, \n\
+even if your cholesterol is norma");
+            msg = new ConMsg(txt, img, 0);
+            this.conManager.addMsg(msg);          
+        }
+        else if(indexQuestion == 2)
+        {
+            let img = this.CreateImg('msgBG', 0.1, 0.1);
+            let txt = this.CreateTxt("How and When?");
+            let msg = new ConMsg(txt, img, 1);
+            this.conManager.addMsg(msg);
+            
+            img = this.CreateImg('msgBG', 0.1, 0.1);
+            txt = this.CreateTxt(
+"It's best to take statins in the evening, because \n\
+cholesterol is made while you sleep.\n\
+However, you can take statins any time\n\
+if it is easier for you to remember to take it.\n\
+Follow your doctor's instructions");
+            msg = new ConMsg(txt, img, 0);
+            this.conManager.addMsg(msg);          
+        }
+        else if(indexQuestion == 3)
+        {
+            let img = this.CreateImg('msgBG', 0.1, 0.1);
+            let txt = this.CreateTxt("The side effects?");
+            let msg = new ConMsg(txt, img, 1);
+            this.conManager.addMsg(msg);
+            
+            img = this.CreateImg('msgBG', 0.1, 0.1);
+            txt = this.CreateTxt(
+"have side effects. Common side effects may include:\n\
+(1) Muscle aches (not severe pain)\n\
+(2) Upset stomach");
+            msg = new ConMsg(txt, img, 0);
+            this.conManager.addMsg(msg);          
         }
     }
 
@@ -249,6 +338,7 @@ class SceneMain extends Phaser.Scene
         {
             this.SetVisibilityOfQuickQuestions(true);
             this.conManager.hide();
+            this.state = 0;
         }        
     }
 
@@ -256,7 +346,7 @@ class SceneMain extends Phaser.Scene
     {
         let txt = this.add.text(ww * rX, wh * rY, text, {
             color: '#F8F8FF',
-            fontSize: '14px'      
+            fontSize: '16px'      
         });
         return txt;
     }
