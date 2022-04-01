@@ -130,14 +130,14 @@ class SceneMain extends Phaser.Scene
         this.anims.create({
             key: 'idle',
             frames: this.anims.generateFrameNumbers('avatar_idle', { start: 0, end: 284 }),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
         this.anims.create({
             key: 'speak',
             frames: this.anims.generateFrameNumbers('avatar_speak', { start: 0, end: 280 }),
-            frameRate: 10,
+            frameRate: 30,
             repeat: -1
         });
 
