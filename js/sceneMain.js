@@ -138,7 +138,7 @@ class SceneMain extends Phaser.Scene
             key: 'speak',
             frames: this.anims.generateFrameNumbers('avatar_speak', { start: 0, end: 280 }),
             frameRate: 30,
-            repeat: -1
+            repeat: 0
         });
 
         this.avatar = this.add.sprite(ww * 0.25, wh * 1, 'avatar_idle').setScale(1.5 * wh/h_avatarFrame);
@@ -378,6 +378,13 @@ Follow your doctor's instructions");
         //     this.conManager.scroll(offset);
         // }
         // console.log(this.conManager.CountMsg());
+
+        if(!this.avatar.anims.isPlaying)
+        {
+            console.log("No animation is playing right now");
+            this.avatar.anims.play('idle', true);
+        }
+            
     }
     
 }
