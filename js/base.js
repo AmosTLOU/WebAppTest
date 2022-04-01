@@ -1,6 +1,3 @@
-var ww = window.innerWidth;
-var wh = window.innerHeight;
-
 class ConMsg  // conversation message  includes phaser text and phaser image(bg)
 {
     constructor(i_phaserText, i_phaserImg, i_side) 
