@@ -303,22 +303,22 @@ class SceneMain extends Phaser.Scene
         // console.log(text);
     	// console.log(cnt);
 
-        if(this.state != 1)
-        {
-            this.ShowQuickQuestions(false);
-            this.avatar.anims.play('speak', true);
-            this.state = 1;
-        }  
         
-        let img = this.CreateImg('msgBG', 0.1, 0.1);
+        let img = this.CreateImg('msgBG');
         let txt = this.CreateTxt(text);
         let msg = new ConMsg(txt, img, 1);
         this.conManager.AddMsg(msg);
         
-        img = this.CreateImg('msgBG', 0.1, 0.1);
+        img = this.CreateImg('msgBG');
         txt = this.CreateTxt("Here is the solution:\nXXXXXXXXXXXX");
         msg = new ConMsg(txt, img, 0);
-        this.conManager.AddMsg(msg);        
+        this.conManager.AddMsg(msg);   
+        
+
+        this.ShowQuickQuestions(false);
+        this.conManager.ShowAllMsg(true);
+        this.avatar.anims.play('speak', true);
+        this.state = 1;
     }
     
 
@@ -335,13 +335,11 @@ class SceneMain extends Phaser.Scene
         msg = new ConMsg(txt, img, 0);
         this.conManager.AddMsg(msg);  
 
-        if(this.state != 1)
-        {
-            this.ShowQuickQuestions(false);
-            this.conManager.ShowAllMsg(true);
-            this.avatar.anims.play('speak', true);
-            this.state = 1;
-        }   
+
+        this.ShowQuickQuestions(false);
+        this.conManager.ShowAllMsg(true);
+        this.avatar.anims.play('speak', true);
+        this.state = 1;
     }
 
     ReturnToQuickQuestions()
