@@ -1,219 +1,180 @@
-class ConMsg  // conversation message  includes phaser text and phaser image(bg)
+var rX_rightBnd = 0.9;
+var rX_leftBnd = 0.5;
+var rY_topBnd = 0.05;
+var rY_bottomBnd = 0.64;
+var padding_rX = 0.01;
+var padding_rY = 0.01;
+var padding_pX = padding_rX * ww;        
+var padding_pY = padding_rY * wh;
+var gapBetweenMsg_rY = 0.03;
+var pW_OriginalMsgBg = undefined;
+var pH_OriginalMsgBg = undefined;
+
+// Conversation Message, including phaser text and phaser image(bg)
+class ConMsg
 {
     constructor(i_phaserText, i_phaserImg, i_side) 
-    {
-        this.rX = undefined;
-        this.rY = undefined;
-
+    {      
         this.txt = i_phaserText;
-        this.txt.visible = true;
         this.bg = i_phaserImg;
-        this.bg.visible = false;
-        this.side = i_side;        
+        this.side = i_side;   
+             
+        this.pW = this.txt.width + padding_pX;
+        this.pH = this.txt.height + padding_pY;
+        this.rW = this.pW/ww;
+        this.rH = this.pH/wh;
+        this.bg.setDisplaySize(this.pW, this.pH); 
 
-        this.padding_rX = 0.01;
-        this.padding_rY = 0.01;
-        this.padding_pX = this.padding_rX * ww;        
-        this.padding_pY = this.padding_rY * wh;
-
-        this.rW_bg = 0.22;
-        this.rH_bg = 0.1;
-        if(this.side == 1)
-            this.rH_bg = 0.05;
-        this.pW_bg = this.rW_bg * ww;
-        this.pH_bg = this.rH_bg * wh;
-
-        this.rX_rightBoundary = 1;
-        this.rX_leftBoundary = 0.5;
-        this.rY_topBoundary = 0.1;
-        this.rY_bottomBoundary = 0.55;
-
-        this.bg.setDisplaySize(this.pW_bg, this.pH_bg); 
-        
-
-        this.per_TopY = 0.1;
-        this.per_BottomY = 0.55;
-    }
-
-    RX()
-    {
-        return this.rX;
-    }
-
-    RY()
-    {
-        return this.rY;
-    }    
-
-    // return pixel height of background image
-    pH()
-    {
-        return this.pH_bg;
-    }
-
-    // return ratio height of background image
-    rH()
-    {
-        return this.rH_bg;
-    }
-
-    Enable() 
-    {
-        this.txt.visible = true;
-        // this.bg.visible = true;        
-    }
-
-    // updatePosY(per_y)
-    // {
-    //     this.txt.setY(wh * per_y);
-    //     this.bg.setY(wh * per_y);
-    // }
-
-    UpdatePos(i_rY)
-    {
-        this.rY = i_rY;
+        this.rX_left = undefined;
         if(this.side == 0)
         {
-            this.rX = this.rX_leftBoundary * ww;
+            this.rX_left = rX_leftBnd;
         }
         else if(this.side == 1)
         {
-            this.rX = this.rX_rightBoundary * ww - this.pW_bg;
-        }      
-            
-        let pY = this.rY * wh;
-        this.txt.setX(this.rX + this.padding_pX);
-        this.txt.setY(pY + this.padding_pY);        
-
-        this.bg.setX(this.rX + this.pW_bg * 0.5);
-        this.bg.setY(pY + this.pH_bg * 0.5);
-
-        if(this.rY < 0 || 0.6 < this.rY)
-            this.hide();
-        else
-            this.Enable();
+            this.rX_left = rX_rightBnd - this.rW;
+        }   
+        this.rY_Top = undefined;              
     }
 
-    hide()
+    RY_Top()
     {
-        this.txt.visible = false;
-        // this.bg.visible = false;
-    }
+        return this.rY_Top;
+    }    
 
-    // return -1 reach top;  1 reach bottom;  0 inbetween
-    translate(rOffset)
+    RH()
     {
-        this.UpdatePos(this.rY + rOffset);
-        return 0;
+        return this.rH;
     }
 
-    inVisibleRange()
-    {        
-        let perY = this.txt.y/wh;
-        if( this.per_TopY <= perY && perY <= this.per_BottomY )
-            return true;
-        else
-            return false;
+    Show(is_visible) 
+    {
+        this.txt.visible = is_visible;
+        this.bg.visible = is_visible;        
+    }
+
+    UpdatePosByTopY(i_rY)
+    {
+        this.rY_Top = i_rY;
         
+        let pX_center = this.rX_left * ww + this.pW * 0.5;
+        let pY_center = this.rY_Top * wh + this.pH * 0.5;
+        this.txt.setPosition(pX_center, pY_center).setOrigin(0.5);
+        this.bg.setPosition(pX_center, pY_center);
+
+        if(this.rY_Top + this.rH < rY_topBnd || rY_bottomBnd < this.rY_Top)
+        {
+            this.Show(false);
+        }
+        else
+        {
+            this.Show(true);
+            let pH_remaining_bg = wh;
+            let pH_remaining_txt = wh;
+            let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
+            // if a part of the bottom is out of the box
+            if(rY_bottomBnd < this.rY_Top + this.rH)
+            {                
+                let pH_intermediate = wh * (rY_bottomBnd - this.rY_Top);
+                pH_remaining_bg = pH_intermediate * ratio_OrginialToDisplay;
+                pH_remaining_txt = pH_intermediate - padding_pY;
+            }
+            this.bg.setCrop(0, 0, ww, pH_remaining_bg);
+            this.txt.setCrop(0, 0, ww, pH_remaining_txt);
+        }
+        
+        // console.log(pX_center + "  " + pY_center);
     }
 
-    inTopRange()
+    Translate(rOffset)
     {
-        let perY = this.txt.y/wh;
-        let biasPercent = 0.2
-        if( this.per_TopY*(1-biasPercent) <= perY && perY <= this.per_TopY*(1+biasPercent) )
-            return true;
-        else
-            return false;
+        this.UpdatePosByTopY(this.rY_Top + rOffset);
     }
 
-    inBottomRange()
+    IsVisibleInBox()
+    {        
+        return (rY_topBnd <= this.rY_Top) || (this.rY_Top + this.rH <= rY_bottomBnd);
+    }
+
+    IsEntirelyVisibleInBox()
     {
-        let perY = this.txt.y/wh;
-        let biasPercent = 0.1
-        if( this.per_BottomY*(1-biasPercent) <= perY && perY <= this.per_BottomY*(1+biasPercent) )
-            return true;
-        else
-            return false;
+        return (rY_topBnd <= this.rY_Top) && (this.rY_Top + this.rH <= rY_bottomBnd);
     }
 }
 
-// conversation manager
+
+// Conversation Manager, charge of Conversation Message
 class ConManager 
 {
     constructor() 
     {
-        this.MsgHistory = new Array();
-        // ww = window.innerWidth;
-        // wh = window.innerHeight;
-
-        this.rX_rightBoundary = 0.8;
-        this.rX_leftBoundary = 0.5;
-        this.rY_topBoundary = 0.1;
-        this.rY_bottomBoundary = 0.45;
+        this.ArrMsg = new Array();
     }
 
-    CountMsg()
+    MsgCount()
     {
-        return this.MsgHistory.length;
+        return this.ArrMsg.length;
     }
 
-    addMsg(conMsg)
+    AddMsg(conMsg)
     {
-        this.MsgHistory[this.MsgHistory.length] = conMsg;
-        this.UpdateMsgPos();
+        this.ArrMsg[this.ArrMsg.length] = conMsg;
     }
 
-    EnableAllMsg()
+    ShowAllMsg(is_visible)
     {
-        for(let i = this.MsgHistory.length-1; 0 <= i ; i--)
+        this.UpdateAllMsgPos();
+        for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
         {         
-            this.MsgHistory[i].Enable();
-        }
+            this.ArrMsg[i].Show(is_visible);
+        }        
     }
 
-    UpdateMsgPos()
+    UpdateAllMsgPos()
     {
-        let bottomY = 0.55;
-        let per_y = bottomY;
-        for(let i = this.MsgHistory.length-1; 0 <= i ; i--)
+        console.log("Enter UpdateAllMsgPos function");
+        // The purpose of adding gapBetweenMsg_rY here is to make the RY of the bottom Message correct
+        let rY = rY_bottomBnd + gapBetweenMsg_rY;
+        let StartPlacingByFirstOne = false;
+        for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
         {         
-            let rH = this.MsgHistory[i].rH();
-            let rY = per_y - rH;
-            this.MsgHistory[i].UpdatePos(rY);
-            per_y -= 0.13;
+            rY = rY - gapBetweenMsg_rY - this.ArrMsg[i].RH();
+            this.ArrMsg[i].UpdatePosByTopY(rY);
+            if(i == 0 && this.ArrMsg[i].IsEntirelyVisibleInBox())
+            {
+                StartPlacingByFirstOne = true;
+                break;
+            }
         }
 
-        // if(this.MsgHistory[0].inVisibleRange())
-        // {
-        //     per_y = 0.1;
-        //     for(let i = 0; i < this.MsgHistory.length ; i++)
-        //     {         
-        //         this.MsgHistory[i].updatePosY(per_y);
-        //         per_y += 0.075;
-        //     }
-        // }
-    }
-
-    hide()
-    {
-        for(let i = 0; i < this.MsgHistory.length; i++)
+        if(StartPlacingByFirstOne)
         {
-            this.MsgHistory[i].hide();
+            // The purpose of substracting ... (same as the above one)
+            rY = rY_topBnd - gapBetweenMsg_rY;
+            for(let i = 0; i < this.ArrMsg.length ; i++)
+            {         
+                rY += gapBetweenMsg_rY;
+                this.ArrMsg[i].UpdatePosByTopY(rY);
+                rY += this.ArrMsg[i].RH();
+            }
         }
     }
 
-    ableToScroll(rOffset)
+
+    CanScroll(rOffset)
     {        
-        let indFinalMsg = this.MsgHistory.length-1;
-        // no matter offset is positive or negative, if the first and the last one are both visible, then don't allow scrolling
-        if(this.MsgHistory[0].inVisibleRange() && this.MsgHistory[indFinalMsg].inVisibleRange())
+        if(this.ArrMsg.length <= 0)
+            return false;
+
+        let IsEntireVisible_FirstOne = this.ArrMsg[0].IsEntirelyVisibleInBox();
+        let IsEntireVisible_LastOne = this.ArrMsg[this.ArrMsg.length-1].IsEntirelyVisibleInBox();
+        // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
+        if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
             return false;
         // when move up, the last one couldn't move above the bottom range
         if(rOffset < 0)
         {      
-            let prospective_rY_lastOne = this.MsgHistory[indFinalMsg].RY() + rOffset;
-            if(prospective_rY_lastOne < this.rY_bottomBoundary)
+            if(IsEntireVisible_LastOne)
             {
                 console.log("Bottom msg cannot move up anymore");
                 return false;
@@ -222,37 +183,25 @@ class ConManager
         // when move down, the first one couldn't move below the top range
         else if(0 < rOffset)
         {            
-            if(this.MsgHistory[0].inTopRange())
+            if(IsEntireVisible_FirstOne)
             {
                 console.log("Top msg cannot move down anymore");
                 return false;
             }
-                
         }
         return true;
     }
 
-    scroll(rOffset)
+    Scroll(rOffset)
     {
-        if(this.MsgHistory.length <= 0 || !this.ableToScroll(rOffset))
+        if(this.ArrMsg.length <= 0 || !this.CanScroll(rOffset))
         {            
             return;
         }            
 
-        for(let i = this.MsgHistory.length-1; 0 <= i ; i--)
+        for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
         {
-            let result = this.MsgHistory[i].translate(rOffset);
-            // if(result != 0)
-            // {
-            //     console.log("Dialogue can't move anymore!");
-            //     break;
-            // }
-                
+            this.ArrMsg[i].Translate(rOffset);
         }
-    }
-
-    test()
-    {
-        console.log("test");
     }
 }

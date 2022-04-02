@@ -1,5 +1,49 @@
+var b_Debug = true;
+
 var w_avatarFrame = 448;
 var h_avatarFrame = 770;
+
+var phaserText_MousePosition;
+
+
+var Content_QuickQuestions = ["What are statins?", "Who should use?", "How and When?", "The side effects?"];
+var Content_AnswersToQuickQuestions = 
+[
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n\
+(4) Help protect your heart from future\n" + 
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n\
+(4) Help protect your heart from future\n" +
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.",
+
+"You should take a statin if you have an increased risk \n\
+of heart attack or stroke.Studies show that statins  \n\
+can reduce the risk of a heart attack or stroke by 30\-45%, \n\
+even if your cholesterol is norma",
+
+"It's best to take statins in the evening, because \n\
+cholesterol is made while you sleep.\n\
+However, you can take statins any time\n\
+if it is easier for you to remember to take it.\n\
+Follow your doctor's instructions",
+
+"have side effects. Common side effects may include:\n\
+(1) Muscle aches (not severe pain)\n\
+(2) Upset stomach"
+];
+
+
 
 class SceneMain extends Phaser.Scene 
 {
@@ -42,7 +86,7 @@ class SceneMain extends Phaser.Scene
         this.add.text(ww * 0.05, wh * 0.2, "Profile", {
             fontFamily: 'open sans',
             color: '#F8F8FF',
-            fontSize: '34px'            
+            fontSize: (ww * 0.02) + 'px'            
         }).setOrigin(0.5);
     }
 
@@ -50,37 +94,29 @@ class SceneMain extends Phaser.Scene
     {
         let bubbles = new Array();
         let texts = new Array();
-        bubbles[0] = this.add.image(ww * 0.47, wh * 0.35, 'bubble').setDisplaySize(wh * 0.3, wh * 0.3); 
-        texts[0] = this.add.text(ww * 0.47, wh * 0.35, "What are \nstatins?", {
-            color: '#F8F8FF',
-            fontSize: '24px'      
-        }).setOrigin(0.5);        
-        bubbles[1] = this.add.image(ww * 0.58, wh * 0.15, 'bubble').setDisplaySize(wh * 0.2, wh * 0.2); 
-        texts[1] = this.add.text(ww * 0.58, wh * 0.15, "Target\n User", {
-            color: '#F8F8FF',
-            fontSize: '22px'      
-        }).setOrigin(0.5);
-        bubbles[2] = this.add.image(ww * 0.71, wh * 0.35, 'bubble').setDisplaySize(wh * 0.4, wh * 0.4); 
-        texts[2] = this.add.text(ww * 0.71, wh * 0.35, "How and when\n do I take?", {
-            color: '#F8F8FF',
-            fontSize: '30px'      
-        }).setOrigin(0.5);
-        bubbles[3] = this.add.image(ww * 0.88, wh * 0.20, 'bubble').setDisplaySize(wh * 0.28, wh * 0.28); 
-        texts[3] = this.add.text(ww * 0.88, wh * 0.20, "Side effects", {
-            color: '#F8F8FF',
-            fontSize: '24px'      
-        }).setOrigin(0.5);
-
-        this.quickQuestions = [bubbles, texts];
-
-        for(let i = 0; i < 4; i++)
+        let coord_bubbles = [[0.47, 0.35], [0.57, 0.15], [0.70, 0.35], [0.87, 0.20]];
+        let scale_bubbles = [0.3, 0.2, 0.37, 0.27];
+        let text_bubbles = ["What are \nstatins?", "Target\n User", "How and when\n do I take?", "Side effects"];
+        let r_font_text = [0.015, 0.0137, 0.0187, 0.015];
+        for(let i = 0; i < coord_bubbles.length; i++)
         {
+            let pX = ww * coord_bubbles[i][0];
+            let pY = wh * coord_bubbles[i][1];
+            bubbles[i] = this.add.image(pX, pY, 'bubble').setDisplaySize(wh * scale_bubbles[i], wh * scale_bubbles[i]); 
+            texts[i] = this.add.text(pX, pY, text_bubbles[i], {
+                color: '#F8F8FF',
+                fontSize: (ww * r_font_text[i]) + "px"      
+            }).setOrigin(0.5);    
+
             bubbles[i].setInteractive();
             bubbles[i].on('pointerover', () => { texts[i].setStyle({ color: '#F00000', }); });
             bubbles[i].on('pointerout', () => { texts[i].setStyle({ color: '#F8F8FF', }); });
             bubbles[i].on('pointerup', () => { this.AnswerQuickQuestion(i) });
-            // bubbles[i].on('pointerdown', () => { console.log('pointerdown'); });
-        }        
+            // bubbles[i].on('pointerdown', () => { console.log('pointerdown'); });    
+        }
+
+        this.quickQuestions = [bubbles, texts];
+    
     }
 
     CreateTestAnim()
@@ -152,10 +188,10 @@ class SceneMain extends Phaser.Scene
         let nameInputField = "inputField_v0";
         let el = document.getElementById(nameInputField);
         el.style.position = "absolute"; 
-        el.style.top = wh*0.65 + "px";
-        el.style.left = ww*0.5 + "px";
-        el.style.width = ww*0.4 + "px";
-        el.style.height = wh*0.1 + "px";
+        el.style.top = wh * (rY_bottomBnd + 0.03) + "px";
+        el.style.left = ww * rX_leftBnd + "px";
+        el.style.width = ww * (rX_rightBnd - rX_leftBnd) + "px";
+        el.style.height = wh * 0.1 + "px";
         el.onchange = function(){ scene_self.InputFieldChanged(nameInputField); };
         el.onfocus = function()
             { 
@@ -169,14 +205,33 @@ class SceneMain extends Phaser.Scene
         window.onwheel = function(event){ scene_self.WheelResponse(event); };
     }
 
+    ExtraWork()
+    {
+        let tmpIMG = this.add.image(ww*0.5, wh*0.5, "msgBG");
+        pW_OriginalMsgBg = tmpIMG.width;
+        pH_OriginalMsgBg = tmpIMG.height;
+        tmpIMG.visible = false;
+        // console.log("Before Set Display Size: " + tmpIMG.width + "  " + tmpIMG.height);
+        // tmpIMG.setDisplaySize(ww*0.1, wh*0.2);
+        // console.log("After Set Display Size: " + tmpIMG.width + "  " + tmpIMG.height);
+        // tmpIMG.setCrop(0,0,ww*0.05,wh*0.1);
+
+        phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
+            color: '#000000',
+            fontSize:  (ww * 0.0137) + 'px'      
+        }).setOrigin(0.5);
+    }
+    
+
     create() 
     {        
         this.CreateMainElements();
         this.CreateQuickQuestions();
-        // this.CreateTestAnim(); 
         this.CreateAvatar();
-        
+
         this.SetInputField();
+        this.ExtraWork();
+        
 
         // this.formUtil = new FormUtil({scene: this, rows: 20, cols: 20});
         
@@ -185,9 +240,18 @@ class SceneMain extends Phaser.Scene
         // var r2 = this.add.line(0, 0, 400, 400, 140, 0, 0x6666ff);
         // var r3 = this.add.line(200, 200, 400, 400, 140, 0, 0x6666ff);
         // r2.setLineWidth(10, 40);
+
+
+        // var test_bg = this.add.image(ww * 0.2, wh * 0.3, 'msgBG');
+        // var test_txt = this.add.text(ww * 0.2, wh * 0.3, "0123456789\n0123456789\n0123456789\n0123456789", {
+        //     color: '#000000',
+        //     fontSize: '22px'      
+        // }).setOrigin(0.5).setCrop(0, 0, ww, 44);
+        // test_bg.setDisplaySize(test_txt.width, test_txt.height); 
+        
     }    
     
-    SetVisibilityOfQuickQuestions(isVisible)
+    ShowQuickQuestions(isVisible)
     {
         for (let i = 0; i < this.quickQuestions.length; i++)
         {
@@ -204,9 +268,9 @@ class SceneMain extends Phaser.Scene
         {
             let rOffset = 0.02;
             if(event.deltaY < 0)
-                this.conManager.scroll(rOffset);
+                this.conManager.Scroll(rOffset);
             else if(0 < event.deltaY)
-                this.conManager.scroll(-rOffset);   
+                this.conManager.Scroll(-rOffset);   
         }           
     }
 
@@ -241,7 +305,7 @@ class SceneMain extends Phaser.Scene
 
         if(this.state != 1)
         {
-            this.SetVisibilityOfQuickQuestions(false);
+            this.ShowQuickQuestions(false);
             this.avatar.anims.play('speak', true);
             this.state = 1;
         }  
@@ -249,97 +313,43 @@ class SceneMain extends Phaser.Scene
         let img = this.CreateImg('msgBG', 0.1, 0.1);
         let txt = this.CreateTxt(text);
         let msg = new ConMsg(txt, img, 1);
-        this.conManager.addMsg(msg);
+        this.conManager.AddMsg(msg);
         
         img = this.CreateImg('msgBG', 0.1, 0.1);
         txt = this.CreateTxt("Here is the solution:\nXXXXXXXXXXXX");
         msg = new ConMsg(txt, img, 0);
-        this.conManager.addMsg(msg);        
+        this.conManager.AddMsg(msg);        
     }
     
 
     AnswerQuickQuestion(indexQuestion)
     {        
+                
+        let img = this.CreateImg('msgBG');
+        let txt = this.CreateTxt(Content_QuickQuestions[indexQuestion]);            
+        let msg = new ConMsg(txt, img, 1);
+        this.conManager.AddMsg(msg);
+        
+        img = this.CreateImg('msgBG');
+        txt = this.CreateTxt(Content_AnswersToQuickQuestions[indexQuestion]);
+        msg = new ConMsg(txt, img, 0);
+        this.conManager.AddMsg(msg);  
+
         if(this.state != 1)
         {
-            this.SetVisibilityOfQuickQuestions(false);
+            this.ShowQuickQuestions(false);
+            this.conManager.ShowAllMsg(true);
             this.avatar.anims.play('speak', true);
             this.state = 1;
-        }            
-        if(indexQuestion == 0)
-        {
-            let img = this.CreateImg('msgBG', 0.1, 0.1);
-            let txt = this.CreateTxt("What are statins?");
-            let msg = new ConMsg(txt, img, 1);
-            this.conManager.addMsg(msg);
-            
-            img = this.CreateImg('msgBG', 0.1, 0.1);
-            txt = this.CreateTxt(
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n\
-(4) Help protect your heart from futu");
-            msg = new ConMsg(txt, img, 0);
-            this.conManager.addMsg(msg);          
-        }
-        else if(indexQuestion == 1)
-        {
-            let img = this.CreateImg('msgBG', 0.1, 0.1);
-            let txt = this.CreateTxt("Who should use?");
-            let msg = new ConMsg(txt, img, 1);
-            this.conManager.addMsg(msg);
-            
-            img = this.CreateImg('msgBG', 0.1, 0.1);
-            txt = this.CreateTxt(
-"You should take a statin if you have an increased risk \n\
-of heart attack or stroke.Studies show that statins  \n\
-can reduce the risk of a heart attack or stroke by 30\-45%, \n\
-even if your cholesterol is norma");
-            msg = new ConMsg(txt, img, 0);
-            this.conManager.addMsg(msg);          
-        }
-        else if(indexQuestion == 2)
-        {
-            let img = this.CreateImg('msgBG', 0.1, 0.1);
-            let txt = this.CreateTxt("How and When?");
-            let msg = new ConMsg(txt, img, 1);
-            this.conManager.addMsg(msg);
-            
-            img = this.CreateImg('msgBG', 0.1, 0.1);
-            txt = this.CreateTxt(
-"It's best to take statins in the evening, because \n\
-cholesterol is made while you sleep.\n\
-However, you can take statins any time\n\
-if it is easier for you to remember to take it.\n\
-Follow your doctor's instructions");
-            msg = new ConMsg(txt, img, 0);
-            this.conManager.addMsg(msg);          
-        }
-        else if(indexQuestion == 3)
-        {
-            let img = this.CreateImg('msgBG', 0.1, 0.1);
-            let txt = this.CreateTxt("The side effects?");
-            let msg = new ConMsg(txt, img, 1);
-            this.conManager.addMsg(msg);
-            
-            img = this.CreateImg('msgBG', 0.1, 0.1);
-            txt = this.CreateTxt(
-"have side effects. Common side effects may include:\n\
-(1) Muscle aches (not severe pain)\n\
-(2) Upset stomach");
-            msg = new ConMsg(txt, img, 0);
-            this.conManager.addMsg(msg);          
-        }
+        }   
     }
 
     ReturnToQuickQuestions()
     {
         if(this.state != 0)
         {
-            this.SetVisibilityOfQuickQuestions(true);
-            this.conManager.hide();
+            this.ShowQuickQuestions(true);
+            this.conManager.ShowAllMsg(false);
             this.avatar.anims.play('idle', true);
             this.state = 0;
         }        
@@ -349,7 +359,7 @@ Follow your doctor's instructions");
     {
         let txt = this.add.text(ww * rX, wh * rY, text, {
             color: '#F8F8FF',
-            fontSize: '16px'      
+            fontSize: (ww * 0.01) + 'px'      
         });
         return txt;
     }
@@ -362,6 +372,18 @@ Follow your doctor's instructions");
         return img;
     }
 
+    CreateText_ByJS()
+    {
+        let el = document.createElement("p");
+        let textNode = document.createTextNode("0123456789");
+        el.appendChild(textNode);
+        document.body.appendChild(el);
+        el.style.position = "absolute"; 
+        el.style.top = ww * 0.2 + "px";
+        el.style.left = wh * 0.3 + "px";
+        el.style.width = ww * 0.1 + "px";
+        el.style.height = wh * 0.1 + "px";
+    }
 
     update() 
     {
@@ -370,20 +392,29 @@ Follow your doctor's instructions");
         // if (cursors.up.isDown)
         // {
         //     console.log("Up");
-        //     this.conManager.scroll(-offset);
+        //     this.conManager.Scroll(-offset);
         // }
         // else if (cursors.down.isDown)
         // {
         //     console.log("Down");
-        //     this.conManager.scroll(offset);
+        //     this.conManager.Scroll(offset);
         // }
-        // console.log(this.conManager.CountMsg());
+        // console.log(this.conManager.MsgCount());
 
         if(!this.avatar.anims.isPlaying)
         {
             console.log("No animation is playing right now");
             this.avatar.anims.play('idle', true);
         }
+
+        if(b_Debug)
+        {
+            phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
+                                "\t\tpY: " + this.input.mousePointer.y + "\n" +
+                                "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+                                "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
+        }
+        
             
     }
     
