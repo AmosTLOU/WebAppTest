@@ -42,6 +42,11 @@ class ConMsg
         return this.rY_Top;
     }    
 
+    RY_Bottom()
+    {
+        return this.rY_Top + this.rH;
+    }
+
     RH()
     {
         return this.rH;
@@ -62,25 +67,47 @@ class ConMsg
         this.txt.setPosition(pX_center, pY_center).setOrigin(0.5);
         this.bg.setPosition(pX_center, pY_center);
 
-        if(this.rY_Top + this.rH < rY_topBnd || rY_bottomBnd < this.rY_Top)
+        // completely invisible in the box
+        if(this.RY_Bottom() < rY_topBnd || rY_bottomBnd < this.rY_Top)
         {
             this.Show(false);
         }
+        // visible in the box(at least partially)
         else
         {
             this.Show(true);
-            let pH_remaining_bg = wh;
-            let pH_remaining_txt = wh;
-            let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
-            // if a part of the bottom is out of the box
-            if(rY_bottomBnd < this.rY_Top + this.rH)
-            {                
-                let pH_intermediate = wh * (rY_bottomBnd - this.rY_Top);
-                pH_remaining_bg = pH_intermediate * ratio_OrginialToDisplay;
-                pH_remaining_txt = pH_intermediate - padding_pY;
+
+            let partOfTopInvisible = false;
+            let partOfBottomInvisible = false;
+            let rY_visible_Top = this.rY_Top;
+            let rY_visible_Bottom = this.RY_Bottom();
+            let pY_startingCropping = 0;
+            // part of top is invisible
+            if(this.rY_Top < rY_topBnd)
+            {
+                rY_visible_Top = rY_topBnd;
+                pY_startingCropping = (rY_topBnd - this.rY_Top) * wh;
+                partOfTopInvisible = true;
             }
-            this.bg.setCrop(0, 0, ww, pH_remaining_bg);
-            this.txt.setCrop(0, 0, ww, pH_remaining_txt);
+            // part of bottom is invisible
+            if(rY_bottomBnd < this.RY_Bottom())
+            {                
+                rY_visible_Bottom = rY_bottomBnd;
+                partOfBottomInvisible = true;
+            }
+            
+            if(partOfTopInvisible || partOfBottomInvisible)
+            {
+                let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
+                let pH_VisibleRange = wh * (rY_visible_Bottom - rY_visible_Top);
+                this.bg.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.bg.width, pH_VisibleRange * ratio_OrginialToDisplay);
+                this.txt.setCrop(0, pY_startingCropping, this.txt.width, pH_VisibleRange - padding_pY);
+            }
+            else{
+                this.bg.setCrop(0, 0, this.bg.width, this.bg.height);
+                this.txt.setCrop(0, 0, this.txt.width, this.txt.height);
+            }
+            
         }
         
         // console.log(pX_center + "  " + pY_center);
@@ -93,12 +120,14 @@ class ConMsg
 
     IsVisibleInBox()
     {        
-        return (rY_topBnd <= this.rY_Top) || (this.rY_Top + this.rH <= rY_bottomBnd);
+        return ((rY_topBnd < this.rY_Top) && (this.rY_Top < rY_bottomBnd)) ||
+                ((rY_topBnd < this.RY_Bottom()) && (this.RY_Bottom() < rY_bottomBnd)) ||
+                ((this.rY_Top <= rY_topBnd) && (rY_bottomBnd <= this.RY_Bottom()));
     }
 
     IsEntirelyVisibleInBox()
     {
-        return (rY_topBnd <= this.rY_Top) && (this.rY_Top + this.rH <= rY_bottomBnd);
+        return (rY_topBnd <= this.rY_Top) && (this.RY_Bottom() <= rY_bottomBnd);
     }
 }
 
@@ -173,8 +202,9 @@ class ConManager
             return false;
         // when move up, the last one couldn't move above the bottom range
         if(rOffset < 0)
-        {      
-            if(IsEntireVisible_LastOne)
+        {   
+            let prospective_rY_Bottom_lastOne = this.ArrMsg[this.ArrMsg.length-1].RY_Top() + this.ArrMsg[this.ArrMsg.length-1].RH() + rOffset;
+            if(IsEntireVisible_LastOne || prospective_rY_Bottom_lastOne < rY_bottomBnd)
             {
                 console.log("Bottom msg cannot move up anymore");
                 return false;
@@ -183,7 +213,8 @@ class ConManager
         // when move down, the first one couldn't move below the top range
         else if(0 < rOffset)
         {            
-            if(IsEntireVisible_FirstOne)
+            let prospective_rY_Top_firstOne = this.ArrMsg[0].RY_Top() + rOffset;
+            if(IsEntireVisible_FirstOne || rY_topBnd < prospective_rY_Top_firstOne)
             {
                 console.log("Top msg cannot move down anymore");
                 return false;
@@ -194,10 +225,45 @@ class ConManager
 
     Scroll(rOffset)
     {
-        if(this.ArrMsg.length <= 0 || !this.CanScroll(rOffset))
+        if(this.ArrMsg.length <= 0)
         {            
             return;
         }            
+
+        let IsEntireVisible_FirstOne = this.ArrMsg[0].IsEntirelyVisibleInBox();
+        let IsEntireVisible_LastOne = this.ArrMsg[this.ArrMsg.length-1].IsEntirelyVisibleInBox();
+        // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
+        if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
+            return;
+        // when move up, the last one couldn't move above the bottom range
+        if(rOffset < 0)
+        {   
+            let ind = this.ArrMsg.length-1;
+            let prospective_rY_Bottom_lastOne = this.ArrMsg[ind].RY_Bottom() + rOffset;
+            if(IsEntireVisible_LastOne || this.ArrMsg[ind].RY_Bottom() <= rY_bottomBnd)
+            {
+                console.log("Bottom msg cannot move up anymore");
+                return;
+            }
+            else if(this.ArrMsg[ind].IsVisibleInBox() && prospective_rY_Bottom_lastOne < rY_bottomBnd)
+            {
+                rOffset = rY_bottomBnd - this.ArrMsg[ind].RY_Bottom();
+            }       
+        }
+        // when move down, the first one couldn't move below the top range
+        else if(0 < rOffset)
+        {            
+            let prospective_rY_Top_firstOne = this.ArrMsg[0].RY_Top() + rOffset;
+            if(IsEntireVisible_FirstOne || rY_topBnd <= this.ArrMsg[0].RY_Top())
+            {
+                console.log("Top msg cannot move down anymore");
+                return;
+            }
+            else if(this.ArrMsg[0].IsVisibleInBox() && rY_topBnd < prospective_rY_Top_firstOne)
+            {
+                rOffset = rY_topBnd - this.ArrMsg[0].RY_Top();
+            }
+        }
 
         for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
         {

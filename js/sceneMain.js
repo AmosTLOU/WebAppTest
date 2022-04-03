@@ -25,7 +25,36 @@ and stroke in people who are at increased risk.\n\
 and stroke in people who are at increased risk.\n\
 (1) Reduce plaque build-up. \n\
 (2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.",
+(3) Lower your cholesterol.\n" + 
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n\
+(4) Help protect your heart from future\n" + 
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n\
+(4) Help protect your heart from future\n" +
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n"+
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n\
+(4) Help protect your heart from future\n" +
+"Statins can help lower the risk of heart attack \n\
+and stroke in people who are at increased risk.\n\
+(1) Reduce plaque build-up. \n\
+(2) Stabilize plaque in the arteries of the heart.\n\
+(3) Lower your cholesterol.\n",
+
 
 "You should take a statin if you have an increased risk \n\
 of heart attack or stroke.Studies show that statins  \n\
