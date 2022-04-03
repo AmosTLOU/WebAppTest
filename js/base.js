@@ -189,40 +189,6 @@ class ConManager
         }
     }
 
-
-    CanScroll(rOffset)
-    {        
-        if(this.ArrMsg.length <= 0)
-            return false;
-
-        let IsEntireVisible_FirstOne = this.ArrMsg[0].IsEntirelyVisibleInBox();
-        let IsEntireVisible_LastOne = this.ArrMsg[this.ArrMsg.length-1].IsEntirelyVisibleInBox();
-        // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
-        if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
-            return false;
-        // when move up, the last one couldn't move above the bottom range
-        if(rOffset < 0)
-        {   
-            let prospective_rY_Bottom_lastOne = this.ArrMsg[this.ArrMsg.length-1].RY_Top() + this.ArrMsg[this.ArrMsg.length-1].RH() + rOffset;
-            if(IsEntireVisible_LastOne || prospective_rY_Bottom_lastOne < rY_bottomBnd)
-            {
-                console.log("Bottom msg cannot move up anymore");
-                return false;
-            }                
-        }
-        // when move down, the first one couldn't move below the top range
-        else if(0 < rOffset)
-        {            
-            let prospective_rY_Top_firstOne = this.ArrMsg[0].RY_Top() + rOffset;
-            if(IsEntireVisible_FirstOne || rY_topBnd < prospective_rY_Top_firstOne)
-            {
-                console.log("Top msg cannot move down anymore");
-                return false;
-            }
-        }
-        return true;
-    }
-
     Scroll(rOffset)
     {
         if(this.ArrMsg.length <= 0)
