@@ -13,11 +13,11 @@ var pH_OriginalMsgBg = undefined;
 // Conversation Message, including phaser text and phaser image(bg)
 class ConMsg
 {
-    constructor(i_phaserText, i_phaserImg, i_side) 
+    constructor(i_text, i_imgBG, i_imgAvatar, i_side) 
     {      
-        this.txt = i_phaserText;
-        this.bg = i_phaserImg;
-        this.bg.alpha = 1;
+        this.txt = i_text;
+        this.bg = i_imgBG;
+        this.imgAvatar = i_imgAvatar;
         this.side = i_side;   
              
         this.pW = this.txt.width + padding_pX;
@@ -56,7 +56,8 @@ class ConMsg
     Show(is_visible) 
     {
         this.txt.visible = is_visible;
-        this.bg.visible = is_visible;        
+        this.bg.visible = is_visible;    
+        this.imgAvatar.visible = false;    
     }
 
     UpdatePosByTopY(i_rY)
@@ -154,17 +155,22 @@ class ConManager
 
     ShowAllMsg(is_visible)
     {
-        this.UpdateAllMsgPos();
-        this.bg.visible = is_visible;   
-        for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
-        {         
-            this.ArrMsg[i].Show(is_visible);
+        this.bg.visible = is_visible; 
+        if(is_visible)
+        {
+            this.UpdateAllMsgPos();
+        }     
+        else
+        {
+            for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
+            {         
+                this.ArrMsg[i].Show(is_visible);
+            }  
         }             
     }
 
     UpdateAllMsgPos()
     {
-        console.log("Enter UpdateAllMsgPos function");
         // The purpose of adding gapBetweenMsg_rY here is to make the RY of the bottom Message correct
         let rY = rY_bottomBnd + gapBetweenMsg_rY;
         let StartPlacingByFirstOne = false;

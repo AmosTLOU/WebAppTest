@@ -52,6 +52,8 @@ class SceneMain extends Phaser.Scene
         // this.load.image('msgBG', 'assets/BlueBG.png');
         this.load.image('msgBG', 'assets/Mockup/textbackground.png');
         this.load.image('ConBoxBG', 'assets/Mockup/dialog_bg2.png');        
+        this.load.image('patientAvatar', 'assets/Mockup/patient_avatar.png');        
+        this.load.image('doctorAvatar', 'assets/Mockup/doctor_avatar.png');        
 
         this.load.image('bg', 'assets/Mockup/background.png');        
         this.load.image('demoCharacter', 'assets/Mockup/democharacter.png');
@@ -245,10 +247,10 @@ class SceneMain extends Phaser.Scene
 
         if(b_Debug)
         {
-            // phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
-            //     color: '#000000',
-            //     fontSize:  (ww * 0.0137) + 'px'      
-            // }).setOrigin(0.5);
+            phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
+                color: '#000000',
+                fontSize:  (ww * 0.0137) + 'px'      
+            }).setOrigin(0.5);
         }
         
     }
@@ -335,16 +337,17 @@ class SceneMain extends Phaser.Scene
     	// console.log(cnt);
 
         
-        let img = this.CreateImg('msgBG');
-        let txt = this.CreateTxt(text);
-        let msg = new ConMsg(txt, img, 1);
+        let img_PatientAvatar = this.CreateImg('patientAvatar', 0.05, 0.05);
+        let img_bg = this.CreateImg('msgBG');
+        let txt = this.CreateTxt(text);       
+        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
         this.conManager.AddMsg(msg);
         
-        img = this.CreateImg('msgBG');
+        let img_DoctorAvatar = this.CreateImg('doctorAvatar', 0.05, 0.05);
+        img_bg = this.CreateImg('msgBG');
         txt = this.CreateTxt("Here is the solution:\nXXXXXXXXXXXX");
-        msg = new ConMsg(txt, img, 0);
-        this.conManager.AddMsg(msg);   
-        
+        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
+        this.conManager.AddMsg(msg);  
 
         this.ShowQuickQuestions(false);
         this.conManager.ShowAllMsg(true);
@@ -355,17 +358,17 @@ class SceneMain extends Phaser.Scene
 
     AnswerQuickQuestion(indexQuestion)
     {        
-                
-        let img = this.CreateImg('msgBG');
-        let txt = this.CreateTxt(Content_QuickQuestions[indexQuestion]);            
-        let msg = new ConMsg(txt, img, 1);
+        let img_PatientAvatar = this.CreateImg('patientAvatar', 0.05, 0.05);
+        let img_bg = this.CreateImg('msgBG');
+        let txt = this.CreateTxt(Content_QuickQuestions[indexQuestion]);       
+        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
         this.conManager.AddMsg(msg);
         
-        img = this.CreateImg('msgBG');
+        let img_DoctorAvatar = this.CreateImg('doctorAvatar', 0.05, 0.05);
+        img_bg = this.CreateImg('msgBG');
         txt = this.CreateTxt(Content_AnswersToQuickQuestions[indexQuestion]);
-        msg = new ConMsg(txt, img, 0);
+        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
         this.conManager.AddMsg(msg);  
-
 
         this.ShowQuickQuestions(false);
         this.conManager.ShowAllMsg(true);
