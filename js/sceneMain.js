@@ -40,7 +40,7 @@ class SceneMain extends Phaser.Scene
     {
         super('SceneMain');
         this.quickQuestions = undefined;
-        this.conManager = new ConManager();
+        this.conManager = undefined;
         this.avatar = undefined;
         
         // 0 Bubbles of Quick Questions; 1 Conversation
@@ -50,7 +50,8 @@ class SceneMain extends Phaser.Scene
     preload() 
     {
         // this.load.image('msgBG', 'assets/BlueBG.png');
-        this.load.image('msgBG', 'assets/BrownBG.jpg');
+        this.load.image('msgBG', 'assets/Mockup/textbackground.png');
+        this.load.image('ConBoxBG', 'assets/Mockup/dialog_bg2.png');        
 
         this.load.image('bg', 'assets/Mockup/background.png');        
         this.load.image('demoCharacter', 'assets/Mockup/democharacter.png');
@@ -67,12 +68,10 @@ class SceneMain extends Phaser.Scene
     }
 
     CreateMainElements()
-    {
-        
+    {        
         this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
         let img_profile = this.add.image(ww * 0.7, wh * 0.33, 'profile').setDisplaySize(ww * 0.30, wh * 0.6);
         img_profile.visible = false;
-        // this.add.image(ww * 0.25, wh * 0.55, 'demoCharacter').setDisplaySize(ww * 0.25, wh * 0.9); 
         let img_profileIcon = this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
         img_profileIcon.setInteractive();
         img_profileIcon.on('pointerup', () => 
@@ -92,6 +91,11 @@ class SceneMain extends Phaser.Scene
             color: '#F8F8FF',
             fontSize: (ww * 0.02) + 'px'            
         }).setOrigin(0.5);
+
+        let img_ConBG = this.add.image(ww * (rX_rightBnd + rX_leftBnd) * 0.5, wh * (rY_bottomBnd + rY_topBnd)* 0.5, 'ConBoxBG');
+        img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd) + 2 * padding_pX, wh * (rY_bottomBnd - rY_topBnd) + 2 * padding_pY);
+        img_ConBG.visible = false;
+        this.conManager = new ConManager(img_ConBG);
     }
 
     CreateQuickQuestions()
@@ -207,8 +211,8 @@ class SceneMain extends Phaser.Scene
         let el = document.getElementById(nameInputField);
         el.style.position = "absolute"; 
         el.style.top = wh * (rY_bottomBnd + 0.03) + "px";
-        el.style.left = ww * rX_leftBnd + "px";
-        el.style.width = ww * (rX_rightBnd - rX_leftBnd) + "px";
+        el.style.left = ww * (rX_leftBnd - padding_rX) + "px";
+        el.style.width = ww * (rX_rightBnd - rX_leftBnd + padding_rX) + "px";
         el.style.height = wh * 0.1 + "px";
         el.style.fontSize = wh * 0.02 + "px";
         el.style.lineHeight = wh * 0.01 + "px";
@@ -383,8 +387,8 @@ class SceneMain extends Phaser.Scene
     CreateTxt(text, rX=0, rY=0)
     {
         let txt = this.add.text(ww * rX, wh * rY, text, {
-            color: '#000000',
-            fontSize: (ww * 0.01) + 'px'      
+            color: '#FFFFFF',
+            fontSize: (ww * 0.011) + 'px'      
         });
         return txt;
     }

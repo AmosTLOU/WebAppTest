@@ -17,6 +17,7 @@ class ConMsg
     {      
         this.txt = i_phaserText;
         this.bg = i_phaserImg;
+        this.bg.alpha = 1;
         this.side = i_side;   
              
         this.pW = this.txt.width + padding_pX;
@@ -135,9 +136,10 @@ class ConMsg
 // Conversation Manager, charge of Conversation Message
 class ConManager 
 {
-    constructor() 
+    constructor(i_bg) 
     {
         this.ArrMsg = new Array();
+        this.bg = i_bg;
     }
 
     MsgCount()
@@ -153,10 +155,11 @@ class ConManager
     ShowAllMsg(is_visible)
     {
         this.UpdateAllMsgPos();
+        this.bg.visible = is_visible;   
         for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
         {         
             this.ArrMsg[i].Show(is_visible);
-        }        
+        }             
     }
 
     UpdateAllMsgPos()
