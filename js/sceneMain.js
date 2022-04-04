@@ -16,9 +16,10 @@ and stroke in people who are at increased risk.\n\
 (3) Lower your cholesterol.\n\
 (4) Help protect your heart from future\n",
 
-"You should take a statin if you have an increased risk \n\
-of heart attack or stroke.Studies show that statins  \n\
-can reduce the risk of a heart attack or stroke by 30\-45%, \n\
+"You should take a statin if you have an \n\
+increased risk of heart attack or stroke.\n\
+Studies show that statins can reduce the risk\n\
+of a heart attack or stroke by 30\-45%, \n\
 even if your cholesterol is norma",
 
 "It's best to take statins in the evening, because \n\
@@ -95,7 +96,7 @@ class SceneMain extends Phaser.Scene
         }).setOrigin(0.5);
 
         let img_ConBG = this.add.image(ww * (rX_rightBnd + rX_leftBnd) * 0.5, wh * (rY_bottomBnd + rY_topBnd)* 0.5, 'ConBoxBG');
-        img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd) + 2 * padding_pX, wh * (rY_bottomBnd - rY_topBnd) + 2 * padding_pY);
+        img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd) + 2 * padding_pX, wh * (rY_bottomBnd - rY_topBnd) + 4 * padding_pY);
         img_ConBG.visible = false;
         this.conManager = new ConManager(img_ConBG);
     }

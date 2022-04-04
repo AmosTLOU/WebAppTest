@@ -29,11 +29,11 @@ class ConMsg
         this.rX_left = undefined;
         if(this.side == 0)
         {
-            this.rX_left = rX_leftBnd;
+            this.rX_left = rX_leftBnd + 0.03;
         }
         else if(this.side == 1)
         {
-            this.rX_left = rX_rightBnd - this.rW;
+            this.rX_left = rX_rightBnd - this.rW  - 0.03;
         }   
         this.rY_Top = undefined;              
     }
@@ -57,7 +57,7 @@ class ConMsg
     {
         this.txt.visible = is_visible;
         this.bg.visible = is_visible;    
-        this.imgAvatar.visible = false;    
+        this.imgAvatar.visible = is_visible;    
     }
 
     UpdatePosByTopY(i_rY)
@@ -68,6 +68,10 @@ class ConMsg
         let pY_center = this.rY_Top * wh + this.pH * 0.5;
         this.txt.setPosition(pX_center, pY_center).setOrigin(0.5);
         this.bg.setPosition(pX_center, pY_center);
+        if(this.side == 0)
+            this.imgAvatar.setPosition(ww * (rX_leftBnd + padding_rX), wh*(this.rY_Top + 0.025));
+        else if(this.side == 1)
+            this.imgAvatar.setPosition(ww * (rX_rightBnd - padding_rX), wh*(this.rY_Top + 0.025));
 
         // completely invisible in the box
         if(this.RY_Bottom() < rY_topBnd || rY_bottomBnd < this.rY_Top)
@@ -109,6 +113,9 @@ class ConMsg
                 this.bg.setCrop(0, 0, this.bg.width, this.bg.height);
                 this.txt.setCrop(0, 0, this.txt.width, this.txt.height);
             }
+
+            if(!this.IsEntirelyVisibleInBox())
+                this.imgAvatar.visible = false;
             
         }
         
