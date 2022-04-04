@@ -1,14 +1,17 @@
 var rX_rightBnd = 0.9;
 var rX_leftBnd = 0.5;
 var rY_topBnd = 0.05;
-var rY_bottomBnd = 0.64;
+var rY_bottomBnd = 0.65;
 var padding_rX = 0.01;
 var padding_rY = 0.01;
 var padding_pX = padding_rX * ww;        
 var padding_pY = padding_rY * wh;
 var gapBetweenMsg_rY = 0.03;
-var pW_OriginalMsgBg = undefined;
+// var pW_OriginalMsgBg = undefined;
 var pH_OriginalMsgBg = undefined;
+var pH_OriginalAvatarIcon = undefined;
+var rY_ConAvatar = 0.05;
+var rX_ConAvatar = (wh * rY_ConAvatar / ww);
 
 // Conversation Message, including phaser text and phaser image(bg)
 class ConMsg
@@ -20,20 +23,21 @@ class ConMsg
         this.imgAvatar = i_imgAvatar;
         this.side = i_side;   
              
-        this.pW = this.txt.width + padding_pX;
-        this.pH = this.txt.height + padding_pY;
+        this.pW = this.txt.width + 2*padding_pX;
+        this.pH = this.txt.height + 2*padding_pY;
         this.rW = this.pW/ww;
         this.rH = this.pH/wh;
+        this.imgAvatar.setDisplaySize(wh * rY_ConAvatar, wh * rY_ConAvatar); 
         this.bg.setDisplaySize(this.pW, this.pH); 
 
         this.rX_left = undefined;
         if(this.side == 0)
         {
-            this.rX_left = rX_leftBnd + 0.03;
+            this.rX_left = rX_leftBnd + rX_ConAvatar + padding_rX;
         }
         else if(this.side == 1)
         {
-            this.rX_left = rX_rightBnd - this.rW  - 0.03;
+            this.rX_left = rX_rightBnd - this.rW  - rX_ConAvatar - padding_rX;
         }   
         this.rY_Top = undefined;              
     }
@@ -69,9 +73,9 @@ class ConMsg
         this.txt.setPosition(pX_center, pY_center).setOrigin(0.5);
         this.bg.setPosition(pX_center, pY_center);
         if(this.side == 0)
-            this.imgAvatar.setPosition(ww * (rX_leftBnd + padding_rX), wh*(this.rY_Top + 0.025));
+            this.imgAvatar.setPosition(ww * (rX_leftBnd + rX_ConAvatar*0.5 + padding_rX*0.5), wh*(this.rY_Top + rY_ConAvatar*0.5));
         else if(this.side == 1)
-            this.imgAvatar.setPosition(ww * (rX_rightBnd - padding_rX), wh*(this.rY_Top + 0.025));
+            this.imgAvatar.setPosition(ww * (rX_rightBnd - rX_ConAvatar*0.5 - padding_rX*0.5), wh*(this.rY_Top + rY_ConAvatar*0.5));
 
         // completely invisible in the box
         if(this.RY_Bottom() < rY_topBnd || rY_bottomBnd < this.rY_Top)
@@ -101,11 +105,11 @@ class ConMsg
                 rY_visible_Bottom = rY_bottomBnd;
                 partOfBottomInvisible = true;
             }
-            
+
+            let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
+            let pH_VisibleRange = wh * (rY_visible_Bottom - rY_visible_Top);
             if(partOfTopInvisible || partOfBottomInvisible)
-            {
-                let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
-                let pH_VisibleRange = wh * (rY_visible_Bottom - rY_visible_Top);
+            {                
                 this.bg.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.bg.width, pH_VisibleRange * ratio_OrginialToDisplay);
                 this.txt.setCrop(0, pY_startingCropping, this.txt.width, pH_VisibleRange - padding_pY);
             }
@@ -114,8 +118,23 @@ class ConMsg
                 this.txt.setCrop(0, 0, this.txt.width, this.txt.height);
             }
 
-            if(!this.IsEntirelyVisibleInBox())
-                this.imgAvatar.visible = false;
+            // deal with the occulusion of the avatar icon
+            ratio_OrginialToDisplay = pH_OriginalAvatarIcon / (wh * rY_ConAvatar);            
+            if(this.rY_Top < rY_topBnd)
+            {
+                pY_startingCropping = wh * (rY_topBnd - this.rY_Top);
+                pH_VisibleRange = (wh * rY_ConAvatar) - pY_startingCropping;
+                this.imgAvatar.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.imgAvatar.width, pH_VisibleRange * ratio_OrginialToDisplay);
+            }
+            else if(rY_bottomBnd < this.rY_Top + rY_ConAvatar)
+            {
+                pH_VisibleRange = wh * (rY_bottomBnd - this.rY_Top);
+                this.imgAvatar.setCrop(0, 0, this.imgAvatar.width, pH_VisibleRange * ratio_OrginialToDisplay);
+            }
+            else
+            {
+                this.imgAvatar.setCrop(0, 0, this.imgAvatar.width, this.imgAvatar.height);
+            }            
             
         }
         

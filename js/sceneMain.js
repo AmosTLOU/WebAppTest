@@ -14,13 +14,13 @@ and stroke in people who are at increased risk.\n\
 (1) Reduce plaque build-up. \n\
 (2) Stabilize plaque in the arteries of the heart.\n\
 (3) Lower your cholesterol.\n\
-(4) Help protect your heart from future\n",
+(4) Help protect your heart from future",
 
 "You should take a statin if you have an \n\
 increased risk of heart attack or stroke.\n\
 Studies show that statins can reduce the risk\n\
 of a heart attack or stroke by 30\-45%, \n\
-even if your cholesterol is norma",
+even if your cholesterol is normal.",
 
 "It's best to take statins in the evening, because \n\
 cholesterol is made while you sleep.\n\
@@ -73,30 +73,36 @@ class SceneMain extends Phaser.Scene
     CreateMainElements()
     {        
         this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
-        let img_profile = this.add.image(ww * 0.7, wh * 0.33, 'profile').setDisplaySize(ww * 0.30, wh * 0.6);
-        img_profile.visible = false;
-        let img_profileIcon = this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
-        img_profileIcon.setInteractive();
-        img_profileIcon.on('pointerup', () => 
-        { 
-            if(this.state == 0)
-            {
-                img_profile.visible = !img_profile.visible;  
-                this.ShowQuickQuestions(!img_profile.visible);
-            }            
-        });
-        let img_mic = this.add.image(ww * 0.67, wh * 0.9, 'microphone').setDisplaySize(wh*0.1, wh * 0.1); 
+        
+        // let img_profile = this.add.image(ww * 0.7, wh * 0.33, 'profile').setDisplaySize(ww * 0.30, wh * 0.6);
+        // img_profile.visible = false;
+        // let img_profileIcon = this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
+        // img_profileIcon.setInteractive();
+        // img_profileIcon.on('pointerup', () => 
+        // { 
+        //     if(this.state == 0)
+        //     {
+        //         img_profile.visible = !img_profile.visible;  
+        //         this.ShowQuickQuestions(!img_profile.visible);
+        //     }            
+        // });
+        // this.add.text(ww * 0.05, wh * 0.2, "Profile", 
+        // {
+        //     fontFamily: 'open sans',
+        //     color: '#F8F8FF',
+        //     fontSize: (ww * 0.02) + 'px'            
+        // }).setOrigin(0.5);
+
+        let img_mic = this.add.image(ww * 0.67, wh * 0.9, 'microphone').setDisplaySize(wh * 0.1, wh * 0.1); 
         img_mic.setInteractive();
         img_mic.on('pointerup', () => { this.ReturnToQuickQuestions() });
-        this.add.text(ww * 0.05, wh * 0.2, "Profile", 
-        {
-            fontFamily: 'open sans',
-            color: '#F8F8FF',
-            fontSize: (ww * 0.02) + 'px'            
-        }).setOrigin(0.5);
+        
 
         let img_ConBG = this.add.image(ww * (rX_rightBnd + rX_leftBnd) * 0.5, wh * (rY_bottomBnd + rY_topBnd)* 0.5, 'ConBoxBG');
-        img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd) + 2 * padding_pX, wh * (rY_bottomBnd - rY_topBnd) + 4 * padding_pY);
+        if(b_Debug)
+            img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd), wh * (rY_bottomBnd - rY_topBnd));
+        else
+            img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd), wh * (rY_bottomBnd - rY_topBnd + 2 * padding_rY));
         img_ConBG.visible = false;
         this.conManager = new ConManager(img_ConBG);
     }
@@ -107,14 +113,15 @@ class SceneMain extends Phaser.Scene
         let texts = new Array();
         let coord_bubbles = [[0.47, 0.35], [0.57, 0.15], [0.70, 0.35], [0.87, 0.20]];
         let rRadius_bubbles = [0.3, 0.2, 0.37, 0.27];
-        let text_bubbles = ["What are \nstatins?", "Target\n User", "How and when\n do I take?", "Side effects"];
-        let r_font_text = [0.015, 0.0137, 0.0187, 0.015];
+        let text_bubbles = ["What are \n statins?", "Target\n User", "How and when\n  do I take?", "Side effects"];
+        let r_font_text = [0.017, 0.015, 0.0187, 0.015];
         for(let i = 0; i < coord_bubbles.length; i++)
         {
             let pX = ww * coord_bubbles[i][0];
             let pY = wh * coord_bubbles[i][1];
             bubbles[i] = this.add.image(pX, pY, 'bubble').setDisplaySize(wh * rRadius_bubbles[i], wh * rRadius_bubbles[i]); 
             texts[i] = this.add.text(pX, pY, text_bubbles[i], {
+                fontFamily: 'open sans',
                 color: '#F8F8FF',
                 fontSize: (ww * r_font_text[i]) + "px"      
             }).setOrigin(0.5);    
@@ -214,8 +221,8 @@ class SceneMain extends Phaser.Scene
         let el = document.getElementById(nameInputField);
         el.style.position = "absolute"; 
         el.style.top = wh * (rY_bottomBnd + 0.03) + "px";
-        el.style.left = ww * (rX_leftBnd - padding_rX) + "px";
-        el.style.width = ww * (rX_rightBnd - rX_leftBnd + padding_rX) + "px";
+        el.style.left = ww * rX_leftBnd + "px";
+        el.style.width = ww * (rX_rightBnd - rX_leftBnd) + "px";
         el.style.height = wh * 0.1 + "px";
         el.style.fontSize = wh * 0.02 + "px";
         el.style.lineHeight = wh * 0.01 + "px";
@@ -237,14 +244,14 @@ class SceneMain extends Phaser.Scene
 
     ExtraWork()
     {
-        let tmpIMG = this.add.image(ww*0.5, wh*0.5, "msgBG");
-        pW_OriginalMsgBg = tmpIMG.width;
+        let tmpIMG = this.add.image(0, 0, "msgBG");
+        // pW_OriginalMsgBg = tmpIMG.width;
         pH_OriginalMsgBg = tmpIMG.height;
         tmpIMG.visible = false;
-        // console.log("Before Set Display Size: " + tmpIMG.width + "  " + tmpIMG.height);
-        // tmpIMG.setDisplaySize(ww*0.1, wh*0.2);
-        // console.log("After Set Display Size: " + tmpIMG.width + "  " + tmpIMG.height);
-        // tmpIMG.setCrop(0,0,ww*0.05,wh*0.1);
+
+        tmpIMG = this.add.image(0, 0, "patientAvatar");
+        pH_OriginalAvatarIcon = tmpIMG.height;
+        tmpIMG.visible = false;
 
         if(b_Debug)
         {
@@ -252,8 +259,7 @@ class SceneMain extends Phaser.Scene
                 color: '#000000',
                 fontSize:  (ww * 0.0137) + 'px'      
             }).setOrigin(0.5);
-        }
-        
+        }        
     }
     
 
@@ -338,13 +344,13 @@ class SceneMain extends Phaser.Scene
     	// console.log(cnt);
 
         
-        let img_PatientAvatar = this.CreateImg('patientAvatar', 0.05, 0.05);
+        let img_PatientAvatar = this.CreateImg('patientAvatar');
         let img_bg = this.CreateImg('msgBG');
         let txt = this.CreateTxt(text);       
         let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
         this.conManager.AddMsg(msg);
         
-        let img_DoctorAvatar = this.CreateImg('doctorAvatar', 0.05, 0.05);
+        let img_DoctorAvatar = this.CreateImg('doctorAvatar');
         img_bg = this.CreateImg('msgBG');
         txt = this.CreateTxt("Here is the solution:\nXXXXXXXXXXXX");
         msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
@@ -359,7 +365,7 @@ class SceneMain extends Phaser.Scene
 
     AnswerQuickQuestion(indexQuestion)
     {        
-        let img_PatientAvatar = this.CreateImg('patientAvatar', 0.05, 0.05);
+        let img_PatientAvatar = this.CreateImg('patientAvatar');
         let img_bg = this.CreateImg('msgBG');
         let txt = this.CreateTxt(Content_QuickQuestions[indexQuestion]);       
         let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
@@ -391,7 +397,8 @@ class SceneMain extends Phaser.Scene
     CreateTxt(text, rX=0, rY=0)
     {
         let txt = this.add.text(ww * rX, wh * rY, text, {
-            color: '#FFFFFF',
+            fontFamily: 'open sans',
+            color: '#000000',
             fontSize: (ww * 0.011) + 'px'      
         });
         return txt;
@@ -401,7 +408,7 @@ class SceneMain extends Phaser.Scene
     {
         let img = this.add.image(ww * rX, wh * rY, label);
         if(rW != -1 && rH != -1)
-            img.setDisplaySize(wh * rW, wh * rH); 
+            img.setDisplaySize(ww * rW, wh * rH); 
         return img;
     }
 
