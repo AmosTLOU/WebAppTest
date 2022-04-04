@@ -89,13 +89,15 @@ class SceneMain extends Phaser.Scene
 
     preload() 
     {
-        this.load.image('msgBG', 'assets/BlueBG.png');
+        // this.load.image('msgBG', 'assets/BlueBG.png');
+        this.load.image('msgBG', 'assets/BrownBG.jpg');
 
         this.load.image('bg', 'assets/Mockup/background.png');        
         this.load.image('demoCharacter', 'assets/Mockup/democharacter.png');
         this.load.image('clipboard', 'assets/Mockup/clipboard.png');
         this.load.image('microphone', 'assets/Mockup/microphone.png');
         this.load.image('bubble', 'assets/Mockup/bubble.png');
+        this.load.image('profile', 'assets/Mockup/profile.png');
         this.load.image('profileIcon', 'assets/Mockup/Profile_Icon.png');
                 
         this.load.spritesheet('dude', 'assets/at.jpg', { frameWidth: 124, frameHeight: 179 });
@@ -106,13 +108,26 @@ class SceneMain extends Phaser.Scene
 
     CreateMainElements()
     {
+        
         this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
+        let img_profile = this.add.image(ww * 0.7, wh * 0.33, 'profile').setDisplaySize(ww * 0.30, wh * 0.6);
+        img_profile.visible = false;
         // this.add.image(ww * 0.25, wh * 0.55, 'demoCharacter').setDisplaySize(ww * 0.25, wh * 0.9); 
-        this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
+        let img_profileIcon = this.add.image(ww * 0.05, wh * 0.1, 'clipboard').setDisplaySize(ww * 0.035, wh * 0.1); 
+        img_profileIcon.setInteractive();
+        img_profileIcon.on('pointerup', () => 
+        { 
+            if(this.state == 0)
+            {
+                img_profile.visible = !img_profile.visible;  
+                this.ShowQuickQuestions(!img_profile.visible);
+            }            
+        });
         let img_mic = this.add.image(ww * 0.67, wh * 0.9, 'microphone').setDisplaySize(wh*0.1, wh * 0.1); 
         img_mic.setInteractive();
         img_mic.on('pointerup', () => { this.ReturnToQuickQuestions() });
-        this.add.text(ww * 0.05, wh * 0.2, "Profile", {
+        this.add.text(ww * 0.05, wh * 0.2, "Profile", 
+        {
             fontFamily: 'open sans',
             color: '#F8F8FF',
             fontSize: (ww * 0.02) + 'px'            
@@ -124,14 +139,14 @@ class SceneMain extends Phaser.Scene
         let bubbles = new Array();
         let texts = new Array();
         let coord_bubbles = [[0.47, 0.35], [0.57, 0.15], [0.70, 0.35], [0.87, 0.20]];
-        let scale_bubbles = [0.3, 0.2, 0.37, 0.27];
+        let rRadius_bubbles = [0.3, 0.2, 0.37, 0.27];
         let text_bubbles = ["What are \nstatins?", "Target\n User", "How and when\n do I take?", "Side effects"];
         let r_font_text = [0.015, 0.0137, 0.0187, 0.015];
         for(let i = 0; i < coord_bubbles.length; i++)
         {
             let pX = ww * coord_bubbles[i][0];
             let pY = wh * coord_bubbles[i][1];
-            bubbles[i] = this.add.image(pX, pY, 'bubble').setDisplaySize(wh * scale_bubbles[i], wh * scale_bubbles[i]); 
+            bubbles[i] = this.add.image(pX, pY, 'bubble').setDisplaySize(wh * rRadius_bubbles[i], wh * rRadius_bubbles[i]); 
             texts[i] = this.add.text(pX, pY, text_bubbles[i], {
                 color: '#F8F8FF',
                 fontSize: (ww * r_font_text[i]) + "px"      
@@ -141,7 +156,21 @@ class SceneMain extends Phaser.Scene
             bubbles[i].on('pointerover', () => { texts[i].setStyle({ color: '#F00000', }); });
             bubbles[i].on('pointerout', () => { texts[i].setStyle({ color: '#F8F8FF', }); });
             bubbles[i].on('pointerup', () => { this.AnswerQuickQuestion(i) });
-            // bubbles[i].on('pointerdown', () => { console.log('pointerdown'); });    
+            // bubbles[i].on('pointerdown', () => { console.log('pointerdown'); });  
+            
+            let tweensScale = 0.9;
+            if((i&1) == 1)
+            tweensScale = 1.1;
+            this.tweens.add({
+                targets: bubbles[i],
+                scaleX: rRadius_bubbles[i]*wh / bubbles[i].height * tweensScale,
+                scaleY: rRadius_bubbles[i]*wh / bubbles[i].height * tweensScale,
+                duration: 1500,
+                ease: 'Sine.easeInOut',
+                delay: 0,
+                yoyo: true,
+                repeat: -1
+            });
         }
 
         this.quickQuestions = [bubbles, texts];
@@ -221,6 +250,11 @@ class SceneMain extends Phaser.Scene
         el.style.left = ww * rX_leftBnd + "px";
         el.style.width = ww * (rX_rightBnd - rX_leftBnd) + "px";
         el.style.height = wh * 0.1 + "px";
+        el.style.fontSize = wh * 0.02 + "px";
+        el.style.lineHeight = wh * 0.01 + "px";
+        el.style.paddingTop =  wh * 0.015 + "px";
+        el.style.paddingLeft =  wh * 0.012 + "px";
+        el.style.borderRadius = wh * 0.015 + "px";
         el.onchange = function(){ scene_self.InputFieldChanged(nameInputField); };
         el.onfocus = function()
             { 
@@ -385,7 +419,7 @@ class SceneMain extends Phaser.Scene
     CreateTxt(text, rX=0, rY=0)
     {
         let txt = this.add.text(ww * rX, wh * rY, text, {
-            color: '#F8F8FF',
+            color: '#000000',
             fontSize: (ww * 0.01) + 'px'      
         });
         return txt;
