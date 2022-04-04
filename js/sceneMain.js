@@ -1,4 +1,4 @@
-var b_Debug = true;
+var b_Debug = false;
 
 var w_avatarFrame = 448;
 var h_avatarFrame = 770;
@@ -14,47 +14,7 @@ and stroke in people who are at increased risk.\n\
 (1) Reduce plaque build-up. \n\
 (2) Stabilize plaque in the arteries of the heart.\n\
 (3) Lower your cholesterol.\n\
-(4) Help protect your heart from future\n" + 
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n\
-(4) Help protect your heart from future\n" +
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n" + 
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n\
-(4) Help protect your heart from future\n" + 
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n\
-(4) Help protect your heart from future\n" +
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n"+
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n\
-(4) Help protect your heart from future\n" +
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n",
-
+(4) Help protect your heart from future\n",
 
 "You should take a statin if you have an increased risk \n\
 of heart attack or stroke.Studies show that statins  \n\
@@ -279,10 +239,14 @@ class SceneMain extends Phaser.Scene
         // console.log("After Set Display Size: " + tmpIMG.width + "  " + tmpIMG.height);
         // tmpIMG.setCrop(0,0,ww*0.05,wh*0.1);
 
-        phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
-            color: '#000000',
-            fontSize:  (ww * 0.0137) + 'px'      
-        }).setOrigin(0.5);
+        if(b_Debug)
+        {
+            // phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
+            //     color: '#000000',
+            //     fontSize:  (ww * 0.0137) + 'px'      
+            // }).setOrigin(0.5);
+        }
+        
     }
     
 
