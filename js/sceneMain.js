@@ -1,3 +1,11 @@
+// "Statins can help lower the risk of heart attack \n\
+// and stroke in people who are at increased risk.\n\
+// (1) Reduce plaque build-up. \n\
+// (2) Stabilize plaque in the arteries of the heart.\n\
+// (3) Lower your cholesterol.\n\
+// (4) Help protect your heart from future",
+
+
 var b_Debug = false;
 
 var w_avatarFrame = 448;
@@ -5,34 +13,22 @@ var h_avatarFrame = 770;
 
 var phaserText_MousePosition;
 
-
+let limitChInOneLine = undefined;
 var Content_QuickQuestions = ["What are statins?", "Who should use?", "How and When?", "The side effects?"];
 var Content_AnswersToQuickQuestions = 
 [
-"Statins can help lower the risk of heart attack \n\
-and stroke in people who are at increased risk.\n\
-(1) Reduce plaque build-up. \n\
-(2) Stabilize plaque in the arteries of the heart.\n\
-(3) Lower your cholesterol.\n\
-(4) Help protect your heart from future",
+"Statins can help lower the risk of heart attack and stroke in people who are at increased risk. Reduce plaque build-up. Help protect your heart from future.",
 
-"You should take a statin if you have an \n\
-increased risk of heart attack or stroke.\n\
-Studies show that statins can reduce the risk\n\
-of a heart attack or stroke by 30\-45%, \n\
-even if your cholesterol is normal.",
+"You should take a statin if you have an increased risk of heart attack or stroke. Studies show that statins can reduce the risk of a heart attack or stroke\
+ by 30\-45%, even if your cholesterol is normal.",
 
-"It's best to take statins in the evening, because \n\
-cholesterol is made while you sleep.\n\
-However, you can take statins any time\n\
-if it is easier for you to remember to take it.\n\
-Follow your doctor's instructions",
+"It's best to take statins in the evening, because cholesterol is made while you sleep. However, you can take statins any time if it is easier for you\
+ to remember to take it. Follow your doctor's instructions.",
 
-"have side effects. Common side effects may include:\n\
-(1) Muscle aches (not severe pain)\n\
-(2) Upset stomach"
+"have side effects. Common side effects may include: \n (1) Muscle aches (not severe pain) \n (2) Upset stomach"
 ];
 
+// \n两侧都要留空格！ 不然maketextfit中 split函数不能把\n提取出来
 
 
 class SceneMain extends Phaser.Scene 
@@ -225,18 +221,30 @@ class SceneMain extends Phaser.Scene
         el.style.width = ww * (rX_rightBnd - rX_leftBnd) + "px";
         el.style.height = wh * 0.1 + "px";
         el.style.fontSize = wh * 0.02 + "px";
-        el.style.lineHeight = wh * 0.01 + "px";
-        el.style.paddingTop =  wh * 0.015 + "px";
+        el.style.lineHeight = wh * 0.03 + "px";
+        el.style.paddingTop =  wh * 0.012 + "px";
+        el.style.paddingBottom =  wh * 0.012 + "px";
         el.style.paddingLeft =  wh * 0.012 + "px";
+        el.style.paddingRight =  wh * 0.012 + "px";
         el.style.borderRadius = wh * 0.015 + "px";
-        el.onchange = function(){ scene_self.InputFieldChanged(nameInputField); };
+
+        // el.onchange = function(){ scene_self.RaiseQuestion(nameInputField); };
         el.onfocus = function()
             { 
                 if(el.value === "What question do you have?")
                     el.value = ""; 
             };
         // el.oninput = () => console.log(el.value);
-        el.onmouseout = () => el.blur();
+        // el.onmouseout = () => el.blur();
+        el.onkeydown = function(event)
+        {             
+            // console.log(event.key);
+            if(event.key == "Enter")
+            {
+                event.preventDefault();
+                scene_self.RaiseQuestion(nameInputField);
+            }
+        };
 
         // phaser built-in wheel is not working, have to use js built-in wheel instead
         window.onwheel = function(event){ scene_self.WheelResponse(event); };
@@ -252,6 +260,21 @@ class SceneMain extends Phaser.Scene
         tmpIMG = this.add.image(0, 0, "patientAvatar");
         pH_OriginalAvatarIcon = tmpIMG.height;
         tmpIMG.visible = false;
+
+
+        let txtUsedToDecideOneLineLimit = this.CreateMessageText("");
+        for(let i = 0; i < 200; i++)
+        {            
+            // Capital W is the English letter that takes up most space width-wise
+            txtUsedToDecideOneLineLimit.text += 'W';
+            if( (rX_rightBnd - rX_leftBnd) < (txtUsedToDecideOneLineLimit.width / ww) )
+            {
+                limitChInOneLine = i;
+                txtUsedToDecideOneLineLimit.visible = false;
+                break;
+            }
+        }
+        
 
         if(b_Debug)
         {
@@ -314,8 +337,40 @@ class SceneMain extends Phaser.Scene
         }           
     }
 
+    Create2MsgAndShow(msg_LeftSide, msg_RightSide)
+    {
+        msg_RightSide = this.MakeTextFit(msg_RightSide);
+        msg_LeftSide = this.MakeTextFit(msg_LeftSide);
+        if(msg_RightSide === undefined)
+        {
+            alert("please input a question that makes sense!");
+            return;
+        }  
+        if(msg_LeftSide === undefined)
+        {
+            alert("Something is wrong with our system. Sry!");
+            return;
+        }
 
-    InputFieldChanged(i_nameInputField) 
+        let img_PatientAvatar = this.CreateImg('patientAvatar');
+        let img_bg = this.CreateImg('msgBG');
+        let txt = this.CreateMessageText(msg_RightSide);
+        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
+        this.conManager.AddMsg(msg);
+        
+        let img_DoctorAvatar = this.CreateImg('doctorAvatar');
+        img_bg = this.CreateImg('msgBG');
+        txt = this.CreateMessageText(msg_LeftSide);
+        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
+        this.conManager.AddMsg(msg);  
+
+        this.ShowQuickQuestions(false);
+        this.conManager.ShowAllMsg(true);
+        this.avatar.anims.play('speak', true);
+        this.state = 1;
+    }
+
+    RaiseQuestion(i_nameInputField) 
     {
         let el = document.getElementById(i_nameInputField);
     	var text = el.value;
@@ -344,43 +399,18 @@ class SceneMain extends Phaser.Scene
     	// console.log(cnt);
 
         
-        let img_PatientAvatar = this.CreateImg('patientAvatar');
-        let img_bg = this.CreateImg('msgBG');
-        let txt = this.CreateTxt(text);       
-        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
-        this.conManager.AddMsg(msg);
-        
-        let img_DoctorAvatar = this.CreateImg('doctorAvatar');
-        img_bg = this.CreateImg('msgBG');
-        txt = this.CreateTxt("Here is the solution:\nXXXXXXXXXXXX");
-        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
-        this.conManager.AddMsg(msg);  
-
-        this.ShowQuickQuestions(false);
-        this.conManager.ShowAllMsg(true);
-        this.avatar.anims.play('speak', true);
-        this.state = 1;
+        let msg_RightSide = text;
+        let msg_LeftSide = "XXXXXXXXXXXXXXXXXXXXXXXXXX";
+        this.Create2MsgAndShow(msg_LeftSide, msg_RightSide);
+        el.value = "";
     }
     
 
     AnswerQuickQuestion(indexQuestion)
     {        
-        let img_PatientAvatar = this.CreateImg('patientAvatar');
-        let img_bg = this.CreateImg('msgBG');
-        let txt = this.CreateTxt(Content_QuickQuestions[indexQuestion]);       
-        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
-        this.conManager.AddMsg(msg);
-        
-        let img_DoctorAvatar = this.CreateImg('doctorAvatar', 0.05, 0.05);
-        img_bg = this.CreateImg('msgBG');
-        txt = this.CreateTxt(Content_AnswersToQuickQuestions[indexQuestion]);
-        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
-        this.conManager.AddMsg(msg);  
-
-        this.ShowQuickQuestions(false);
-        this.conManager.ShowAllMsg(true);
-        this.avatar.anims.play('speak', true);
-        this.state = 1;
+        let msg_RightSide = Content_QuickQuestions[indexQuestion];
+        let msg_LeftSide = Content_AnswersToQuickQuestions[indexQuestion];
+        this.Create2MsgAndShow(msg_LeftSide, msg_RightSide);
     }
 
     ReturnToQuickQuestions()
@@ -394,12 +424,73 @@ class SceneMain extends Phaser.Scene
         }        
     }
 
-    CreateTxt(text, rX=0, rY=0)
+    MakeTextFit(text)
     {
-        let txt = this.add.text(ww * rX, wh * rY, text, {
+        // todo better write a new split function to extract \n, remove blank space, etc.
+        let arrayWord = text.split(' ');
+        // for(let i = 0; i < arrayWord.length; i++)
+        //     console.log("[" + arrayWord[i] + "]");
+        let lines = new Array();
+        let oneLine = "";
+        for(let i = 0; i < arrayWord.length; )
+        {            
+            if(limitChInOneLine < arrayWord[i].length)
+                return undefined;
+            // This situation may happen if there are multiple blank spaces between 2 words
+            if(arrayWord[i].length <= 0)
+            {
+                i++;
+                continue;
+            }
+            if(arrayWord[i] == '\n')
+            {
+                if(0 < oneLine.length)
+                {
+                    oneLine += '\n';
+                    lines[lines.length] = oneLine;
+                    oneLine = "";
+                }
+                i++;
+                continue;
+            }
+
+            let oneLine_prospective = oneLine;
+            if(oneLine.length <= 0)
+                oneLine_prospective = arrayWord[i];
+            else
+                oneLine_prospective = oneLine + " " + arrayWord[i];
+            if(oneLine_prospective.length <= limitChInOneLine)
+            {
+                oneLine = oneLine_prospective;
+                if(i+1 == arrayWord.length)
+                {
+                    lines[lines.length] = oneLine;
+                    break;
+                }
+                i++;                
+            }
+            else
+            {
+                oneLine += '\n';
+                lines[lines.length] = oneLine;
+                oneLine = "";
+            }
+        }
+        let content = "";
+        for(let i = 0; i < lines.length; i++)
+            content += lines[i];
+        if(content.length <= 0)
+            return undefined;
+        else
+            return content;
+    }
+
+    CreateMessageText(content, rX=0, rY=0)
+    {
+        let txt = this.add.text(ww * rX, wh * rY, content, {
             fontFamily: 'open sans',
             color: '#000000',
-            fontSize: (ww * 0.011) + 'px'      
+            fontSize: (ww * 0.013) + 'px'      
         });
         return txt;
     }
@@ -443,7 +534,7 @@ class SceneMain extends Phaser.Scene
 
         if(!this.avatar.anims.isPlaying)
         {
-            console.log("No animation is playing right now");
+            // console.log("No animation is playing right now");
             this.avatar.anims.play('idle', true);
         }
 

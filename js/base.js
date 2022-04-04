@@ -10,7 +10,7 @@ var gapBetweenMsg_rY = 0.03;
 // var pW_OriginalMsgBg = undefined;
 var pH_OriginalMsgBg = undefined;
 var pH_OriginalAvatarIcon = undefined;
-var rY_ConAvatar = 0.05;
+var rY_ConAvatar = 0.04;
 var rX_ConAvatar = (wh * rY_ConAvatar / ww);
 
 // Conversation Message, including phaser text and phaser image(bg)
