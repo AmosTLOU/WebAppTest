@@ -6,7 +6,7 @@
 // (4) Help protect your heart from future",
 
 
-var b_Debug = false;
+var b_Debug = true;
 
 var w_avatarFrame = 448;
 var h_avatarFrame = 770;
@@ -692,13 +692,16 @@ class SceneMain extends Phaser.Scene
 
         if(b_Debug)
         {
-            phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
-                                "\t\tpY: " + this.input.mousePointer.y + "\n" +
-                                "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                                "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-        }
-        
-            
+            // phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
+            //                     "\t\tpY: " + this.input.mousePointer.y + "\n" +
+            //                     "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+            //                     "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
+
+            phaserText_MousePosition.text = "pX: " + window.innerWidth + 
+            "\t\tpY: " + window.innerHeight + "\n" +
+            "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+            "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
+        }                
     }
     
 }
