@@ -13,7 +13,10 @@ var h_avatarFrame = 770;
 
 var phaserText_MousePosition;
 
-let limitChInOneLine = undefined;
+// 1 shown in the conversation box, 3 in the related questions area
+var MaxCntAnswers = 4;
+var limitChInOneLine = undefined;
+
 var Content_QuickQuestions = ["What are statins?", "Who should use?", "How and When?", "The side effects?"];
 var Content_AnswersToQuickQuestions = 
 [
@@ -25,10 +28,16 @@ var Content_AnswersToQuickQuestions =
 "It's best to take statins in the evening, because cholesterol is made while you sleep. However, you can take statins any time if it is easier for you\
  to remember to take it. Follow your doctor's instructions.",
 
-"have side effects. Common side effects may include: \n (1) Muscle aches (not severe pain) \n (2) Upset stomach"
+"Common side effects may include: \n (1) Muscle aches (not severe pain) \n (2) Upset stomach"
 ];
+// 上面的内容里： \n两侧都要留空格！ 不然maketextfit中 split函数不能把\n提取出来
 
-// \n两侧都要留空格！ 不然maketextfit中 split函数不能把\n提取出来
+var ListQuestions = ["What when are statins?", "What what what should use?", "what and When?", "what what side effects?"];
+// var ListQuestions = Content_QuickQuestions;
+var ListAnswers = Content_AnswersToQuickQuestions;
+var dct_synonym = { "bad": "side", "benefits": "good", "benefit": "good", "help": "good", "helps": "good", "popular": "good", "effects": "effect", "statins": "statin" }
+var dct_useless = { "is": 0, "it": 0, "to": 0 , "the": 0, "a": 0, "me": 0, "you": 0};
+
 
 
 class SceneMain extends Phaser.Scene 
@@ -37,6 +46,7 @@ class SceneMain extends Phaser.Scene
     {
         super('SceneMain');
         this.quickQuestions = undefined;
+        this.relatedQuestions = undefined;
         this.conManager = undefined;
         this.avatar = undefined;
         
@@ -143,9 +153,32 @@ class SceneMain extends Phaser.Scene
             });
         }
 
-        this.quickQuestions = [bubbles, texts];
-    
+        this.quickQuestions = [bubbles, texts];    
     }
+
+    CreateRelatedQuestions()
+    {
+        let rX = 0.1;
+        let rY = 0.1;
+        let rOffsetY = 0.05; 
+        this.relatedQuestions = new Array();
+        for(let i = 0; i < MaxCntAnswers-1; i++)
+        {
+            let txt = this.add.text(ww * rX, wh * rY, "Related Question No." + (i+1), {
+                fontFamily: 'open sans',
+                color: '#F8F8FF',
+                fontSize: (ww * 0.013) + 'px'      
+            });
+            txt.setInteractive();
+            txt.on('pointerover', () => { txt.setStyle({ color: '#F00000', }); });
+            txt.on('pointerout', () => { txt.setStyle({ color: '#F8F8FF', }); });
+            txt.visible = false;
+            this.relatedQuestions.push(txt);
+
+            rY += rOffsetY;
+        }
+    }
+        
 
     CreateTestAnim()
     {
@@ -290,6 +323,7 @@ class SceneMain extends Phaser.Scene
     {        
         this.CreateMainElements();
         this.CreateQuickQuestions();
+        this.CreateRelatedQuestions();
         this.CreateAvatar();
 
         this.SetInputField();
@@ -321,6 +355,24 @@ class SceneMain extends Phaser.Scene
             for (let j = 0; j < this.quickQuestions[i].length; j++)
             {
                 this.quickQuestions[i][j].visible = isVisible;
+            }
+        }
+    }
+
+    ShowRelatedQuestions(IndexRelatedQuestions)
+    {
+        let sz = Math.min(IndexRelatedQuestions.length, MaxCntAnswers-1);
+        for(let i = 0; i < MaxCntAnswers-1; i++)
+        {
+            if(i < sz)
+            {
+                this.relatedQuestions[i].visible = true;
+                this.relatedQuestions[i].text = ListQuestions[IndexRelatedQuestions[i]];
+                this.relatedQuestions[i].on('pointerup', () => { this.AnswerQuickQuestion(IndexRelatedQuestions[i]) });
+            }
+            else
+            {
+                this.relatedQuestions[i].visible = false;
             }
         }
     }
@@ -370,37 +422,136 @@ class SceneMain extends Phaser.Scene
         this.state = 1;
     }
 
+    // to lowercase, no sign, no punctuation, to synonym, remove useless
+    ConvertWordToStandardWord(word)
+    {
+        // converts to lowercase at the first place
+        word = word.toLowerCase();
+        // remove any non-letter character
+        let tmp = "";
+        for(let j = 0; j < word.length; j++)
+        {
+            let c = word[j];
+            if(('a' <= c && c <='z') || ('A' <= c && c <='Z'))
+                tmp += c;
+            else
+                break;
+        }
+        word = tmp;
+        // exists in the dct_synonym
+        if(dct_synonym[word] != undefined)
+        {
+            word = dct_synonym[word]
+        }
+        // exists in the dct_useless
+        if(dct_useless[word] != undefined)
+        {
+            return "";
+        }
+        return word;
+    }
+
+    SelectAnswer(str_question)
+    {        
+        let dct = {};
+        let arrayWord = str_question.split(' ');
+        for(let i = 0; i < arrayWord.length; i++)
+        {                 
+            let word = this.ConvertWordToStandardWord(arrayWord[i]);
+            if(word.length <= 0)
+                continue;
+            // first appear
+            if(dct[word] === undefined)
+                dct[word] = 1;
+            // appear again
+            else
+                dct[word]++;
+        }
+        
+        let result = new Array();
+        for(let k = 0; k < ListQuestions.length; k++)
+        {
+            let q = ListQuestions[k];
+            let arrayWord = q.split(' ');
+            let matchScore = 0;
+            for(let i = 0; i < arrayWord.length; i++)
+            {
+                let word = this.ConvertWordToStandardWord(arrayWord[i]);
+                if(word.length <= 0)
+                    continue;
+
+                if(dct[word] === undefined)
+                {
+                    continue;
+                }
+                else
+                {
+                    matchScore += dct[word];
+                }
+            }
+
+            if(matchScore <= 0)
+                continue;
+            if(result.length < MaxCntAnswers)
+            {
+                // k: index of the qustion, matchScore: matching score of this question
+                result.push([k, matchScore]);
+            }
+            else if(result.length == MaxCntAnswers)
+            {
+                let minScore = 9999;
+                let indReplaced = -1;
+                for(let j = 0; j < MaxCntAnswers; j++)
+                {
+                    if(result[j][1] < minScore)
+                    {
+                        minScore = result[j][1];
+                        indReplaced = j;
+                    }
+                }
+                if(minScore < matchScore)
+                {
+                    result[indReplaced] = [k, matchScore];
+                }
+            }
+            else
+            {
+                alert("something is wrong");
+            }
+        }   
+        // if return value < 0, then a is in front of b. Otherwise, b is in front of a
+        result.sort(function(a, b){return b[1] - a[1]});
+        let ret = new Array();
+        for(let i = 0; i < result.length; i++)
+        {
+            ret.push(result[i][0]);
+            // console.log(result[i][1]);
+        }
+        return ret;
+    }
+
     RaiseQuestion(i_nameInputField) 
     {
         let el = document.getElementById(i_nameInputField);
-    	var text = el.value;
-
-        // var dct = {};
-        // const arrayWord = text.split(' ');
-        // for(let i = 0; i < arrayWord.length; i++)
-        // {
-        //     if(dct[arrayWord[i]] === undefined)
-        //         dct[arrayWord[i]] = 1;
-        //     else
-        //         dct[arrayWord[i]]++;
-        // }
+    	let text = el.value;      
         
-        // let s1 = "possible side effect";
-        // const arraryS1 = s1.split(' ');
-        // let cnt = 0;
-        // for(let i = 0; i < arraryS1.length; i++)
-        // {
-        //     if(dct[arraryS1[i]] === undefined)
-        //         continue;
-        //     else
-        //         cnt++;
-        // }
-        // console.log(text);
-    	// console.log(cnt);
-
-        
+        let IndexRelatedQuestions = new Array();
+        let IndexAnswers = this.SelectAnswer(text);
+        let msg_LeftSide = "Sorry, we couldn't find an answer for your question.";
+        if(0 < IndexAnswers.length)
+        {
+            msg_LeftSide = ListQuestions[IndexAnswers[0]] +" \n " + ListAnswers[IndexAnswers[0]];
+            if(1 < IndexAnswers.length)
+            {                
+                for(let i = 1; i < IndexAnswers.length; i++)
+                {
+                    IndexRelatedQuestions.push(IndexAnswers[i]);
+                }
+            }
+        }   
+        this.ShowRelatedQuestions(IndexRelatedQuestions);         
         let msg_RightSide = text;
-        let msg_LeftSide = "XXXXXXXXXXXXXXXXXXXXXXXXXX";
+        
         this.Create2MsgAndShow(msg_LeftSide, msg_RightSide);
         el.value = "";
     }
@@ -418,6 +569,7 @@ class SceneMain extends Phaser.Scene
         if(this.state != 0)
         {
             this.ShowQuickQuestions(true);
+            this.ShowRelatedQuestions([]);
             this.conManager.ShowAllMsg(false);
             this.avatar.anims.play('idle', true);
             this.state = 0;
