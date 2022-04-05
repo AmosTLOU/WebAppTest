@@ -317,6 +317,14 @@ class SceneMain extends Phaser.Scene
             }).setOrigin(0.5);
         }        
     }
+
+    GetQAFromJSON()
+    {
+        $.getJSON("data.json", function(json) {
+            // console.log(json);
+            // console.log(json.name);
+        });
+    }
     
 
     create() 
@@ -338,15 +346,13 @@ class SceneMain extends Phaser.Scene
         // var r3 = this.add.line(200, 200, 400, 400, 140, 0, 0x6666ff);
         // r2.setLineWidth(10, 40);
 
-
         // var test_bg = this.add.image(ww * 0.2, wh * 0.3, 'msgBG');
         // var test_txt = this.add.text(ww * 0.2, wh * 0.3, "0123456789\n0123456789\n0123456789\n0123456789", {
         //     color: '#000000',
         //     fontSize: '22px'      
         // }).setOrigin(0.5).setCrop(0, 0, ww, 44);
         // test_bg.setDisplaySize(test_txt.width, test_txt.height); 
-        
-    }    
+    } 
     
     ShowQuickQuestions(isVisible)
     {
@@ -692,15 +698,10 @@ class SceneMain extends Phaser.Scene
 
         if(b_Debug)
         {
-            // phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
-            //                     "\t\tpY: " + this.input.mousePointer.y + "\n" +
-            //                     "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-            //                     "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-
-            phaserText_MousePosition.text = "pX: " + window.innerWidth + 
-            "\t\tpY: " + window.innerHeight + "\n" +
-            "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-            "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
+            phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
+                                "\t\tpY: " + this.input.mousePointer.y + "\n" +
+                                "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+                                "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
         }      
         
         if(isMobile)
@@ -708,12 +709,12 @@ class SceneMain extends Phaser.Scene
             // portrait mode
             if(window.innerWidth < window.innerHeight)
             {
-                phaserText_MousePosition.text = "nonononono!!!!!";
+                // phaserText_MousePosition.text = "nonononono!!!!!";
             }
             // landscape mode
             else if(window.innerHeight < window.innerWidth)
             {
-                phaserText_MousePosition.text = "good!!!!!!";
+                // phaserText_MousePosition.text = "good!!!!!!";
             }
             // square?
             else
