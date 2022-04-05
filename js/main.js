@@ -2,11 +2,14 @@ var isMobile;
 var game;
 
 // window with and window height
-var ww = window.innerWidth;
-var wh = window.innerHeight;
+var ww = undefined;
+var wh = undefined;
 
 window.onload = function() 
 {
+    ww = window.innerWidth;
+    wh = window.innerHeight;
+
     isMobile = navigator.userAgent.indexOf("Mobile");
     if (isMobile == -1) 
     {
@@ -29,8 +32,6 @@ window.onload = function()
     // mobile
     else 
     {
-        ww = window.innerHeight;
-        wh = window.innerWidth;
         var config = 
         {
             type: Phaser.AUTO,

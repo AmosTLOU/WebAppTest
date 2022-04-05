@@ -701,7 +701,26 @@ class SceneMain extends Phaser.Scene
             "\t\tpY: " + window.innerHeight + "\n" +
             "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
             "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-        }                
+        }      
+        
+        if(isMobile)
+        {
+            // portrait mode
+            if(window.innerWidth < window.innerHeight)
+            {
+                phaserText_MousePosition.text = "nonononono!!!!!";
+            }
+            // landscape mode
+            else if(window.innerHeight < window.innerWidth)
+            {
+                phaserText_MousePosition.text = "good!!!!!!";
+            }
+            // square?
+            else
+            {
+
+            }
+        }
     }
     
 }
