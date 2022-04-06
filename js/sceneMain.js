@@ -19,7 +19,6 @@ var limitChInOneLine = undefined;
 
 var Content_QuickQuestions = undefined;
 var Content_AnswersToQuickQuestions = undefined; 
-// 上面的内容里： \n两侧都要留空格！ 不然maketextfit中 split函数不能把\n提取出来
 
 var ListQuestions = ["What when are statins?", "What what what should use?", "what and When?", "what what side effects?"];
 var ListAnswers = undefined;
@@ -420,19 +419,13 @@ class SceneMain extends Phaser.Scene
     // to lowercase, no sign, no punctuation, to synonym, remove useless
     ConvertWordToStandardWord(word)
     {
+         // Be sure the input word is all letter.
+        var isAllLetter = /^[a-zA-Z]+$/.test(word);
+        if(!isAllLetter)
+            alert("Misusing the function ConvertWordToStandardWord!");
+
         // converts to lowercase at the first place
         word = word.toLowerCase();
-        // remove any non-letter character
-        let tmp = "";
-        for(let j = 0; j < word.length; j++)
-        {
-            let c = word[j];
-            if(('a' <= c && c <='z') || ('A' <= c && c <='Z'))
-                tmp += c;
-            else
-                break;
-        }
-        word = tmp;
         // exists in the dct_synonym
         if(dct_synonym[word] != undefined)
         {
@@ -446,10 +439,58 @@ class SceneMain extends Phaser.Scene
         return word;
     }
 
+    // Extract words out of sentence while removing any non-letter charcater
+    // For instance, "Sta-q?!me how am I?" would become ["Sta", "q", "me", "how", "am", "I"]
+    BreakSentenceIntoWords(str)
+    {
+        let arrayWord = str.split(' ');
+        let ret = new Array();
+        for(let i = 0; i < arrayWord.length; i++)
+        {
+            var isAllLetter = /^[a-zA-Z]+$/.test(arrayWord[i]);
+            // This word only consists of letters, we can push it into ret directly.
+            if(isAllLetter)
+            {
+                ret.push(arrayWord[i]);
+                continue;
+            }
+            // This word contains non-letter characters, we need to extract all English words out.
+            else
+            {
+                let w = "";
+                let s = arrayWord[i];
+                for(let j = 0; j < s.length; j++)
+                {
+                    if( ('a' <= s[j] && s[j] <='z') || ('A' <= s[j] && s[j] <='Z') )
+                    {
+                        w += s[j];
+                        continue;
+                    }
+                    else
+                    {
+                        if(0 < w.length)
+                        {
+                            ret.push(w);
+                            w = "";
+                        }
+                        continue;                            
+                    }
+                }
+                if(0 < w.length)
+                {
+                    ret.push(w);
+                    w = "";
+                }
+            }
+        }
+        return ret;
+    }
+
     SelectAnswer(str_question)
     {        
         let dct = {};
-        let arrayWord = str_question.split(' ');
+        // let arrayWord = str_question.split(' ');
+        let arrayWord = this.BreakSentenceIntoWords(str_question);
         for(let i = 0; i < arrayWord.length; i++)
         {                 
             let word = this.ConvertWordToStandardWord(arrayWord[i]);
@@ -467,7 +508,8 @@ class SceneMain extends Phaser.Scene
         for(let k = 0; k < ListQuestions.length; k++)
         {
             let q = ListQuestions[k];
-            let arrayWord = q.split(' ');
+            // let arrayWord = q.split(' ');
+            let arrayWord = this.BreakSentenceIntoWords(q);
             let matchScore = 0;
             for(let i = 0; i < arrayWord.length; i++)
             {
@@ -605,12 +647,13 @@ class SceneMain extends Phaser.Scene
     }
 
 
+    // This function is not supposed to delete any char, just adding '\n' to the necessary positions
     MakeTextFit(text)
     {
-        // todo better write a new split function to extract \n, remove blank space, etc.
+        // Replace "\n" with " \n " first, so all '\n' could be extracted and stored in arrayWord after the split(' ') operation
+        text = text.replace(/\n/g, " \n ");
         let arrayWord = text.split(' ');
-        // for(let i = 0; i < arrayWord.length; i++)
-        //     console.log("[" + arrayWord[i] + "]");
+
         let lines = new Array();
         let oneLine = "";
         for(let i = 0; i < arrayWord.length; )
@@ -625,12 +668,6 @@ class SceneMain extends Phaser.Scene
             }
             if(arrayWord[i] == '\n')
             {
-                // if(0 < oneLine.length)
-                // {
-                //     oneLine += '\n';
-                //     lines[lines.length] = oneLine;
-                //     oneLine = "";
-                // }
                 oneLine += '\n';
                 lines[lines.length] = oneLine;
                 oneLine = "";
