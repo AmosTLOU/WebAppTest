@@ -63,6 +63,47 @@ class SceneMain extends Phaser.Scene
         
     }
 
+    GetQAFromJSON()
+    {     
+        let formatQA = 1;
+        let pathJSON = undefined;
+
+        // Get json from online resources
+        // pathJSON = "https://amostlou.github.io/WebAppTest/data_V0.json";
+        // Get json from files
+        // pathJSON = "data_V0.json";
+        pathJSON = "data_V1.json";
+        
+        if(formatQA == 0)
+        {
+            $.getJSON(pathJSON, function(json) {
+                // console.log(json);
+                // console.log(json.name);
+
+                Content_QuickQuestions = json.Questions;
+                ListQuestions = Content_QuickQuestions;
+
+                Content_AnswersToQuickQuestions = json.Answers;
+                ListAnswers = Content_AnswersToQuickQuestions;
+            });
+        }
+        else if(formatQA == 1)
+        {
+            $.getJSON(pathJSON, function(json) {
+                Content_QuickQuestions = new Array();
+                Content_AnswersToQuickQuestions = new Array();
+                for(let i = 0; i < json.QA.length; i++)
+                {
+                    Content_QuickQuestions.push(json.QA[i][0]);
+                    Content_AnswersToQuickQuestions.push(json.QA[i][1]);
+                }
+                // ListQuestions = Content_QuickQuestions;
+                ListAnswers = Content_AnswersToQuickQuestions;
+            });
+        }       
+        
+    }
+
     CreateMainElements()
     {        
         this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
@@ -303,47 +344,6 @@ class SceneMain extends Phaser.Scene
                 fontSize:  (ww * 0.0137) + 'px'      
             }).setOrigin(0.5);
         }        
-    }
-
-    GetQAFromJSON()
-    {     
-        let formatQA = 1;
-        let pathJSON = undefined;
-
-        // Get json from online resources
-        // pathJSON = "https://amostlou.github.io/WebAppTest/data_V0.json";
-        // Get json from files
-        // pathJSON = "data_V0.json";
-        pathJSON = "data_V1.json";
-        
-        if(formatQA == 0)
-        {
-            $.getJSON(pathJSON, function(json) {
-                // console.log(json);
-                // console.log(json.name);
-
-                Content_QuickQuestions = json.Questions;
-                ListQuestions = Content_QuickQuestions;
-
-                Content_AnswersToQuickQuestions = json.Answers;
-                ListAnswers = Content_AnswersToQuickQuestions;
-            });
-        }
-        else if(formatQA == 1)
-        {
-            $.getJSON(pathJSON, function(json) {
-                Content_QuickQuestions = new Array();
-                Content_AnswersToQuickQuestions = new Array();
-                for(let i = 0; i < json.QA.length; i++)
-                {
-                    Content_QuickQuestions.push(json.QA[i][0]);
-                    Content_AnswersToQuickQuestions.push(json.QA[i][1]);
-                }
-                // ListQuestions = Content_QuickQuestions;
-                ListAnswers = Content_AnswersToQuickQuestions;
-            });
-        }       
-        
     }
     
 
