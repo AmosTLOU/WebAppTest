@@ -308,15 +308,18 @@ class SceneMain extends Phaser.Scene
 
     GetQAFromJSON()
     {     
-        // // Get json from online resources
-        // $.getJSON("https://amostlou.github.io/WebAppTest/data_V0.json", function(json) {
-        //     console.log(json);
-        // });
-
         let formatQA = 1;
+        let pathJSON = undefined;
+
+        // Get json from online resources
+        // pathJSON = "https://amostlou.github.io/WebAppTest/data_V0.json";
+        // Get json from files
+        // pathJSON = "data_V0.json";
+        pathJSON = "data_V1.json";
+        
         if(formatQA == 0)
         {
-            $.getJSON("data_V0.json", function(json) {
+            $.getJSON(pathJSON, function(json) {
                 // console.log(json);
                 // console.log(json.name);
 
@@ -329,7 +332,7 @@ class SceneMain extends Phaser.Scene
         }
         else if(formatQA == 1)
         {
-            $.getJSON("data_V1.json", function(json) {
+            $.getJSON(pathJSON, function(json) {
                 Content_QuickQuestions = new Array();
                 Content_AnswersToQuickQuestions = new Array();
                 for(let i = 0; i < json.QA.length; i++)
@@ -412,39 +415,6 @@ class SceneMain extends Phaser.Scene
             else if(0 < event.deltaY)
                 this.conManager.Scroll(-rOffset);   
         }           
-    }
-
-    Create2MsgAndShow(msg_LeftSide, msg_RightSide)
-    {
-        msg_RightSide = this.MakeTextFit(msg_RightSide);
-        msg_LeftSide = this.MakeTextFit(msg_LeftSide);
-        if(msg_RightSide === undefined)
-        {
-            alert("please input a question that makes sense!");
-            return;
-        }  
-        if(msg_LeftSide === undefined)
-        {
-            alert("Something is wrong with our system. Sry!");
-            return;
-        }
-
-        let img_PatientAvatar = this.CreateImg('patientAvatar');
-        let img_bg = this.CreateImg('msgBG');
-        let txt = this.CreateMessageText(msg_RightSide);
-        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
-        this.conManager.AddMsg(msg);
-        
-        let img_DoctorAvatar = this.CreateImg('doctorAvatar');
-        img_bg = this.CreateImg('msgBG');
-        txt = this.CreateMessageText(msg_LeftSide);
-        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
-        this.conManager.AddMsg(msg);  
-
-        this.ShowQuickQuestions(false);
-        this.conManager.ShowAllMsg(true);
-        this.avatar.anims.play('speak', true);
-        this.state = 1;
     }
 
     // to lowercase, no sign, no punctuation, to synonym, remove useless
@@ -555,6 +525,39 @@ class SceneMain extends Phaser.Scene
         return ret;
     }
 
+    Create2MsgAndShow(msg_LeftSide, msg_RightSide)
+    {
+        msg_RightSide = this.MakeTextFit(msg_RightSide);
+        msg_LeftSide = this.MakeTextFit(msg_LeftSide);
+        if(msg_RightSide === undefined)
+        {
+            alert("please input a question that makes sense!");
+            return;
+        }  
+        if(msg_LeftSide === undefined)
+        {
+            alert("Something is wrong with our system. Sry!");
+            return;
+        }
+
+        let img_PatientAvatar = this.CreateImg('patientAvatar');
+        let img_bg = this.CreateImg('msgBG');
+        let txt = this.CreateMessageText(msg_RightSide);
+        let msg = new ConMsg(txt, img_bg, img_PatientAvatar, 1);
+        this.conManager.AddMsg(msg);
+        
+        let img_DoctorAvatar = this.CreateImg('doctorAvatar');
+        img_bg = this.CreateImg('msgBG');
+        txt = this.CreateMessageText(msg_LeftSide);
+        msg = new ConMsg(txt, img_bg, img_DoctorAvatar, 0);
+        this.conManager.AddMsg(msg);  
+
+        this.ShowQuickQuestions(false);
+        this.conManager.ShowAllMsg(true);
+        this.avatar.anims.play('speak', true);
+        this.state = 1;
+    }
+
     RaiseQuestion(i_nameInputField) 
     {
         let el = document.getElementById(i_nameInputField);
@@ -601,6 +604,7 @@ class SceneMain extends Phaser.Scene
         }        
     }
 
+
     MakeTextFit(text)
     {
         // todo better write a new split function to extract \n, remove blank space, etc.
@@ -621,12 +625,15 @@ class SceneMain extends Phaser.Scene
             }
             if(arrayWord[i] == '\n')
             {
-                if(0 < oneLine.length)
-                {
-                    oneLine += '\n';
-                    lines[lines.length] = oneLine;
-                    oneLine = "";
-                }
+                // if(0 < oneLine.length)
+                // {
+                //     oneLine += '\n';
+                //     lines[lines.length] = oneLine;
+                //     oneLine = "";
+                // }
+                oneLine += '\n';
+                lines[lines.length] = oneLine;
+                oneLine = "";
                 i++;
                 continue;
             }
