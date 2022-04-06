@@ -6,7 +6,7 @@
 // (4) Help protect your heart from future",
 
 
-var b_Debug = true;
+var b_Debug = false;
 
 var w_avatarFrame = 448;
 var h_avatarFrame = 770;
@@ -17,24 +17,12 @@ var phaserText_MousePosition;
 var MaxCntAnswers = 4;
 var limitChInOneLine = undefined;
 
-var Content_QuickQuestions = ["What are statins?", "Who should use?", "How and When?", "The side effects?"];
-var Content_AnswersToQuickQuestions = 
-[
-"Statins can help lower the risk of heart attack and stroke in people who are at increased risk. Reduce plaque build-up. Help protect your heart from future.",
-
-"You should take a statin if you have an increased risk of heart attack or stroke. Studies show that statins can reduce the risk of a heart attack or stroke\
- by 30\-45%, even if your cholesterol is normal.",
-
-"It's best to take statins in the evening, because cholesterol is made while you sleep. However, you can take statins any time if it is easier for you\
- to remember to take it. Follow your doctor's instructions.",
-
-"Common side effects may include: \n (1) Muscle aches (not severe pain) \n (2) Upset stomach"
-];
+var Content_QuickQuestions = undefined;
+var Content_AnswersToQuickQuestions = undefined; 
 // 上面的内容里： \n两侧都要留空格！ 不然maketextfit中 split函数不能把\n提取出来
 
 var ListQuestions = ["What when are statins?", "What what what should use?", "what and When?", "what what side effects?"];
-// var ListQuestions = Content_QuickQuestions;
-var ListAnswers = Content_AnswersToQuickQuestions;
+var ListAnswers = undefined;
 var dct_synonym = { "bad": "side", "benefits": "good", "benefit": "good", "help": "good", "helps": "good", "popular": "good", "effects": "effect", "statins": "statin" }
 var dct_useless = { "is": 0, "it": 0, "to": 0 , "the": 0, "a": 0, "me": 0, "you": 0};
 
@@ -319,16 +307,47 @@ class SceneMain extends Phaser.Scene
     }
 
     GetQAFromJSON()
-    {
-        $.getJSON("data.json", function(json) {
-            // console.log(json);
-            // console.log(json.name);
-        });
+    {     
+        // // Get json from online resources
+        // $.getJSON("https://amostlou.github.io/WebAppTest/data_V0.json", function(json) {
+        //     console.log(json);
+        // });
+
+        let formatQA = 1;
+        if(formatQA == 0)
+        {
+            $.getJSON("data_V0.json", function(json) {
+                // console.log(json);
+                // console.log(json.name);
+
+                Content_QuickQuestions = json.Questions;
+                ListQuestions = Content_QuickQuestions;
+
+                Content_AnswersToQuickQuestions = json.Answers;
+                ListAnswers = Content_AnswersToQuickQuestions;
+            });
+        }
+        else if(formatQA == 1)
+        {
+            $.getJSON("data_V1.json", function(json) {
+                Content_QuickQuestions = new Array();
+                Content_AnswersToQuickQuestions = new Array();
+                for(let i = 0; i < json.QA.length; i++)
+                {
+                    Content_QuickQuestions.push(json.QA[i][0]);
+                    Content_AnswersToQuickQuestions.push(json.QA[i][1]);
+                }
+                // ListQuestions = Content_QuickQuestions;
+                ListAnswers = Content_AnswersToQuickQuestions;
+            });
+        }       
+        
     }
     
 
     create() 
     {        
+        this.GetQAFromJSON();
         this.CreateMainElements();
         this.CreateQuickQuestions();
         this.CreateRelatedQuestions();
