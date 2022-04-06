@@ -2,14 +2,11 @@ var isMobile;
 var game;
 
 // window with and window height
-var ww = undefined;
-var wh = undefined;
+var ww = window.innerWidth;
+var wh = window.innerHeight;
 
 window.onload = function() 
 {
-    ww = window.innerWidth;
-    wh = window.innerHeight;
-
     isMobile = navigator.userAgent.indexOf("Mobile");
     if (isMobile == -1) 
     {
