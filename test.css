@@ -5,5 +5,19 @@ body
 
 #inputField_v0
 {
-    resize: none;
+    position: absolute;
+    resize: none;  
+    background: none;
+
+    border: none;
+    /* outline: none; */
+    overflow: auto;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    color: rgb(255, 255, 255);
+    font-family:'open sans';
 }
+

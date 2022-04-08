@@ -8,8 +8,10 @@
 
 var b_Debug = false;
 
-var w_avatarFrame = 448;
-var h_avatarFrame = 770;
+// var w_avatarFrame = 448;
+// var h_avatarFrame = 770;
+var w_avatarFrame = 501;
+var h_avatarFrame = 601;
 
 var phaserText_MousePosition;
 
@@ -43,23 +45,29 @@ class SceneMain extends Phaser.Scene
 
     preload() 
     {
-        // this.load.image('msgBG', 'assets/BlueBG.png');
-        this.load.image('msgBG', 'assets/Mockup/textbackground.png');
-        this.load.image('ConBoxBG', 'assets/Mockup/dialog_bg2.png');        
+        this.load.image('msgBG', 'assets/Mockup/MessageBG.png');
+        this.load.image('ConBoxBG', 'assets/Mockup/DialogueBox.png');        
         this.load.image('patientAvatar', 'assets/Mockup/patient_avatar.png');        
         this.load.image('doctorAvatar', 'assets/Mockup/doctor_avatar.png');        
 
-        this.load.image('bg', 'assets/Mockup/background.png');        
-        this.load.image('demoCharacter', 'assets/Mockup/democharacter.png');
-        this.load.image('clipboard', 'assets/Mockup/clipboard.png');
+        this.load.image('bg', 'assets/Mockup/background_green.png');        
+        this.load.image('InputFieldBG', 'assets/Mockup/InputFieldBG.png');        
         this.load.image('microphone', 'assets/Mockup/microphone.png');
+        this.load.image('pen', 'assets/Mockup/pen.png');
         this.load.image('bubble', 'assets/Mockup/bubble.png');
-        this.load.image('profile', 'assets/Mockup/profile.png');
-        this.load.image('profileIcon', 'assets/Mockup/Profile_Icon.png');
+        this.load.image('back', 'assets/Mockup/back.png')
+        this.load.image('enter', 'assets/Mockup/enter.png')
+
+        // this.load.image('demoCharacter', 'assets/Mockup/democharacter.png');
+        // this.load.image('clipboard', 'assets/Mockup/clipboard.png');
+        // this.load.image('profile', 'assets/Mockup/profile.png');
+        // this.load.image('profileIcon', 'assets/Mockup/Profile_Icon.png');
                 
-        this.load.spritesheet('dude', 'assets/at.jpg', { frameWidth: 124, frameHeight: 179 });
-        this.load.spritesheet('avatar_idle', 'assets/Mockup/Idel_sprite_sheet.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
-        this.load.spritesheet('avatar_speak', 'assets/Mockup/speak_sprite_sheet.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
+        // this.load.spritesheet('dude', 'assets/at.jpg', { frameWidth: 124, frameHeight: 179 });
+        // this.load.spritesheet('avatar_idle', 'assets/Mockup/Idel_sprite_sheet.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
+        // this.load.spritesheet('avatar_speak', 'assets/Mockup/speak_sprite_sheet.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
+        this.load.spritesheet('avatar_idle', 'assets/Mockup/Idle_sprite.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
+        this.load.spritesheet('avatar_speak', 'assets/Mockup/Speakl_sprite.png', { frameWidth: w_avatarFrame, frameHeight: h_avatarFrame });
         
     }
 
@@ -104,6 +112,69 @@ class SceneMain extends Phaser.Scene
         
     }
 
+    SetInputField()
+    {
+        let scene_self = this;
+        let nameInputField = "inputField_v0";
+        let el = document.getElementById(nameInputField);
+
+        let pX_left = ww * rX_leftBnd;
+        let pY_top = wh * (rY_bottomBnd + 0.03);
+        let pX_width = ww * (rX_rightBnd - rX_leftBnd) - wh*0.12;
+        let pY_height = wh * 0.135;
+        let pX_paddingLeft = wh * 0.012 * 5;
+        let pX_paddingRight = wh * 0.012;
+        let pY_paddingTop = wh * 0.012;
+        let pY_paddingBottom = wh * 0.012;
+        let text_prompt = "What question do you have?";
+        
+        let img_pen = this.add.image(pX_left + wh * 0.012, pY_top + pY_paddingTop, 'pen').setDisplaySize(wh * 0.04, wh * 0.04).setOrigin(0); 
+        // let img_enter = this.add.image(pX_left + pX_width - wh*0.012, (pY_top + pY_top + pY_height) * 0.5, 'enter').setDisplaySize(wh * 0.055, wh * 0.07).setOrigin(1, 0.5); 
+        let img_mic = this.add.image((pX_left + pX_width + ww*rX_rightBnd)*0.5, pY_top + pY_height, 'microphone').setDisplaySize(wh * 0.08, wh * 0.08).setOrigin(0.5, 1); 
+        img_mic.setInteractive();
+        // img_mic.on('pointerup', () => { this.ReturnToQuickQuestions() });
+        let img_InputFieldBG = this.add.image(pX_left, pY_top, 'InputFieldBG').setOrigin(0);
+        img_InputFieldBG.setDisplaySize(pX_width, pY_height);
+        
+        el.style.top = pY_top + "px";
+        el.style.left = pX_left + "px";
+        // Padding is used to create buffer area between the text and the edge.
+        // But after adding padding, the actual w and h of the text area would become the sum of width and padding/height of padding,
+        // So we need to substract the padding from width and height first.
+        el.style.width = (pX_width - pX_paddingLeft - pX_paddingRight) + "px";
+        el.style.height = (pY_height - pY_paddingTop - pY_paddingBottom) + "px";
+        el.style.paddingTop =  pY_paddingTop + "px";
+        el.style.paddingBottom =  pY_paddingBottom + "px";
+        el.style.paddingLeft =  pX_paddingLeft + "px";
+        el.style.paddingRight =  pX_paddingRight + "px";
+
+        el.style.borderRadius = wh * 0.015 + "px";
+        el.style.fontSize = wh * 0.02 + "px";
+        el.style.lineHeight = wh * 0.03 + "px";        
+        el.value = text_prompt;
+
+        // el.onchange = function(){ scene_self.RaiseQuestion(nameInputField); };
+        el.onfocus = function()
+            { 
+                if(el.value === text_prompt)
+                    el.value = ""; 
+            };
+        // el.oninput = () => console.log(el.value);
+        // el.onmouseout = () => el.blur();
+        el.onkeydown = function(event)
+        {             
+            // console.log(event.key);
+            if(event.key == "Enter")
+            {
+                event.preventDefault();
+                scene_self.RaiseQuestion(nameInputField);
+            }
+        };
+
+        // phaser built-in wheel is not working, have to use js built-in wheel instead
+        window.onwheel = function(event){ scene_self.WheelResponse(event); };
+    }
+
     CreateMainElements()
     {        
         this.add.image(ww * 0.5, wh * 0.5, 'bg').setDisplaySize(ww, wh);
@@ -126,11 +197,8 @@ class SceneMain extends Phaser.Scene
         //     color: '#F8F8FF',
         //     fontSize: (ww * 0.02) + 'px'            
         // }).setOrigin(0.5);
-
-        let img_mic = this.add.image(ww * 0.67, wh * 0.9, 'microphone').setDisplaySize(wh * 0.1, wh * 0.1); 
-        img_mic.setInteractive();
-        img_mic.on('pointerup', () => { this.ReturnToQuickQuestions() });
         
+        this.SetInputField();
 
         let img_ConBG = this.add.image(ww * (rX_rightBnd + rX_leftBnd) * 0.5, wh * (rY_bottomBnd + rY_topBnd)* 0.5, 'ConBoxBG');
         if(b_Debug)
@@ -138,7 +206,12 @@ class SceneMain extends Phaser.Scene
         else
             img_ConBG.setDisplaySize(ww * (rX_rightBnd - rX_leftBnd), wh * (rY_bottomBnd - rY_topBnd + 2 * padding_rY));
         img_ConBG.visible = false;
-        this.conManager = new ConManager(img_ConBG);
+
+        let img_backButton = this.add.image(ww * (rX_leftBnd - 0.01), wh * (rY_topBnd), 'back').setDisplaySize(wh * 0.07, wh * 0.07).setOrigin(1, 0); 
+        img_backButton.setInteractive();
+        img_backButton.on('pointerup', () => { this.ReturnToQuickQuestions() });
+        img_backButton.visible = false;
+        this.conManager = new ConManager(img_ConBG, img_backButton);
     }
 
     CreateQuickQuestions()
@@ -208,107 +281,69 @@ class SceneMain extends Phaser.Scene
     }
         
 
-    CreateTestAnim()
-    {
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
+    // CreateTestAnim()
+    // {
+    //     this.anims.create({
+    //         key: 'left',
+    //         frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+    //         frameRate: 10,
+    //         repeat: -1
+    //     });
     
-        this.anims.create({
-            key: 'turn',
-            frames: [ { key: 'dude', frame: 4 } ],
-            frameRate: 20
-        });
+    //     this.anims.create({
+    //         key: 'turn',
+    //         frames: [ { key: 'dude', frame: 4 } ],
+    //         frameRate: 20
+    //     });
     
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
+    //     this.anims.create({
+    //         key: 'right',
+    //         frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+    //         frameRate: 10,
+    //         repeat: -1
+    //     });
 
-        let avatar = this.add.sprite(ww * 0.02, wh * 0.95, 'dude');
-        avatar.anims.play('left', true);
-        avatar.setInteractive();
-        avatar.on('pointerover', () => 
-        { 
-            if(avatar.anims.currentAnim.key === 'left')
-                avatar.anims.play('right', true);
-            else if(avatar.anims.currentAnim.key === 'right')
-                avatar.anims.play('left', true);
-        });
-        avatar.on('pointerdown', () => 
-        { 
-            if(avatar.anims.currentAnim.key != 'turn')
-                avatar.anims.play('turn', true);
-            else if(avatar.anims.currentAnim.key === 'turn')
-                avatar.anims.play('left', true);
+    //     let avatar = this.add.sprite(ww * 0.02, wh * 0.95, 'dude');
+    //     avatar.anims.play('left', true);
+    //     avatar.setInteractive();
+    //     avatar.on('pointerover', () => 
+    //     { 
+    //         if(avatar.anims.currentAnim.key === 'left')
+    //             avatar.anims.play('right', true);
+    //         else if(avatar.anims.currentAnim.key === 'right')
+    //             avatar.anims.play('left', true);
+    //     });
+    //     avatar.on('pointerdown', () => 
+    //     { 
+    //         if(avatar.anims.currentAnim.key != 'turn')
+    //             avatar.anims.play('turn', true);
+    //         else if(avatar.anims.currentAnim.key === 'turn')
+    //             avatar.anims.play('left', true);
             
-        });
-    }
+    //     });
+    // }
 
     CreateAvatar()
     {
         this.anims.create({
             key: 'idle',
-            frames: this.anims.generateFrameNumbers('avatar_idle', { start: 0, end: 284 }),
-            frameRate: 30,
+            // frames: this.anims.generateFrameNumbers('avatar_idle', { start: 0, end: 284 }),
+            frames: this.anims.generateFrameNumbers('avatar_idle', { start: 0, end: 184 }),
+            frameRate: 24,
             repeat: -1
         });
 
         this.anims.create({
             key: 'speak',
-            frames: this.anims.generateFrameNumbers('avatar_speak', { start: 0, end: 280 }),
-            frameRate: 30,
+            // frames: this.anims.generateFrameNumbers('avatar_speak', { start: 0, end: 280 }),
+            frames: this.anims.generateFrameNumbers('avatar_speak', { start: 0, end: 168 }),
+            frameRate: 24,
             repeat: 0
         });
 
-        this.avatar = this.add.sprite(ww * 0.25, wh * 1, 'avatar_idle').setScale(1.5 * wh/h_avatarFrame);
+        this.avatar = this.add.sprite(ww * 0.25 , wh * 1.02, 'avatar_idle').setScale(0.75 * wh/h_avatarFrame).setOrigin(0.5, 1);
         this.avatar.anims.play('idle', true);
         // this.avatar.setInteractive();
-    }
-
-    SetInputField()
-    {
-        let scene_self = this;
-        let nameInputField = "inputField_v0";
-        let el = document.getElementById(nameInputField);
-        el.style.position = "absolute"; 
-        el.style.top = wh * (rY_bottomBnd + 0.03) + "px";
-        el.style.left = ww * rX_leftBnd + "px";
-        el.style.width = ww * (rX_rightBnd - rX_leftBnd) + "px";
-        el.style.height = wh * 0.1 + "px";
-        el.style.fontSize = wh * 0.02 + "px";
-        el.style.lineHeight = wh * 0.03 + "px";
-        el.style.paddingTop =  wh * 0.012 + "px";
-        el.style.paddingBottom =  wh * 0.012 + "px";
-        el.style.paddingLeft =  wh * 0.012 + "px";
-        el.style.paddingRight =  wh * 0.012 + "px";
-        el.style.borderRadius = wh * 0.015 + "px";
-
-        // el.onchange = function(){ scene_self.RaiseQuestion(nameInputField); };
-        el.onfocus = function()
-            { 
-                if(el.value === "What question do you have?")
-                    el.value = ""; 
-            };
-        // el.oninput = () => console.log(el.value);
-        // el.onmouseout = () => el.blur();
-        el.onkeydown = function(event)
-        {             
-            // console.log(event.key);
-            if(event.key == "Enter")
-            {
-                event.preventDefault();
-                scene_self.RaiseQuestion(nameInputField);
-            }
-        };
-
-        // phaser built-in wheel is not working, have to use js built-in wheel instead
-        window.onwheel = function(event){ scene_self.WheelResponse(event); };
     }
 
     ExtraWork()
@@ -354,8 +389,6 @@ class SceneMain extends Phaser.Scene
         this.CreateQuickQuestions();
         this.CreateRelatedQuestions();
         this.CreateAvatar();
-
-        this.SetInputField();
         this.ExtraWork();
         
 

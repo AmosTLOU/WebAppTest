@@ -163,10 +163,11 @@ class ConMsg
 // Conversation Manager, charge of Conversation Message
 class ConManager 
 {
-    constructor(i_bg) 
+    constructor(i_bg, i_backButton) 
     {
         this.ArrMsg = new Array();
         this.bg = i_bg;
+        this.backButton = i_backButton;
     }
 
     MsgCount()
@@ -182,6 +183,7 @@ class ConManager
     ShowAllMsg(is_visible)
     {
         this.bg.visible = is_visible; 
+        this.backButton.visible = is_visible;
         if(is_visible)
         {
             this.UpdateAllMsgPos();
