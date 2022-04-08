@@ -131,7 +131,15 @@ class SceneMain extends Phaser.Scene
         let img_pen = this.add.image(pX_left + wh * 0.012, pY_top + pY_paddingTop, 'pen').setDisplaySize(wh * 0.04, wh * 0.04).setOrigin(0); 
         let img_enter = this.add.image(pX_left + pX_width - wh*0.012, (pY_top + pY_top + pY_height) * 0.5, 'enter').setDisplaySize(wh * 0.055, wh * 0.07).setOrigin(1, 0.5); 
         img_enter.setInteractive();
-        img_enter.on('pointerup', () => { scene_self.RaiseQuestion(nameInputField); });
+        img_enter.on('pointerup', () => 
+        {
+            if(el.value == text_prompt)
+            {
+                alert("please input a question first!");
+                return;
+            }
+            scene_self.RaiseQuestion(nameInputField); 
+        });
         let img_mic = this.add.image((pX_left + pX_width + ww*rX_rightBnd)*0.5, pY_top + pY_height, 'microphone').setDisplaySize(wh * 0.08, wh * 0.08).setOrigin(0.5, 1); 
         let img_InputFieldBG = this.add.image(pX_left, pY_top, 'InputFieldBG').setDisplaySize(pX_width, pY_height).setOrigin(0);
         
@@ -154,17 +162,17 @@ class SceneMain extends Phaser.Scene
 
         // el.onchange = function(){ scene_self.RaiseQuestion(nameInputField); };
         el.onfocus = function()
-            { 
-                if(el.value === text_prompt)
-                    el.value = ""; 
-            };
+        { 
+            if(el.value === text_prompt)
+                el.value = ""; 
+        };
         // el.oninput = () => console.log(el.value);
         // el.onmouseout = () => el.blur();
         el.onkeydown = function(event)
         {             
             // console.log(event.key);
             if(event.key == "Enter")
-            {
+            {                    
                 event.preventDefault();
                 scene_self.RaiseQuestion(nameInputField);
             }
