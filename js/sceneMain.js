@@ -20,9 +20,9 @@ var MaxCntAnswers = 4;
 var limitChInOneLine = undefined;
 
 var Content_QuickQuestions = undefined;
-var Content_AnswersToQuickQuestions = undefined; 
+var Content_AnswersToQuickQuestions = undefined;
 
-var ListQuestions = ["What when are statins?", "What what what should use?", "what and When?", "what what side effects?"];
+var ListQuestions = ["What are Statins?", "Who should use stains?", "How and When to take statins?", "what is side effects of statins?"];
 var ListAnswers = undefined;
 var dct_synonym = { "bad": "side", "benefits": "good", "benefit": "good", "help": "good", "helps": "good", "popular": "good", "effects": "effect", "statins": "statin" }
 var dct_useless = { "is": 0, "it": 0, "to": 0 , "the": 0, "a": 0, "me": 0, "you": 0};
@@ -122,26 +122,25 @@ class SceneMain extends Phaser.Scene
         let pY_top = wh * (rY_bottomBnd + 0.03);
         let pX_width = ww * (rX_rightBnd - rX_leftBnd) - wh*0.12;
         let pY_height = wh * 0.135;
-        let pX_paddingLeft = wh * 0.012 * 5;
+        let pX_paddingLeft = wh * 0.012;
         let pX_paddingRight = wh * 0.012;
         let pY_paddingTop = wh * 0.012;
         let pY_paddingBottom = wh * 0.012;
         let text_prompt = "What question do you have?";
         
         let img_pen = this.add.image(pX_left + wh * 0.012, pY_top + pY_paddingTop, 'pen').setDisplaySize(wh * 0.04, wh * 0.04).setOrigin(0); 
-        // let img_enter = this.add.image(pX_left + pX_width - wh*0.012, (pY_top + pY_top + pY_height) * 0.5, 'enter').setDisplaySize(wh * 0.055, wh * 0.07).setOrigin(1, 0.5); 
+        let img_enter = this.add.image(pX_left + pX_width - wh*0.012, (pY_top + pY_top + pY_height) * 0.5, 'enter').setDisplaySize(wh * 0.055, wh * 0.07).setOrigin(1, 0.5); 
+        img_enter.setInteractive();
+        img_enter.on('pointerup', () => { scene_self.RaiseQuestion(nameInputField); });
         let img_mic = this.add.image((pX_left + pX_width + ww*rX_rightBnd)*0.5, pY_top + pY_height, 'microphone').setDisplaySize(wh * 0.08, wh * 0.08).setOrigin(0.5, 1); 
-        img_mic.setInteractive();
-        // img_mic.on('pointerup', () => { this.ReturnToQuickQuestions() });
-        let img_InputFieldBG = this.add.image(pX_left, pY_top, 'InputFieldBG').setOrigin(0);
-        img_InputFieldBG.setDisplaySize(pX_width, pY_height);
+        let img_InputFieldBG = this.add.image(pX_left, pY_top, 'InputFieldBG').setDisplaySize(pX_width, pY_height).setOrigin(0);
         
         el.style.top = pY_top + "px";
-        el.style.left = pX_left + "px";
+        el.style.left = pX_left + ww * 0.03 + "px";
         // Padding is used to create buffer area between the text and the edge.
         // But after adding padding, the actual w and h of the text area would become the sum of width and padding/height of padding,
         // So we need to substract the padding from width and height first.
-        el.style.width = (pX_width - pX_paddingLeft - pX_paddingRight) + "px";
+        el.style.width = (pX_width - ww * 0.07 - pX_paddingLeft - pX_paddingRight) + "px";
         el.style.height = (pY_height - pY_paddingTop - pY_paddingBottom) + "px";
         el.style.paddingTop =  pY_paddingTop + "px";
         el.style.paddingBottom =  pY_paddingBottom + "px";

@@ -10,7 +10,7 @@ body
     background: none;
 
     border: none;
-    /* outline: none; */
+    outline: none;
     overflow: auto;
 
     -webkit-box-shadow: none;
