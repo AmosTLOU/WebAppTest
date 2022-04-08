@@ -385,7 +385,7 @@ class SceneMain extends Phaser.Scene
                 color: '#000000',
                 fontSize:  (ww * 0.0137) + 'px'      
             }).setOrigin(0.5);
-        }        
+        }      
     }
     
 
