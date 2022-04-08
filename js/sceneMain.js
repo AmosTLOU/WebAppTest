@@ -25,7 +25,7 @@ var Content_AnswersToQuickQuestions = undefined;
 var ListQuestions = ["What are Statins?", "Who should use stains?", "How and When to take statins?", "what is side effects of statins?"];
 var ListAnswers = undefined;
 var dct_synonym = { "bad": "side", "benefits": "good", "benefit": "good", "help": "good", "helps": "good", "popular": "good", "effects": "effect", "statins": "statin" }
-var dct_useless = { "is": 0, "it": 0, "to": 0 , "the": 0, "a": 0, "me": 0, "you": 0};
+var dct_useless = { "is": 0, "it": 0, "to": 0 , "the": 0, "a": 0, "and": 0, "me": 0, "you": 0};
 
 
 
@@ -602,12 +602,19 @@ class SceneMain extends Phaser.Scene
     Create2MsgAndShow(msg_LeftSide, msg_RightSide)
     {
         msg_RightSide = this.MakeTextFit(msg_RightSide);
-        msg_LeftSide = this.MakeTextFit(msg_LeftSide);
         if(msg_RightSide === undefined)
         {
             alert("please input a question that makes sense!");
             return;
         }  
+
+        let playSpeakAnim = true;
+        if(msg_LeftSide === undefined)
+        {
+            msg_LeftSide = "Sorry, we couldn't find an answer for your question."
+            playSpeakAnim = false;
+        }        
+        msg_LeftSide = this.MakeTextFit(msg_LeftSide);
         if(msg_LeftSide === undefined)
         {
             alert("Something is wrong with our system. Sry!");
@@ -628,7 +635,8 @@ class SceneMain extends Phaser.Scene
 
         this.ShowQuickQuestions(false);
         this.conManager.ShowAllMsg(true);
-        this.avatar.anims.play('speak', true);
+        if(playSpeakAnim)
+            this.avatar.anims.play('speak', true);
         this.state = 1;
     }
 
@@ -639,10 +647,11 @@ class SceneMain extends Phaser.Scene
         
         let IndexRelatedQuestions = new Array();
         let IndexAnswers = this.SelectAnswer(text);
-        let msg_LeftSide = "Sorry, we couldn't find an answer for your question.";
+        let msg_RightSide = text;
+        let msg_LeftSide = undefined;
         if(0 < IndexAnswers.length)
         {
-            msg_LeftSide = ListQuestions[IndexAnswers[0]] +" \n " + ListAnswers[IndexAnswers[0]];
+            msg_LeftSide = ListQuestions[IndexAnswers[0]] +"\n\n" + ListAnswers[IndexAnswers[0]];
             if(1 < IndexAnswers.length)
             {                
                 for(let i = 1; i < IndexAnswers.length; i++)
@@ -651,9 +660,7 @@ class SceneMain extends Phaser.Scene
                 }
             }
         }   
-        this.ShowRelatedQuestions(IndexRelatedQuestions);         
-        let msg_RightSide = text;
-        
+        this.ShowRelatedQuestions(IndexRelatedQuestions);                 
         this.Create2MsgAndShow(msg_LeftSide, msg_RightSide);
         el.value = "";
     }
