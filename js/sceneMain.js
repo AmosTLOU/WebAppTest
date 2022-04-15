@@ -79,8 +79,8 @@ class SceneMain extends Phaser.Scene
         // Get json from online resources
         // pathJSON = "https://amostlou.github.io/WebAppTest/data_V0.json";
         // Get json from files
-        // pathJSON = "data_V0.json";
-        pathJSON = "data_V1.json";
+        // pathJSON = "JSON/data_V0.json";
+        pathJSON = "JSON/data_V1.json";
         
         if(formatQA == 0)
         {
