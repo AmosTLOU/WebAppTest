@@ -316,7 +316,7 @@ class SceneMain extends Phaser.Scene
     {        
         this.GetQAFromJSON();
         this.CreateMainElements();
-        let txt = this.add.text(ww * 0.2, wh * 0.5, "testString", {
+        let txt = this.add.text(ww * 0.2, wh * 0.5, "testString50px", {
             fontFamily: 'open sans',
             color: '#000000',
             fontSize: 50 + 'px'      
