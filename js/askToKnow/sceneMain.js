@@ -355,6 +355,7 @@ class SceneMain extends Phaser.Scene
 
     ExtraWork()
     {
+        /* get the original size of some pictures */
         let tmpIMG = this.add.image(0, 0, "msgBG");
         // pW_OriginalMsgBg = tmpIMG.width;
         pH_OriginalMsgBg = tmpIMG.height;
@@ -364,7 +365,7 @@ class SceneMain extends Phaser.Scene
         pH_OriginalAvatarIcon = tmpIMG.height;
         tmpIMG.visible = false;
 
-
+        /* decide the limit of characters in a line */
         let txtUsedToDecideOneLineLimit = this.CreateMessageText("");
         for(let i = 0; i < 200; i++)
         {            
@@ -378,7 +379,7 @@ class SceneMain extends Phaser.Scene
             }
         }
         
-
+        /* display mouse position for debugging */
         if(b_Debug)
         {
             phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
