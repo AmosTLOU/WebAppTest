@@ -38,6 +38,7 @@ window.onload = function()
             // height: window.innerHeight,
             width: ww,
             height: wh,
+            resolution: window.devicePixelRatio,
             parent: 'phaser-game',
             scene: [SceneMain]
         };

@@ -6,7 +6,7 @@
 // (4) Help protect your heart from future",
 
 
-var b_Debug = false;
+var b_Debug = true;
 
 // var w_avatarFrame = 448;
 // var h_avatarFrame = 770;
@@ -311,6 +311,18 @@ class SceneMain extends Phaser.Scene
             }).setOrigin(0.5);
         }      
     }
+
+    CreateDOMText(str_text, rX, rY)
+    {
+        let el = document.createElement("p");
+        let textNode = document.createTextNode(str_text);
+        el.appendChild(textNode);
+        document.body.appendChild(el);
+        el.style.position = "absolute"; 
+        el.style.left = ww * rX + "px";
+        el.style.top = wh * rY + "px";
+        el.style.fontSize= 50 + "px";
+    }
     
     create() 
     {        
@@ -321,6 +333,22 @@ class SceneMain extends Phaser.Scene
             color: '#000000',
             fontSize: 50 + 'px'      
         });
+
+
+        console.log(window.devicePixelRatio);
+        this.CreateDOMText("testString50px_DOM", 0.5, 0.75);
+
+        let img_mic = this.add.image(ww*0.5, wh*0.75, 'microphone').setDisplaySize(wh * 0.1, wh * 0.1).setOrigin(0.5); 
+
+        /* display mouse position for debugging */
+        if(b_Debug)
+        {
+            phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
+                color: '#000000',
+                fontSize:  (ww * 0.0137) + 'px'      
+            }).setOrigin(0.5);
+
+        }   
     }     
 
     ShowQuickQuestions(isVisible)
@@ -679,22 +707,26 @@ class SceneMain extends Phaser.Scene
         return img;
     }
 
-    CreateText_ByJS()
-    {
-        let el = document.createElement("p");
-        let textNode = document.createTextNode("0123456789");
-        el.appendChild(textNode);
-        document.body.appendChild(el);
-        el.style.position = "absolute"; 
-        el.style.top = ww * 0.2 + "px";
-        el.style.left = wh * 0.3 + "px";
-        el.style.width = ww * 0.1 + "px";
-        el.style.height = wh * 0.1 + "px";
-    }
+    
 
     update() 
     {
-
+        if(b_Debug)
+        {
+            if(wh < ww)
+            {
+                phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
+                                "\t\tpY: " + this.input.mousePointer.y + "\n" +
+                                "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+                                "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
+            }
+            else
+            {
+                phaserText_MousePosition.text = "pX: " + ww + 
+                                "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
+            }
+            
+        }
     }
     
 }
