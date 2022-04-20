@@ -319,7 +319,7 @@ class SceneMain extends Phaser.Scene
         let txt = this.add.text(ww * 0.2, wh * 0.5, "testString", {
             fontFamily: 'open sans',
             color: '#000000',
-            fontSize: (ww * 0.05) + 'px'      
+            fontSize: 50 + 'px'      
         });
     }     
 
