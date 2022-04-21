@@ -38,6 +38,7 @@ window.onload = function()
             // height: window.innerHeight,
             width: ww,
             height: wh,
+            // need to add the resolution config below, otherwise things will be blurry on mobile devices
             resolution: window.devicePixelRatio,
             parent: 'phaser-game',
             scene: [SceneMain]

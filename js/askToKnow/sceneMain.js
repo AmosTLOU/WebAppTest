@@ -1,11 +1,3 @@
-// "Statins can help lower the risk of heart attack \n\
-// and stroke in people who are at increased risk.\n\
-// (1) Reduce plaque build-up. \n\
-// (2) Stabilize plaque in the arteries of the heart.\n\
-// (3) Lower your cholesterol.\n\
-// (4) Help protect your heart from future",
-
-
 var b_Debug = false;
 
 // var w_avatarFrame = 448;
@@ -696,6 +688,8 @@ class SceneMain extends Phaser.Scene
 
 
     // This function is not supposed to delete any char, just adding '\n' to the necessary positions
+    // Later found out, wordwrap could achieve better effect in a more efficient way
+    // https://phaser.io/examples/v3/view/game-objects/text/word-wrap-by-width#
     MakeTextFit(text)
     {
         // Replace "\n" with " \n " first, so all '\n' could be extracted and stored in arrayWord after the split(' ') operation
