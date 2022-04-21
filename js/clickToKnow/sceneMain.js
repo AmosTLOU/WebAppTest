@@ -1,4 +1,4 @@
-var b_Debug = false;
+var b_Debug = true;
 var phaserText_MousePosition;
 
 class SceneMain extends Phaser.Scene 
@@ -6,13 +6,8 @@ class SceneMain extends Phaser.Scene
     constructor() 
     {
         super('SceneMain');
-        this.quickQuestions = undefined;
-        this.relatedQuestions = undefined;
-        this.conManager = undefined;
-        this.avatar = undefined;
+        this.startPage = undefined;
         
-        // 0 Bubbles of Quick Questions; 1 Conversation
-        this.state = 0;  
     }
 
     preload() 
@@ -57,26 +52,60 @@ class SceneMain extends Phaser.Scene
         
     }
 
+    CreatePhaserText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, wordWrapWidth=ww)
+    {
+        let ret = this.make.text
+        ({
+            x: ww * rX,
+            y: wh * rY,
+            text: text,
+            origin: { x: oX, y: oY },
+            style: 
+            {
+                font: i_font,
+                fill: i_fill,
+                lineSpacing: wh * rH_linSpacing,
+                wordWrap: { width: wordWrapWidth }
+            }
+        })
+        return ret;
+    }
+
+    CreateDOMText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, wordWrapWidth=ww)
+    {
+        let el = document.createElement("p");
+        let textNode = document.createTextNode(text);
+        el.appendChild(textNode);
+        document.body.appendChild(el);
+        el.style.position = "absolute"; 
+        if(oX == 0)
+            el.style.left = ww*rX + "px";
+        if(oY == 0)
+            el.style.top = wh*rY + "px";
+        el.style.font = i_font;
+        el.style.color = i_fill;
+        el.style.width = wordWrapWidth + "px";
+        el.style.margin = 0 + "px";
+        // el.style.display = "initial";   // display
+        el.style.display = "none";      // don't display
+    }
+
     CreateStartPage()
     {
-        this.add.image(ww * 0.5, wh * 0.5, 'startPage_bg').setDisplaySize(ww, wh);
-        this.add.image(ww * 0.1, wh * 0.02, 'startPage_back').setDisplaySize(wh*0.06, wh*0.06).setOrigin(0.5, 0);  
-        this.add.image(ww * 0.5, wh * 0.1, 'startPage_b1').setDisplaySize(ww*0.8, wh*0.7).setOrigin(0.5, 0);
-        this.add.image(ww * 0.5, wh * 0.1, 'startPage_b2').setDisplaySize(ww*0.8, wh*0.2).setOrigin(0.5, 0);
-        this.add.image(ww * 0.2, wh * 0.12, 'startPage_avatar').setDisplaySize(wh*0.07, wh*0.07).setOrigin(0.5, 0);
-        this.make.text({
-            x: ww * 0.3,
-            y: wh * 0.12,
-            text: "What was the reason for stopping your statin last time?",
-            origin: { x: 0, y: 0 },
-            style: {
-                font: 'bold 26px Arial',
-                fill: '#FFFFFF',
-                lineSpacing: wh*0.005,
-                wordWrap: { width: 300 }
-            }
-        });
-        this.make.text({
+        this.startPage = new StartPage();
+        // static content
+        this.startPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'startPage_bg').setDisplaySize(ww, wh));
+        this.startPage.elements.push(this.add.image(ww * 0.1, wh * 0.02, 'startPage_back').setDisplaySize(wh*0.06, wh*0.06).setOrigin(0.5, 0));  
+        this.startPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'startPage_b1').setDisplaySize(ww*0.8, wh*0.7).setOrigin(0.5, 0));
+        this.startPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'startPage_b2').setDisplaySize(ww*0.8, wh*0.2).setOrigin(0.5, 0));
+        this.startPage.elements.push(this.add.image(ww * 0.2, wh * 0.12, 'startPage_avatar').setDisplaySize(wh*0.07, wh*0.07).setOrigin(0.5, 0));
+        this.startPage.elements.push( this.CreatePhaserText(0.3, 0.12, "What was the reason for stopping your statin last time?", 
+            0, 0, 'bold 26px Arial', '#FFFFFF', 0.005, 300) );
+
+        // this.CreateDOMText(0.3, 0.12, "What was the reason for stopping your statin last time?", 
+        // 0, 0, 'bold 26px Arial', '#FFFFFF', 0.005, 300);
+
+        this.startPage.elements.push(this.make.text({
             x: ww * 0.3,
             y: wh * 0.24,
             text: "Please select all that apply",
@@ -85,8 +114,22 @@ class SceneMain extends Phaser.Scene
                 font: '18px Arial',
                 fill: '#FFFFFF',
             }
-        });
-
+        }));
+        let img_submit = this.add.image(ww * 0.5, wh * 0.83, 'startPage_submit').setDisplaySize(ww*0.6, wh*0.1).setOrigin(0.5, 0).setInteractive();  
+        img_submit.on('pointerup', () => { 
+            let result = this.startPage.mulSelector.GetAnswer();
+            let str = "";
+            for(let i = 0; i < result.length; i++)
+            {
+                if(0 < i)
+                    str += " ";
+                str += result[i];
+            }
+            console.log(str);
+        });  
+        this.startPage.elements.push(img_submit);   
+        
+        // dynamic content
         let rH_option = 0.075;
         let rH_gapOptions = 0.012;
         let rY_option = 0.33;
@@ -94,9 +137,12 @@ class SceneMain extends Phaser.Scene
         {            
             if(0 < i)
                 rY_option += rH_option + rH_gapOptions;
-            this.add.image(ww * 0.5, wh * rY_option, 'startPage_b3').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0);
-            this.add.image(ww * 0.5, wh * rY_option, 'startPage_b3_pressed').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0);
-            this.make.text({
+            let bg_option = this.add.image(ww * 0.5, wh * rY_option, 'startPage_b3').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0).setInteractive();
+            bg_option.on('pointerdown', () => { this.startPage.mulSelector.ChangeVal(i); });  
+            let fg_option = this.add.image(ww * 0.5, wh * rY_option, 'startPage_b3_pressed').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0).setInteractive();
+            fg_option.visible = false;
+            fg_option.on('pointerdown', () => { this.startPage.mulSelector.ChangeVal(i); });    
+            let txt_option = this.make.text({
                 x: ww * 0.5,
                 y: wh * (rY_option + rH_option*0.5),
                 text: "My doctor told me it was no longer needed.",
@@ -106,23 +152,25 @@ class SceneMain extends Phaser.Scene
                     fill: '#000000',
                 }
             });
+            this.startPage.mulSelector.AddVisualOption(bg_option, fg_option, txt_option);
         }
-        let img_submit = this.add.image(ww * 0.5, wh * 0.83, 'startPage_submit').setDisplaySize(ww*0.6, wh*0.1).setOrigin(0.5, 0).setInteractive();     
-        img_submit.on('pointerdown', () => { console.log('pointerdown'); });     
-        img_submit.on('pointerup', () => { console.log('pointerup'); });     
     }
 
     ExtraWork()
     {
-         /* display mouse position for debugging */
-         if(b_Debug)
-         {
-             phaserText_MousePosition = this.add.text(ww * 0.2, wh * 0.1, "0123456789\n0123456789\n0123456789\n0123456789", {
-                 color: '#000000',
-                 fontSize:  (ww * 0.03) + 'px'      
-             }).setOrigin(0);
- 
-         }    
+        if(b_Debug)
+        {
+            /* display mouse position for debugging */
+            phaserText_MousePosition = this.add.text(ww * 0.5, wh * 0.035, "0123456789\n0123456789\n0123456789\n0123456789", {
+                color: '#000000',
+                fontSize:  (ww * 0.03) + 'px'      
+            }).setOrigin(0.5);
+
+            let img_startPage = this.add.image(ww * 0.1, wh * 0.95, 'startPage_b1').setDisplaySize(wh*0.05, wh*0.05).setInteractive();
+            img_startPage.on('pointerdown', () => {});     
+            img_startPage.on('pointerup', () => { this.startPage.ChangeVisibility(); });  
+        }    
+         
     }    
     
     create() 
@@ -149,21 +197,6 @@ class SceneMain extends Phaser.Scene
         if(rW != -1 && rH != -1)
             img.setDisplaySize(ww * rW, wh * rH); 
         return img;
-    }
-
-    CreateDOMText(str_text, rX, rY)
-    {
-        let el = document.createElement("div");
-        let textNode = document.createTextNode(str_text);
-        el.appendChild(textNode);
-        document.body.appendChild(el);
-        el.style.position = "absolute"; 
-        el.style.left = ww * rX + "px";
-        el.style.top = wh * rY + "px";
-        el.style.width = 200 + "px";
-        el.style.height = 100 + "px";
-        // el.style.fontSize = 20 + "px";
-        // el.style.overflow = "scroll";
     }
 
     update() 
