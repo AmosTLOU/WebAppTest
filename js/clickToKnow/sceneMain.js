@@ -52,7 +52,7 @@ class SceneMain extends Phaser.Scene
         
     }
 
-    CreatePhaserText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, wordWrapWidth=ww)
+    CreatePhaserText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, rW_wordWrap=1)
     {
         let ret = this.make.text
         ({
@@ -65,13 +65,13 @@ class SceneMain extends Phaser.Scene
                 font: i_font,
                 fill: i_fill,
                 lineSpacing: wh * rH_linSpacing,
-                wordWrap: { width: wordWrapWidth }
+                wordWrap: { width: ww * rW_wordWrap }
             }
         })
         return ret;
     }
 
-    CreateDOMText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, wordWrapWidth=ww)
+    CreateDOMText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, rW_wordWrap=1)
     {
         let el = document.createElement("p");
         let textNode = document.createTextNode(text);
@@ -84,10 +84,10 @@ class SceneMain extends Phaser.Scene
             el.style.top = wh*rY + "px";
         el.style.font = i_font;
         el.style.color = i_fill;
-        el.style.width = wordWrapWidth + "px";
+        el.style.width = 300 + "px";
         el.style.margin = 0 + "px";
-        // el.style.display = "initial";   // display
-        el.style.display = "none";      // don't display
+        el.style.display = "initial";   // display
+        // el.style.display = "none";      // don't display
     }
 
     CreateStartPage()
@@ -100,13 +100,13 @@ class SceneMain extends Phaser.Scene
         this.startPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'startPage_b2').setDisplaySize(ww*0.8, wh*0.2).setOrigin(0.5, 0));
         this.startPage.elements.push(this.add.image(ww * 0.2, wh * 0.12, 'startPage_avatar').setDisplaySize(wh*0.07, wh*0.07).setOrigin(0.5, 0));
         this.startPage.elements.push( this.CreatePhaserText(0.3, 0.12, "What was the reason for stopping your statin last time?", 
-            0, 0, 'bold 26px Arial', '#FFFFFF', 0.005, 300) );
+            0, 0, 'bold '+wh*0.028+'px Arial', '#FFFFFF', 0.005, 0.6) );
 
         // this.CreateDOMText(0.3, 0.12, "What was the reason for stopping your statin last time?", 
-        // 0, 0, 'bold 26px Arial', '#FFFFFF', 0.005, 300);
+        //     0, 0, 'bold '+wh*0.028+'px Arial', '#FFFFFF', 0.005, 0.6);
 
         this.startPage.elements.push( this.CreatePhaserText(0.3, 0.24, "Please select all that apply", 
-            0, 0, '18px Arial', '#FFFFFF', 0) );
+            0, 0, wh*0.02+'px Arial', '#FFFFFF', 0) );
         let img_submit = this.add.image(ww * 0.5, wh * 0.83, 'startPage_submit').setDisplaySize(ww*0.6, wh*0.1).setOrigin(0.5, 0).setInteractive();  
         img_submit.on('pointerup', () => { 
             let result = this.startPage.mulSelector.GetAnswer();
@@ -136,7 +136,7 @@ class SceneMain extends Phaser.Scene
             fg_option.visible = false;
             fg_option.on('pointerdown', () => { this.startPage.mulSelector.ChangeVal(i); });    
             let txt_option = this.make.text( this.CreatePhaserText(0.5, (rY_option + rH_option*0.5), "My doctor told me it was no longer needed.", 
-                0.5, 0.5,  '18px Arial', '#000000', 0.005) );    
+                0.5, 0.5,  wh*0.02+'px Arial', '#000000', 0.005) );    
             this.startPage.mulSelector.AddVisualOption(bg_option, fg_option, txt_option);
         }
     }

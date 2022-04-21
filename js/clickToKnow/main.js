@@ -4,8 +4,8 @@ var game;
 // window with and window height
 var ww = window.innerWidth;
 var wh = window.innerHeight;
-// var ww = 600;
-// var wh = 900;
+// var ww = 390;
+// var wh = 660;
 
 window.onload = function() 
 {

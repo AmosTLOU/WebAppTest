@@ -2,17 +2,13 @@
 
 class MultiSelector
 {
-    constructor(i_maxCnt) 
+    constructor() 
     {      
         this.selector = new Array();
-        this.maxCnt = i_maxCnt;
-        for(let i = 0; i < this.maxCnt; i++)
-        {
-            this.selector.push(false);
-        }   
-        this.cnt = this.maxCnt;
-        this.visibility = true;
         this.visualOptions = new Array();
+        this.maxCnt = 0;
+        this.cnt = 0;
+        this.visibility = true;        
     }
 
     ChangeVal(index)
@@ -49,6 +45,10 @@ class MultiSelector
         el.push(fg);
         el.push(txt);
         this.visualOptions.push(el);
+
+        this.selector.push(false);
+        this.maxCnt++;
+        this.cnt++;
     }
 
     ShowAll(i_visibility)
@@ -58,6 +58,7 @@ class MultiSelector
         
         for(let i = 0; i < this.visualOptions.length; i++)
         {
+            this.selector[i] = false;
             for(let j = 0; j < this.visualOptions[i].length; j++)
             {
                 if(this.cnt <= i)
