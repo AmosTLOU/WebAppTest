@@ -118,6 +118,7 @@ class SceneMain extends Phaser.Scene
                 str += result[i];
             }
             console.log(str);
+            alert(str);
         });  
         this.startPage.elements.push(img_submit);   
         
