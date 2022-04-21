@@ -105,16 +105,8 @@ class SceneMain extends Phaser.Scene
         // this.CreateDOMText(0.3, 0.12, "What was the reason for stopping your statin last time?", 
         // 0, 0, 'bold 26px Arial', '#FFFFFF', 0.005, 300);
 
-        this.startPage.elements.push(this.make.text({
-            x: ww * 0.3,
-            y: wh * 0.24,
-            text: "Please select all that apply",
-            origin: { x: 0, y: 0 },
-            style: {
-                font: '18px Arial',
-                fill: '#FFFFFF',
-            }
-        }));
+        this.startPage.elements.push( this.CreatePhaserText(0.3, 0.24, "Please select all that apply", 
+            0, 0, '18px Arial', '#FFFFFF', 0) );
         let img_submit = this.add.image(ww * 0.5, wh * 0.83, 'startPage_submit').setDisplaySize(ww*0.6, wh*0.1).setOrigin(0.5, 0).setInteractive();  
         img_submit.on('pointerup', () => { 
             let result = this.startPage.mulSelector.GetAnswer();
@@ -142,16 +134,8 @@ class SceneMain extends Phaser.Scene
             let fg_option = this.add.image(ww * 0.5, wh * rY_option, 'startPage_b3_pressed').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0).setInteractive();
             fg_option.visible = false;
             fg_option.on('pointerdown', () => { this.startPage.mulSelector.ChangeVal(i); });    
-            let txt_option = this.make.text({
-                x: ww * 0.5,
-                y: wh * (rY_option + rH_option*0.5),
-                text: "My doctor told me it was no longer needed.",
-                origin: { x: 0.5, y: 0.5 },
-                style: {
-                    font: '18px Arial',
-                    fill: '#000000',
-                }
-            });
+            let txt_option = this.make.text( this.CreatePhaserText(0.5, (rY_option + rH_option*0.5), "My doctor told me it was no longer needed.", 
+                0.5, 0.5,  '18px Arial', '#000000', 0.005) );    
             this.startPage.mulSelector.AddVisualOption(bg_option, fg_option, txt_option);
         }
     }
