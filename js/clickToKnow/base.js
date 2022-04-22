@@ -148,16 +148,16 @@ class BaseSolution
         let gap_rY = this.rH * 0.05;
         this.title1.setFontSize(ww*this.rW*0.055 + "px");
         this.title1.setPosition(ww * (this.rX + this.rW*0.3), wh * (this.rY + this.rH*0.1));
-        this.title1.setWordWrapWidth(ww*this.rW*0.7);
+        this.title1.setWordWrapWidth(ww*this.rW*0.75);
 
         this.title2.setFontSize(ww*this.rW*0.055 + "px");
         this.title2.setFontStyle('bold');
         this.title2.setPosition(ww * (this.rX + this.rW*0.3), wh * ((this.title1.y + this.title1.height)/wh + gap_rY));
-        this.title2.setWordWrapWidth(ww*this.rW*0.7);
+        this.title2.setWordWrapWidth(ww*this.rW*0.75);
         
         this.dsp.setFontSize(ww*this.rW*0.04 + "px");
         this.dsp.setPosition(ww * (this.rX + this.rW*0.3), wh * ((this.title2.y + this.title2.height)/wh + gap_rY));
-        this.dsp.setWordWrapWidth(ww*this.rW*0.7);
+        this.dsp.setWordWrapWidth(ww*this.rW*0.75);
     }
 
     ShowAll(i_visibility)

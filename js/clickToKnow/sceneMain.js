@@ -202,7 +202,7 @@ class SceneMain extends Phaser.Scene
         this.questionPage.elements.push(this.add.image(ww * 0.02, wh * 0.9, 'questionPage_doctorAvatar').setDisplaySize(ww*0.2, ww*0.2).setOrigin(0, 0.5));
         this.questionPage.elements.push(this.add.image(ww * 0.25, wh * 0.9, 'questionPage_doctorTextBG').setDisplaySize(ww*0.4, wh*0.1).setOrigin(0, 0.5));
         this.questionPage.elements.push( this.CreatePhaserText(0.27, 0.87, "How are you today?", 
-            0, 0, 'bold '+ww*0.03+'px Arial', '#000000', 0.005, 0.3) );
+            0, 0, 'bold '+ww*0.03+'px Arial', '#000000', 0.005, 0.4) );
         let img_submit = this.add.image(ww * 0.9, wh * 0.9, 'questionPage_submit').setDisplaySize(ww*0.2, ww*0.2).setOrigin(1, 0.5).setInteractive();  
         img_submit.on('pointerup', () => { 
             let result = this.questionPage.mulSelector.GetAnswer();
@@ -253,7 +253,7 @@ class SceneMain extends Phaser.Scene
         this.solutionPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'solutionPage_bg1').setDisplaySize(ww, wh));
         this.solutionPage.elements.push(this.add.image(ww * 0.98, wh * 0.02, 'solutionPage_doctorAvatar').setDisplaySize(ww*0.6, wh*0.8).setOrigin(1, 0));
         this.solutionPage.elements.push(this.add.image(ww * 0.5, wh * 1, 'solutionPage_bg2').setDisplaySize(ww, wh*0.6).setOrigin(0.5, 1));
-        this.solutionPage.elements.push(this.add.image(ww * 0.45, wh * 0.9, 'solutionPage_b1').setDisplaySize(ww*0.8, wh*0.6).setOrigin(0.5, 1));
+        this.solutionPage.elements.push(this.add.image(ww * 0.45, wh * 0.95, 'solutionPage_b1').setDisplaySize(ww*0.8, wh*0.65).setOrigin(0.5, 1));
         this.solutionPage.elements.push(this.add.image(ww * 0.3, wh * 0.05, 'solutionPage_doctorTextBG').setDisplaySize(ww*0.5, wh*0.2).setOrigin(0.5, 0));
         this.solutionPage.elements.push( this.CreatePhaserText(0.1, 0.07, "Based on your prior statin experience and stated perferences. Here are your top treatment options.", 
             0, 0, 'bold '+ww*0.036+'px Arial', '#000000', 0.005, 0.4) );
@@ -268,7 +268,7 @@ class SceneMain extends Phaser.Scene
             0.1,
             0.32,
             0.7,
-            0.15
+            0.18
         ));
         this.solutionPage.AddSolution(new BaseSolution(
             this.add.image(0, 0, 'solutionPage_solutionBG'),
@@ -277,9 +277,9 @@ class SceneMain extends Phaser.Scene
             this.make.text({x: 0, y: 0, text: "Rosuvastatin 20 mg every day", style:{ fill: '#000000'}}),
             this.make.text({x: 0, y: 0, text: "Switch to Rosuvastatin, lower the dose and decrease the frequency.", style:{ fill: '#000000'}}),
             0.1,
-            0.49,
+            0.52,
             0.7,
-            0.15
+            0.18
         ));
         this.solutionPage.AddSolution(new BaseSolution(
             this.add.image(0, 0, 'solutionPage_solutionBG'),
@@ -288,9 +288,9 @@ class SceneMain extends Phaser.Scene
             this.make.text({x: 0, y: 0, text: "Atorvastatin 20 mg", style:{ fill: '#000000'}}),
             this.make.text({x: 0, y: 0, text: "Continue to use Atorvastatin but cut the dose in half.\nUse one half a tabley every day.", style:{ fill: '#000000'}}),
             0.1,
-            0.66,
+            0.72,
             0.7,
-            0.15
+            0.18
         ));
 
         this.solutionPage.elements.push(this.add.image(ww * 0.92, wh * 0.9, 'solutionPage_back').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1));
