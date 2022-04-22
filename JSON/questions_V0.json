@@ -1,10 +1,12 @@
 {
     "FirstLayer":
     [
-        "Title_0_0",
-        "Option_0_0_0",
-        "Option_0_0_1",
-        "Option_0_0_2"
+        ["Statin medications are effective in reducing the risk of heart disease and stroke.", "Please indicate how you agree with the above statement."],
+        "Totally agree",
+        "Agree",
+        "Neutral",
+        "Disagree",
+        "Totally disagree"
     ],
 
     "Option_0_0_0":

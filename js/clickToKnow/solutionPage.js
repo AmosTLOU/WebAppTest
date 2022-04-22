@@ -1,9 +1,14 @@
-class StartPage extends BasePage
+class SolutionPage extends BasePage
 {
     constructor() 
     {   
-        super("StartPage");
-        this.mulSelector = new MultiSelector(false);
+        super("SolutionPage");
+        this.solutions = new Array();
+    }
+
+    AddSolution(sln)
+    {
+        this.solutions.push(sln);
     }
 
     ShowAll(i_visibility)
@@ -13,7 +18,8 @@ class StartPage extends BasePage
         
         for(let i = 0; i < this.elements.length; i++)
             this.elements[i].visible = i_visibility;
-        this.mulSelector.ShowAll(i_visibility);
+        for(let i = 0; i < this.solutions.length; i++)
+            this.solutions[i].ShowAll(i_visibility);
 
         this.visibility = i_visibility;
     }

@@ -1,9 +1,9 @@
-class StartPage extends BasePage
+class QuestionPage extends BasePage
 {
     constructor() 
     {   
-        super("StartPage");
-        this.mulSelector = new MultiSelector(false);
+        super("QuestionPage");
+        this.mulSelector = new MultiSelector(true);
     }
 
     ShowAll(i_visibility)
