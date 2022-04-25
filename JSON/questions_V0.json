@@ -1,4 +1,14 @@
 {
+    "TestLayer":
+    [
+        ["Statin medications are effective in reducing the risk of heart disease and stroke.", "Please indicate how you agree with the above statement."],
+        "Totally agree",
+        "Agree",
+        "Neutral",
+        "Disagree",
+        "Totally disagree"
+    ],
+
     "FirstLayer":
     [
         ["Statin medications are effective in reducing the risk of heart disease and stroke.", "Please indicate how you agree with the above statement."],

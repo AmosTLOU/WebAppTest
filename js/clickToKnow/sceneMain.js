@@ -167,16 +167,27 @@ class SceneMain extends Phaser.Scene
                 str += result[i];
             }
             console.log(str);
-            // alert(str);
-            this.ShowPage("StartConversationPage");
+            let hasSelected = false;
+            for(let i = 0; i < this.startPage.mulSelector.cnt; i++)
+            {
+                let res = this.startPage.mulSelector.GetVal(i);
+                if(res != undefined && res == true)
+                    hasSelected  = true;
+            }                
+            if(hasSelected)
+                this.ShowPage("StartConversationPage");
+            else
+                alert("Please select one or more options that fits!");
         });  
         this.startPage.elements.push(img_submit);   
         
         // dynamic content
+        let options = ["My doctor told me it was no longer needed.", "I found some alternatives.",
+        "I suffered side effects.", "I was worried about potential side effects.", "Personal reason"]
         let rH_option = 0.075;
         let rH_gapOptions = 0.012;
         let rY_option = 0.33;
-        for(let i = 0; i < 5; i++)
+        for(let i = 0; i < options.length; i++)
         {            
             if(0 < i)
                 rY_option += rH_option + rH_gapOptions;
@@ -185,7 +196,7 @@ class SceneMain extends Phaser.Scene
             let fg_option = this.add.image(ww * 0.5, wh * rY_option, 'startPage_b3_pressed').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0).setInteractive();
             fg_option.visible = false;
             fg_option.on('pointerdown', () => { this.startPage.mulSelector.ChangeVal(i); });    
-            let txt_option = this.CreatePhaserText(0.5, (rY_option + rH_option*0.5), "My doctor told me it was no longer needed.", 
+            let txt_option = this.CreatePhaserText(0.5, (rY_option + rH_option*0.5), options[i], 
                 0.5, 0.5,  ww*0.0325+'px Arial', '#000000', 0.005);    
             this.startPage.mulSelector.AddVisualOption(bg_option, fg_option, txt_option);
         }
@@ -200,7 +211,7 @@ class SceneMain extends Phaser.Scene
         this.startConversationPage.elements.push(this.add.image(ww * 0.7, wh * 0.45, 'startConversationPage_doctorAvatar').setDisplaySize(ww*0.5, wh*0.7));
         this.startConversationPage.elements.push(this.add.image(ww * 0.5, wh * 1, 'startConversationPage_bg2').setDisplaySize(ww, wh*0.6).setOrigin(0.5, 1));
         this.startConversationPage.elements.push(this.add.image(ww * 0.05, wh * 0.1, 'startConversationPage_doctorTextBG').setDisplaySize(ww*0.5, wh*0.6).setOrigin(0));
-        this.startConversationPage.elements.push( this.CreatePhaserText(0.1, 0.15, "Hi [First Name]! I am Sam, a virtual cardiac risk coach. I am sorry to hear you are having side effects. The good...", 0, 0, ww*0.04+'px Arial', '#000000', 0.01, 0.42) );
+        this.startConversationPage.elements.push( this.CreatePhaserText(0.1, 0.15, "Hi [First Name]! I am Sam, a virtual cardiac risk coach. I am sorry to hear that... The good news is ...", 0, 0, ww*0.04+'px Arial', '#000000', 0.01, 0.42) );
         // back button
         let img_back = this.add.image(ww * 0.05, wh * 0.02, 'startConversationPage_back').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0).setInteractive();
         this.startConversationPage.elements.push(img_back);

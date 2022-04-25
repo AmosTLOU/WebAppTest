@@ -4,7 +4,11 @@ class MultiSelector
 {
     constructor(i_onlyOneChoice) 
     {      
-        this.selector = new Array();
+        // made up of true and false
+        this.selector = new Array();  
+        // storage of titles. Might be multiple, like heading1, heading2, etc.
+        this.titles = new Array();
+        // storage of the 2 phaser images(pic_unselected, pic_selected) and 1 phaser text(content of the option)
         this.visualOptions = new Array();
         this.maxCnt = 0;
         this.cnt = 0;
@@ -41,7 +45,7 @@ class MultiSelector
 
     GetVal(index)
     {
-        if(cnt <= index)
+        if(this.cnt <= index)
             return undefined;
         
         return this.selector[index];
