@@ -100,8 +100,9 @@ class MultiSelector
 
 class BasePage
 {
-    constructor() 
+    constructor(i_name) 
     {      
+        this.name = i_name;
         this.elements = new Array();
         this.visibility = true;
     }

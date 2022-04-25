@@ -1,5 +1,8 @@
-var b_Debug = true;
+var b_Debug = false;
 var phaserText_MousePosition;
+
+var prevPage = undefined;
+var curPage = undefined;
 
 class SceneMain extends Phaser.Scene 
 {
@@ -10,6 +13,7 @@ class SceneMain extends Phaser.Scene
         this.questionPage = undefined;
         this.solutionPage = undefined;
         this.startConversationPage = undefined;
+        this.consultationPage = undefined;
         this.pages = new Array();
     }
 
@@ -25,6 +29,15 @@ class SceneMain extends Phaser.Scene
         this.load.image('startPage_avatar', 'assets/MockUp2/StartPage/StartPage_UserAvatar.png');
         this.load.image('startPage_back', 'assets/MockUp2/StartPage/back.png'); 
 
+        // start conversation page
+        this.load.image('startConversationPage_bg1', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_BackGround1.png');
+        this.load.image('startConversationPage_bg2', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_BackGround2.png');
+        this.load.image('startConversationPage_doctorAvatar', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_DoctorPlaceHolder.png');
+        this.load.image('startConversationPage_doctorTextBG', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_TextBoard.png');
+        this.load.image('startConversationPage_back', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_Back.png');
+        this.load.image('startConversationPage_toQuestionPage', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_FindSolutionButton.png');
+        this.load.image('startConversationPage_toConsultationPage', 'assets/MockUp2/StartConverstationPage/StartConverstationPage_ConsultationButton.png');
+
         // question page
         this.load.image('questionPage_bg', 'assets/MockUp2/QuestionPage/QuestionPage_BackGround.png');
         this.load.image('questionPage_b1', 'assets/MockUp2/QuestionPage/QuestionPage_QuestionBoard1.png');
@@ -36,6 +49,14 @@ class SceneMain extends Phaser.Scene
         this.load.image('questionPage_userAvatar', 'assets/MockUp2/QuestionPage/QuestionPage_UserAvatar_PlaceHolder.png');
         this.load.image('questionPage_doctorAvatar', 'assets/MockUp2/QuestionPage/QuestionPage_DoctorAvatar_PlaceHolder.png');
         this.load.image('questionPage_back', 'assets/MockUp2/QuestionPage/back.png'); 
+
+        // consultation page
+        this.load.image('consultationPage_bg', 'assets/MockUp2/ConsultationPage/ConsultationPage_BackGround.png');
+        this.load.image('consultationPage_doctorAvatar', 'assets/MockUp2/ConsultationPage/ConsultationPage_DoctarAvatar_PlaceHolder.png');
+        this.load.image('consultationPage_userAvatar', 'assets/MockUp2/ConsultationPage/ConsultationPage_UserAvatar_PlaceHolder.png');
+        this.load.image('consultationPage_textBG', 'assets/MockUp2/ConsultationPage/ConsultationPage_TextBoard.png');
+        this.load.image('consultationPage_inputFieldBG', 'assets/MockUp2/ConsultationPage/ConsultationPage_InputBoard.png');
+        this.load.image('consultationPage_back', 'assets/MockUp2/ConsultationPage/back.png');
 
         // solution page
         this.load.image('solutionPage_bg1', 'assets/MockUp2/SolutionPage/SolutionPage_BackGround1.png');
@@ -98,21 +119,6 @@ class SceneMain extends Phaser.Scene
         return ret;
     }
 
-    // CreatePhaserText(text)
-    // {
-    //     let ret = this.make.text
-    //     ({
-    //         x: 0,
-    //         y: 0,
-    //         text: text,
-    //         style: 
-    //         {
-    //             fill: '#000000',
-    //         }
-    //     })
-    //     return ret;
-    // }
-
     CreateDOMText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, rW_wordWrap=1)
     {
         let el = document.createElement("p");
@@ -161,7 +167,8 @@ class SceneMain extends Phaser.Scene
                 str += result[i];
             }
             console.log(str);
-            alert(str);
+            // alert(str);
+            this.ShowPage("StartConversationPage");
         });  
         this.startPage.elements.push(img_submit);   
         
@@ -184,14 +191,36 @@ class SceneMain extends Phaser.Scene
         }
     }
 
+    CreateStartConversationPage()
+    {
+        this.startConversationPage = new StartConversationPage();
+        this.pages.push(this.startConversationPage);
+        // static content
+        this.startConversationPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'startConversationPage_bg1').setDisplaySize(ww, wh));
+        this.startConversationPage.elements.push(this.add.image(ww * 0.7, wh * 0.45, 'startConversationPage_doctorAvatar').setDisplaySize(ww*0.5, wh*0.7));
+        this.startConversationPage.elements.push(this.add.image(ww * 0.5, wh * 1, 'startConversationPage_bg2').setDisplaySize(ww, wh*0.6).setOrigin(0.5, 1));
+        this.startConversationPage.elements.push(this.add.image(ww * 0.05, wh * 0.1, 'startConversationPage_doctorTextBG').setDisplaySize(ww*0.5, wh*0.6).setOrigin(0));
+        this.startConversationPage.elements.push( this.CreatePhaserText(0.1, 0.15, "Hi [First Name]! I am Sam, a virtual cardiac risk coach. I am sorry to hear you are having side effects. The good...", 0, 0, ww*0.04+'px Arial', '#000000', 0.01, 0.42) );
+        // back button
+        let img_back = this.add.image(ww * 0.05, wh * 0.02, 'startConversationPage_back').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0).setInteractive();
+        this.startConversationPage.elements.push(img_back);
+        img_back.on('pointerup', () => { this.ShowPage("StartPage"); }); 
+        // toQuestionPage button
+        let img_toQuestonPage = this.add.image(ww * 0.5, wh * 0.78, 'startConversationPage_toQuestionPage').setDisplaySize(ww*0.6, ww*0.15).setInteractive();
+        this.startConversationPage.elements.push(img_toQuestonPage);
+        img_toQuestonPage.on('pointerup', () => { this.ShowPage("QuestionPage"); }); 
+        // toConsultationPage button
+        let img_toConsultationPage = this.add.image(ww * 0.5, wh * 0.9, 'startConversationPage_toConsultationPage').setDisplaySize(ww*0.6, ww*0.15).setInteractive();
+        this.startConversationPage.elements.push(img_toConsultationPage);
+        img_toConsultationPage.on('pointerup', () => { this.ShowPage("ConsultationPage"); }); 
+    }
 
     CreateQuestionPage()
     {
         this.questionPage = new QuestionPage();
         this.pages.push(this.questionPage);
         // static content
-        this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'questionPage_bg').setDisplaySize(ww, wh));
-        this.questionPage.elements.push(this.add.image(ww * 0.1, wh * 0.02, 'questionPage_back').setDisplaySize(wh*0.06, wh*0.06).setOrigin(0.5, 0));  
+        this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'questionPage_bg').setDisplaySize(ww, wh));    
         this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'questionPage_b1').setDisplaySize(ww*0.8, wh*0.7).setOrigin(0.5, 0));
         this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'questionPage_b2').setDisplaySize(ww*0.8, wh*0.2).setOrigin(0.5, 0));
         this.questionPage.elements.push(this.add.image(ww * 0.2, wh * 0.12, 'questionPage_userAvatar').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0.5, 0));
@@ -203,6 +232,11 @@ class SceneMain extends Phaser.Scene
         this.questionPage.elements.push(this.add.image(ww * 0.25, wh * 0.9, 'questionPage_doctorTextBG').setDisplaySize(ww*0.4, wh*0.1).setOrigin(0, 0.5));
         this.questionPage.elements.push( this.CreatePhaserText(0.27, 0.87, "How are you today?", 
             0, 0, 'bold '+ww*0.03+'px Arial', '#000000', 0.005, 0.4) );
+        // back button
+        let img_back = this.add.image(ww * 0.1, wh * 0.02, 'questionPage_back').setDisplaySize(wh*0.06, wh*0.06).setOrigin(0.5, 0).setInteractive();
+        this.questionPage.elements.push(img_back);  
+        img_back.on('pointerup', () => { this.ShowPage("StartConversationPage"); });
+        // submit buttion
         let img_submit = this.add.image(ww * 0.9, wh * 0.9, 'questionPage_submit').setDisplaySize(ww*0.2, ww*0.2).setOrigin(1, 0.5).setInteractive();  
         img_submit.on('pointerup', () => { 
             let result = this.questionPage.mulSelector.GetAnswer();
@@ -214,10 +248,10 @@ class SceneMain extends Phaser.Scene
                 str += result[i];
             }
             console.log(str);
-            alert(str);
+            // alert(str);
+            this.ShowPage("SolutionPage");
         });  
         this.questionPage.elements.push(img_submit);   
-
 
         // dynamic content
         let rH_option = 0.075;
@@ -245,6 +279,31 @@ class SceneMain extends Phaser.Scene
         }
     }
 
+    CreateConsultationPage()
+    {
+        this.consultationPage = new ConsultationPage();
+        this.pages.push(this.consultationPage);
+        // static
+        this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'consultationPage_bg').setDisplaySize(ww, wh));
+        this.consultationPage.elements.push(this.add.image(ww * 0.22, wh * 0.2, 'consultationPage_doctorAvatar').setDisplaySize(ww*0.15, ww*0.15));
+        this.consultationPage.elements.push(this.add.image(ww * 0.35, wh * 0.15, 'consultationPage_textBG').setDisplaySize(ww*0.45, ww*0.15).setOrigin(0));
+        this.consultationPage.elements.push(this.CreatePhaserText(0.37, 0.17, "Do you have any question about Statins?", 
+        0, 0, 'bold '+ww*0.03+'px Arial', '#000000', 0.005, 0.4));
+        this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.85, 'consultationPage_inputFieldBG').setDisplaySize(ww*0.6, ww*0.1));
+        this.consultationPage.elements.push(this.CreatePhaserText(0.5, 0.85, "Type in your questions", 
+        0.5, 0.5, ww*0.035+'px Arial', '#000000', 0.005, 0.4));
+
+        // back button
+        let img_back = this.add.image(ww * 0.05, wh * 0.02, 'consultationPage_back').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0).setInteractive();
+        this.consultationPage.elements.push(img_back);
+        img_back.on('pointerup', () => { this.ShowPage("StartConversationPage"); });
+        // submit button
+        let img_submit = this.add.image(ww * 0.92, wh * 0.89, 'questionPage_submit').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1).setInteractive();
+        this.consultationPage.elements.push(img_submit);
+        img_submit.on('pointerup', () => { this.ShowPage("SolutionPage"); });
+        
+    }
+
     CreateSolutionPage()
     {
         this.solutionPage = new SolutionPage();
@@ -255,7 +314,7 @@ class SceneMain extends Phaser.Scene
         this.solutionPage.elements.push(this.add.image(ww * 0.5, wh * 1, 'solutionPage_bg2').setDisplaySize(ww, wh*0.6).setOrigin(0.5, 1));
         this.solutionPage.elements.push(this.add.image(ww * 0.45, wh * 0.95, 'solutionPage_b1').setDisplaySize(ww*0.8, wh*0.65).setOrigin(0.5, 1));
         this.solutionPage.elements.push(this.add.image(ww * 0.3, wh * 0.05, 'solutionPage_doctorTextBG').setDisplaySize(ww*0.5, wh*0.2).setOrigin(0.5, 0));
-        this.solutionPage.elements.push( this.CreatePhaserText(0.1, 0.07, "Based on your prior statin experience and stated perferences. Here are your top treatment options.", 
+        this.solutionPage.elements.push(this.CreatePhaserText(0.1, 0.07, "Based on your prior statin experience and stated perferences. Here are your top treatment options.", 
             0, 0, 'bold '+ww*0.036+'px Arial', '#000000', 0.005, 0.4) );
 
         
@@ -293,31 +352,50 @@ class SceneMain extends Phaser.Scene
             0.18
         ));
 
-        this.solutionPage.elements.push(this.add.image(ww * 0.92, wh * 0.9, 'solutionPage_back').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1));
+        let img_back = this.add.image(ww * 0.92, wh * 0.89, 'solutionPage_back').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1).setInteractive();
+        this.solutionPage.elements.push(img_back);
+        img_back.on('pointerup', () => {
+            if(prevPage != undefined)
+                this.ShowPage(prevPage); 
+        });
     }
+    
 
-    CreateStartConversationPage()
+    // ShowPage(index)
+    // {
+    //     if(index == -1)
+    //     {
+    //         for(let i = 0; i < this.pages.length; i++)
+    //             this.pages[i].ShowAll(false);
+    //         return;
+    //     }
+
+    //     if(this.pages.length <= index)
+    //         return;
+    //     for(let i = 0; i < this.pages.length; i++)
+    //     {
+    //         if(i == index)
+    //             this.pages[i].ShowAll(true);
+    //         else
+    //             this.pages[i].ShowAll(false);
+    //     }
+    // }
+
+    ShowPage(i_name)
     {
-
-    }
-
-    ShowPage(index)
-    {
-        if(index == -1)
-        {
-            for(let i = 0; i < this.pages.length; i++)
-                this.pages[i].ShowAll(false);
-            return;
-        }
-
-        if(this.pages.length <= index)
-            return;
+        prevPage = curPage;
+        curPage = undefined;
         for(let i = 0; i < this.pages.length; i++)
         {
-            if(i == index)
+            if(this.pages[i].name == i_name)
+            {
                 this.pages[i].ShowAll(true);
+                curPage = i_name;
+            }                
             else
+            {
                 this.pages[i].ShowAll(false);
+            }                
         }
     }
 
@@ -346,13 +424,15 @@ class SceneMain extends Phaser.Scene
     create() 
     {        
         this.GetQAFromJSON();
-        this.CreateStartPage();
-        this.CreateQuestionPage();
-        this.CreateSolutionPage();
-        this.CreateStartConversationPage();
-        this.ExtraWork();
         
-        this.ShowPage(0);
+        this.CreateStartPage();
+        this.CreateStartConversationPage();
+        this.CreateQuestionPage();
+        this.CreateConsultationPage();
+        this.CreateSolutionPage();        
+        this.ExtraWork();
+
+        this.ShowPage("StartPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)

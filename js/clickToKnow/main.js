@@ -5,7 +5,7 @@ var game;
 var ww = window.innerWidth;
 var wh = window.innerHeight;
 // var ww = 390;
-// var wh = 753;
+// var wh = 700;
 
 window.onload = function() 
 {
