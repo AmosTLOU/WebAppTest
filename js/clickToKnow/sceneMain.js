@@ -480,8 +480,11 @@ class SceneMain extends Phaser.Scene
         }
         else
         {
-            phaserText_MousePosition.text = "pX: " + ww + 
+            if(b_Debug)
+            {
+                phaserText_MousePosition.text = "pX: " + ww + 
                             "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
+            }            
         }
     }
 
