@@ -466,23 +466,22 @@ class SceneMain extends Phaser.Scene
 
     update() 
     {
-        if(b_Debug)
+        if(window.innerHeight < window.innerWidth)
         {
-            if(window.innerHeight < window.innerWidth)
+            if(b_Debug)
             {
                 phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
-                                "\t\tpY: " + this.input.mousePointer.y + "\n" +
-                                "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                                "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-                this.ShowPage(-1);
-                alert("Please access this website in potrait mode!");
+                            "\t\tpY: " + this.input.mousePointer.y + "\n" +
+                            "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+                            "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
             }
-            else
-            {
-                phaserText_MousePosition.text = "pX: " + ww + 
-                                "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
-            }
-            
+            this.ShowPage("nothing");
+            alert("Please access this website in potrait mode!");
+        }
+        else
+        {
+            phaserText_MousePosition.text = "pX: " + ww + 
+                            "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
         }
     }
 
