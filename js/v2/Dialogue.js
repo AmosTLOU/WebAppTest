@@ -1,33 +1,40 @@
-var rX_rightBnd = 0.9;
-var rX_leftBnd = 0.5;
-var rY_topBnd = 0.05;
-var rY_bottomBnd = 0.65;
-var padding_rX = 0.01;
-var padding_rY = 0.01;
-var padding_pX = padding_rX * ww;        
-var padding_pY = padding_rY * wh;
-var gapBetweenMsg_rY = 0.03;
-// var pW_OriginalMsgBg = undefined;
-var pH_OriginalMsgBg = undefined;
-var pH_OriginalAvatarIcon = undefined;
-var rY_ConAvatar = 0.04;
-var rX_ConAvatar = (wh * rY_ConAvatar / ww);
+// var rX_rightBnd = 0.9;
+// var rX_leftBnd = 0.5;
+// var rY_topBnd = 0.05;
+// var rY_bottomBnd = 0.65;
+// var padding_rX = 0.01;
+// var padding_rY = 0.01;
+// var padding_pX = padding_rX * ww;        
+// var padding_pY = padding_rY * wh;
+// var gapBetweenMsg_rY = 0.03;
+// // var pW_OriginalMsgBg = undefined;
+// var pH_OriginalMsgBg = undefined;
+// var pH_OriginalAvatarIcon = undefined;
+// var rY_ConAvatar = 0.04;
+// var rX_ConAvatar = (wh * rY_ConAvatar / ww);
 
-// Conversation Message, including phaser text and phaser image(bg)
-class ConMsg
+
+rX_box = undefined;
+rY_box = undefined;
+rW_box = undefined;
+rH_box = undefined;
+rW_avatar = undefined;
+rH_gapDialogues = undefined
+
+// represents a dialogue
+class Dialogue
 {
-    constructor(i_text, i_imgBG, i_imgAvatar, i_side) 
+    constructor(i_avatar, i_bg, i_text) 
     {      
-        this.txt = i_text;
-        this.bg = i_imgBG;
-        this.imgAvatar = i_imgAvatar;
-        this.side = i_side;   
+        this.bg = i_bg;
+        this.avatar = i_avatar;
+        this.text = i_text;
              
-        this.pW = this.txt.width + 2*padding_pX;
-        this.pH = this.txt.height + 2*padding_pY;
-        this.rW = this.pW/ww;
-        this.rH = this.pH/wh;
-        this.imgAvatar.setDisplaySize(wh * rY_ConAvatar, wh * rY_ConAvatar); 
+        // this.pW = this.txt.width + 2*padding_pX;
+        // this.pH = this.txt.height + 2*padding_pY;
+        // this.rW = this.pW/ww;
+        // this.rH = this.pH/wh;
+        this.avatar.setOrigin(0.5, ).setPosition(ww * (i_rX + i_rX + i_rW)*).setDisplaySize(wh * rY_ConAvatar, wh * rY_ConAvatar); 
         this.bg.setDisplaySize(this.pW, this.pH); 
 
         this.rX_left = undefined;
@@ -160,117 +167,135 @@ class ConMsg
 }
 
 
-// Conversation Manager, charge of Conversation Message
-class ConManager 
+
+class DialogueManager 
 {
-    constructor(i_bg, i_backButton) 
-    {
-        this.ArrMsg = new Array();
-        this.bg = i_bg;
-        this.backButton = i_backButton;
+    constructor(i_scene, i_KeyAvatar1, i_KeyAvatar2, i_KeyTextBG) 
+    {        
+        this.scene = i_scene;
+        this.keyAvatar1 = i_KeyAvatar1;
+        this.keyAvatar2 = i_KeyAvatar2;
+        this.keyTextBG = i_KeyTextBG;
+
+        this.visibility = true;
+
+        // this.ArrMsg = new Array();
+        this.dialogues = new Array();
     }
 
-    MsgCount()
-    {
-        return this.ArrMsg.length;
-    }
+    // MsgCount()
+    // {
+    //     return this.ArrMsg.length;
+    // }
 
-    AddMsg(conMsg)
+    Push(i_side, i_text)
     {
-        this.ArrMsg[this.ArrMsg.length] = conMsg;
-    }
-
-    ShowAllMsg(is_visible)
-    {
-        this.bg.visible = is_visible; 
-        this.backButton.visible = is_visible;
-        if(is_visible)
-        {
-            this.UpdateAllMsgPos();
-        }     
+        let img_avatar = undefined;
+        if(i_side == "left")
+            img_avatar = this.scene.add.image(ww * 0.22, wh * 0.2,  this.keyAvatar1).setDisplaySize(ww*0.15, ww*0.15);
+        else if(i_side == "right")
+            img_avatar = this.scene.add.image(ww * 0.22, wh * 0.2,  this.keyAvatar2).setDisplaySize(ww*0.15, ww*0.15);
         else
-        {
-            for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
-            {         
-                this.ArrMsg[i].Show(is_visible);
-            }  
-        }             
+            alert("The input i_side to DialogueManager.Push() funciton is invalid");
+
+        let img_textBG = this.scene.add.image(ww * 0.35, wh * 0.15, this.keyTextBG).setOrigin(0).setDisplaySize(ww*0.45, ww*0.15);
+        let text = this.scene.CreatePhaserText(0.37, 0.17, i_text, 
+        0, 0, 'bold '+ ww* rW_box * 0.1 + 'px Arial', '#000000', rW_box * 0.005, rW_box * 0.5);
+
+        this.dialogues.push(new Dialogue(img_avatar, img_textBG, text));
     }
 
-    UpdateAllMsgPos()
+    // AddMsg(conMsg)
+    // {
+    //     this.ArrMsg[this.ArrMsg.length] = conMsg;
+    // }
+
+    ShowAll(i_visibility)
     {
-        // The purpose of adding gapBetweenMsg_rY here is to make the RY of the bottom Message correct
-        let rY = rY_bottomBnd + gapBetweenMsg_rY;
-        let StartPlacingByFirstOne = false;
-        for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
+        if(this.visibility == i_visibility)
+            return;    
+
+        for(let i = 0; i < this.dialogues.length ; i++)
         {         
-            rY = rY - gapBetweenMsg_rY - this.ArrMsg[i].RH();
-            this.ArrMsg[i].UpdatePosByTopY(rY);
-            if(i == 0 && this.ArrMsg[i].IsEntirelyVisibleInBox())
+            this.dialogues[i].ShowAll(i_visibility);
+        }        
+        this.ResetDlgPos();
+        this.visibility = i_visibility;    
+    }
+
+    // reset dialogue positions
+    ResetDlgPos()
+    {
+        let rY = rY_box + rH_box;
+        let Placing_StartByFirstOne = false;
+        for(let i = this.dialogues.length-1; 0 <= i ; i--)
+        {         
+            rY = rY_box - rH_gapDialogues - this.dialogues[i].bg.height;
+            this.dialogues[i].SetPosRY(rY);
+            if(i == 0 && this.dialogues[i].IsEntirelyVisible())
             {
-                StartPlacingByFirstOne = true;
+                Placing_StartByFirstOne = true;
                 break;
             }
         }
 
-        if(StartPlacingByFirstOne)
+        if(Placing_StartByFirstOne)
         {
-            // The purpose of substracting ... (same as the above one)
-            rY = rY_topBnd - gapBetweenMsg_rY;
-            for(let i = 0; i < this.ArrMsg.length ; i++)
+            rY = rY_box;
+            for(let i = 0; i < this.dialogues.length ; i++)
             {         
-                rY += gapBetweenMsg_rY;
-                this.ArrMsg[i].UpdatePosByTopY(rY);
-                rY += this.ArrMsg[i].RH();
+                rY += rH_gapDialogues;
+                this.dialogues[i].SetPosRY(rY);
+                rY += this.dialogues[i].bg.height;
             }
         }
     }
 
-    Scroll(rOffset)
-    {
-        if(this.ArrMsg.length <= 0)
-        {            
-            return;
-        }            
+    // Scroll(rOffset)
+    // {
+    //     if(this.ArrMsg.length <= 0)
+    //     {            
+    //         return;
+    //     }            
 
-        let IsEntireVisible_FirstOne = this.ArrMsg[0].IsEntirelyVisibleInBox();
-        let IsEntireVisible_LastOne = this.ArrMsg[this.ArrMsg.length-1].IsEntirelyVisibleInBox();
-        // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
-        if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
-            return;
-        // when move up, the last one couldn't move above the bottom range
-        if(rOffset < 0)
-        {   
-            let ind = this.ArrMsg.length-1;
-            let prospective_rY_Bottom_lastOne = this.ArrMsg[ind].RY_Bottom() + rOffset;
-            if(IsEntireVisible_LastOne || this.ArrMsg[ind].RY_Bottom() <= rY_bottomBnd)
-            {
-                console.log("Bottom msg cannot move up anymore");
-                return;
-            }
-            else if(this.ArrMsg[ind].IsVisibleInBox() && prospective_rY_Bottom_lastOne < rY_bottomBnd)
-            {
-                rOffset = rY_bottomBnd - this.ArrMsg[ind].RY_Bottom();
-            }       
-        }
-        // when move down, the first one couldn't move below the top range
-        else if(0 < rOffset)
-        {            
-            let prospective_rY_Top_firstOne = this.ArrMsg[0].RY_Top() + rOffset;
-            if(IsEntireVisible_FirstOne || rY_topBnd <= this.ArrMsg[0].RY_Top())
-            {
-                console.log("Top msg cannot move down anymore");
-                return;
-            }
-            else if(this.ArrMsg[0].IsVisibleInBox() && rY_topBnd < prospective_rY_Top_firstOne)
-            {
-                rOffset = rY_topBnd - this.ArrMsg[0].RY_Top();
-            }
-        }
+    //     let IsEntireVisible_FirstOne = this.ArrMsg[0].IsEntirelyVisibleInBox();
+    //     let IsEntireVisible_LastOne = this.ArrMsg[this.ArrMsg.length-1].IsEntirelyVisibleInBox();
+    //     // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
+    //     if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
+    //         return;
+    //     // when move up, the last one couldn't move above the bottom range
+    //     if(rOffset < 0)
+    //     {   
+    //         let ind = this.ArrMsg.length-1;
+    //         let prospective_rY_Bottom_lastOne = this.ArrMsg[ind].RY_Bottom() + rOffset;
+    //         if(IsEntireVisible_LastOne || this.ArrMsg[ind].RY_Bottom() <= rY_bottomBnd)
+    //         {
+    //             console.log("Bottom msg cannot move up anymore");
+    //             return;
+    //         }
+    //         else if(this.ArrMsg[ind].IsVisibleInBox() && prospective_rY_Bottom_lastOne < rY_bottomBnd)
+    //         {
+    //             rOffset = rY_bottomBnd - this.ArrMsg[ind].RY_Bottom();
+    //         }       
+    //     }
+    //     // when move down, the first one couldn't move below the top range
+    //     else if(0 < rOffset)
+    //     {            
+    //         let prospective_rY_Top_firstOne = this.ArrMsg[0].RY_Top() + rOffset;
+    //         if(IsEntireVisible_FirstOne || rY_topBnd <= this.ArrMsg[0].RY_Top())
+    //         {
+    //             console.log("Top msg cannot move down anymore");
+    //             return;
+    //         }
+    //         else if(this.ArrMsg[0].IsVisibleInBox() && rY_topBnd < prospective_rY_Top_firstOne)
+    //         {
+    //             rOffset = rY_topBnd - this.ArrMsg[0].RY_Top();
+    //         }
+    //     }
 
-        for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
-        {
-            this.ArrMsg[i].Translate(rOffset);
-        }
-    }
+    //     for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
+    //     {
+    //         this.ArrMsg[i].Translate(rOffset);
+    //     }
+    // }
 }

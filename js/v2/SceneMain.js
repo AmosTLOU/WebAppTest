@@ -293,6 +293,7 @@ class SceneMain extends Phaser.Scene
     CreateConsultationPage()
     {
         this.consultationPage = new ConsultationPage();
+        this.consultationPage.dialogueManager = new DialogueManager();
         this.pages.push(this.consultationPage);
         // static
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'consultationPage_bg').setDisplaySize(ww, wh));
