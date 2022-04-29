@@ -46,6 +46,7 @@ class QuestionPage extends BasePage
     {   
         super("QuestionPage");
         this.scene = i_scene;
+        this.historyLayer = new Array();
         this.mulSelector = new MultiSelector(true);
         this.jsonData = undefined;
         this.GetJSONData();
@@ -75,6 +76,24 @@ class QuestionPage extends BasePage
     // i_ln == input layer name
     SetContentByLayerName(i_ln)
     {        
+        if(0 < this.historyLayer.length)
+        {
+            let newArray = new Array();
+            for(let i = 0; i < this.historyLayer.length; i++)
+            {
+                if(this.historyLayer[i] == i_ln)
+                {
+                    this.historyLayer = newArray;
+                    break;
+                }                    
+                else
+                {
+                    newArray.push(this.historyLayer[i]);
+                }                    
+            }            
+        }
+        this.historyLayer.push(i_ln);
+
         let layerContent = this.jsonData[i_ln];  
         this.mulSelector.cnt = layerContent.length - 1;
         for(let i = 0; i < layerContent.length; i++)
@@ -95,6 +114,19 @@ class QuestionPage extends BasePage
             }                
         }
         this.mulSelector.ShowAll(true);  
+    }
+
+    GoBackInLayer()
+    {
+        if(this.historyLayer.length <= 1)
+        {
+            this.scene.ShowPage("StartConversationPage");
+        }
+        else
+        {
+            this.SetContentByLayerName(this.historyLayer[this.historyLayer.length-2]);
+        }
+        return;
     }
 
     SubmitChoice()

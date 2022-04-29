@@ -16,22 +16,26 @@ class BaseSolution
 
     ArrangePos()
     {
+        let phEl = undefined;
+
         this.bg.setOrigin(0).setPosition(ww * this.rX, wh * this.rY).setDisplaySize(ww * this.rW, wh * this.rH);
-        this.icon.setPosition(ww * (this.rX + this.rW*0.15), wh * (this.rY*2 + this.rH)*0.5).setDisplaySize(ww * this.rW * 0.2, ww * this.rW * 0.2);
+        phEl = this.icon;
+        this.icon.setPosition(ww * (this.rX + this.rW*0.15), wh * (this.rY*2 + this.rH)*0.5).setDisplaySize(ww*this.rW*0.2, ww*this.rW*0.2 * phEl.height/phEl.width);
 
         let gap_rY = this.rH * 0.05;
-        this.title1.setFontSize(ww*this.rW*0.055 + "px");
+        this.title1.setFontSize(Math.round(ww*this.rW*0.055) + "px");
         this.title1.setPosition(ww * (this.rX + this.rW*0.3), wh * (this.rY + this.rH*0.1));
-        this.title1.setWordWrapWidth(ww*this.rW*0.75);
+        this.title1.setWordWrapWidth(Math.round(ww*this.rW*0.75));
 
-        this.title2.setFontSize(ww*this.rW*0.055 + "px");
+        this.title2.setFontSize(Math.round(ww*this.rW*0.055) + "px");
         this.title2.setFontStyle('bold');
         this.title2.setPosition(ww * (this.rX + this.rW*0.3), wh * ((this.title1.y + this.title1.height)/wh + gap_rY));
         this.title2.setWordWrapWidth(ww*this.rW*0.75);
         
-        this.dsp.setFontSize(ww*this.rW*0.04 + "px");
+        this.dsp.setFontSize(Math.round(ww*this.rW*0.04) + "px");
+        this.dsp.setLineSpacing(Math.round(ww*this.rW*0.015));
         this.dsp.setPosition(ww * (this.rX + this.rW*0.3), wh * ((this.title2.y + this.title2.height)/wh + gap_rY));
-        this.dsp.setWordWrapWidth(ww*this.rW*0.75);
+        this.dsp.setWordWrapWidth(Math.round(ww*this.rW*0.72));
     }
 
     ShowAll(i_visibility)

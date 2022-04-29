@@ -16,9 +16,9 @@ window.onload = function()
     }
     // non-mobile
     if (isMobile == -1) 
-    {
-        ww = 550;
-        wh = 900;
+    {        
+        wh = window.innerHeight;
+        ww = wh * 0.6;
         var config = 
         {
             type: Phaser.AUTO,

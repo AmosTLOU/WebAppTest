@@ -1,13 +1,13 @@
 // The coordinates defing the box containing all dialogues.
 // The origin is at top-left
-rX_box = 0.12;
-rY_box = 0.12;
-rW_box = 0.8;
-rH_box = 0.56;
-rW_avatar = 0.15;
-rW_bufferAroundAvatar = rW_avatar * 0.2;
-rH_gapDialogues = 0.02;
-rFontSize = 0.04;
+var rX_box = 0.12;
+var rY_box = 0.12;
+var rW_box = 0.8;
+var rH_box = 0.56;
+var rW_avatar = 0.15;
+var rW_bufferAroundAvatar = rW_avatar * 0.2;
+var rH_gapDialogues = 0.02;
+var rFontSize = 0.04;
 
 // represents a dialogue
 class Dialogue
