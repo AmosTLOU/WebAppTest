@@ -470,8 +470,8 @@ class SceneMain extends Phaser.Scene
         this.CreateSolutionPage();        
         this.ExtraWork();
 
-        // this.ShowPage("StartPage");
-        this.ShowPage("QuestionPage");
+        this.ShowPage("StartPage");
+        // this.ShowPage("QuestionPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
