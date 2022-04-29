@@ -314,7 +314,7 @@ class DialogueManager
         if(rOffset < 0)
         {   
             let ind = this.dialogues.length-1;
-            let rY_bottom_lastOne = (this.dialogues[ind].bg.y + this.dialogues[ind].bg.height*0.5)/wh;
+            let rY_bottom_lastOne = (this.dialogues[ind].bg.y + this.dialogues[ind].bg.displayHeight*0.5)/wh;
             let prospective_rY_bottom_lastOne = rY_bottom_lastOne + rOffset;
             if(IsEntireVisible_LastOne || rY_bottom_lastOne <= rY_box + rH_box)
             {
@@ -330,7 +330,7 @@ class DialogueManager
         else if(0 < rOffset)
         {            
             let ind = 0;
-            let rY_top_firstOne = (this.dialogues[ind].bg.y - this.dialogues[ind].bg.height*0.5)/wh;
+            let rY_top_firstOne = (this.dialogues[ind].bg.y - this.dialogues[ind].bg.displayHeight*0.5)/wh;
             let prospective_rY_top_firstOne = rY_top_firstOne + rOffset;
             if(IsEntireVisible_FirstOne || rY_box <= rY_top_firstOne)
             {

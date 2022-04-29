@@ -16,7 +16,7 @@ class SceneMain extends Phaser.Scene
         this.solutionPage = undefined;
         this.startConversationPage = undefined;
         this.consultationPage = undefined;
-        this.qaSystem = new QASystem();
+        this.qaSystem = undefined;
         this.pages = new Array();
     }
 
@@ -74,35 +74,6 @@ class SceneMain extends Phaser.Scene
         this.load.image('solutionPage_solutionBG', 'assets/MockUp2/SolutionPage/SolutionPage_SolutionBoard.png');
     }
 
-    GetQAFromJSON()
-    {     
-        let formatQA = 1;
-        let pathJSON = undefined;
-
-        // Get json from online resources
-        // pathJSON = "https://amostlou.github.io/WebAppTest/data_V0.json";
-        // Get json from files
-        // pathJSON = "JSON/data_V0.json";
-        pathJSON = "JSON/data_V1.json";
-        
-        if(formatQA == 0)
-        {
-            $.getJSON(pathJSON, function(json) {
-                // console.log(json);
-                // console.log(json.name);
-
-                
-            });
-        }
-        else if(formatQA == 1)
-        {
-            $.getJSON(pathJSON, function(json) {
-                
-            });
-        }       
-        
-    }
-
     CreatePhaserText(rX, rY, text, oX, oY, i_font, i_fill, rH_linSpacing, rW_wordWrap=1)
     {
         let ret = this.make.text
@@ -116,7 +87,7 @@ class SceneMain extends Phaser.Scene
                 font: i_font,
                 fill: i_fill,
                 lineSpacing: wh * rH_linSpacing,
-                wordWrap: { width: ww * rW_wordWrap }
+                wordWrap: { width: ww * rW_wordWrap, useAdvancedWrap: true }
             }
         })
         return ret;
@@ -310,14 +281,14 @@ class SceneMain extends Phaser.Scene
         let el = document.getElementById(nameInputField);
 
         el.style.position = "absolute"
-        el.style.top = wh * (rY_box + rH_box) + "px";
-        el.style.left = ww * rX_box + "px";
+        el.style.top = wh * 0.82 + "px";
+        el.style.left = ww * 0.28 + "px";
         // Padding is used to create buffer area between the text and the edge.
         // But after adding padding, the actual w and h of the text area would become the sum of width and padding/height of padding,
         // So we need to substract the padding from width and height first.
         let p_padding = 10;
-        el.style.width = ww * rW_box - 2*p_padding + "px";
-        el.style.height = 100 - 2*p_padding + "px";
+        el.style.width = ww * rW_box*0.8 - 2*p_padding + "px";
+        el.style.height = 50 - 2*p_padding + "px";
         
         el.style.paddingTop =  p_padding + "px";
         el.style.paddingBottom =  p_padding + "px";
@@ -325,7 +296,7 @@ class SceneMain extends Phaser.Scene
         el.style.paddingRight =  p_padding + "px";
 
         el.style.borderRadius = wh * 0.015 + "px";
-        el.style.fontSize = wh * 0.02 + "px";
+        el.style.fontSize = wh * 0.03 + "px";
         el.style.lineHeight = wh * 0.03 + "px";        
         el.value = text_prompt;
 
@@ -353,13 +324,14 @@ class SceneMain extends Phaser.Scene
     CreateConsultationPage()
     {
         this.consultationPage = new ConsultationPage();
+        this.qaSystem = new QASystem(this);
         this.consultationPage.dialogueManager = new DialogueManager(this, 'consultationPage_doctorAvatar', 'consultationPage_userAvatar', 'consultationPage_textBG');
         this.pages.push(this.consultationPage);
         // static
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'consultationPage_bg').setDisplaySize(ww, wh));
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.85, 'consultationPage_inputFieldBG').setDisplaySize(ww*0.6, ww*0.1));
-        this.consultationPage.elements.push(this.CreatePhaserText(0.5, 0.85, "Type in your questions", 
-        0.5, 0.5, ww*0.035+'px Arial', '#000000', 0.005, 0.4));
+        // this.consultationPage.elements.push(this.CreatePhaserText(0.5, 0.85, "Type in your questions", 
+        // 0.5, 0.5, ww*0.035+'px Arial', '#000000', 0.005, 0.4));
 
         // back button
         let img_back = this.add.image(ww * 0.05, wh * 0.02, 'consultationPage_back').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0).setInteractive();
@@ -371,13 +343,12 @@ class SceneMain extends Phaser.Scene
         img_submit.on('pointerup', () => { this.ShowPage("SolutionPage"); });
         
 
-        for(let i = 1; i <= 8; i++)
-        {
-            let side = (i&1) == 1 ? 'L' : 'R';
-            this.consultationPage.dialogueManager.Push(side, "Dialogue" + i);
-        }
-        // this.consultationPage.dialogueManager.Push("l", "Do you have any question about Statins?");
-        // this.consultationPage.dialogueManager.Push("r", "Hello Doctor!");
+        // for(let i = 1; i <= 7; i++)
+        // {
+        //     let side = (i&1) == 1 ? 'L' : 'R';
+        //     this.consultationPage.dialogueManager.Push(side, "Dialogue" + i);
+        // }
+        this.consultationPage.dialogueManager.Push("l", "Do you have any question about Statins?");
         this.consultationPage.dialogueManager.ResetDlgPos();
 
         // phaser built-in wheel is not working, have to use js built-in wheel instead
@@ -505,9 +476,7 @@ class SceneMain extends Phaser.Scene
     }    
     
     create() 
-    {        
-        this.GetQAFromJSON();
-        
+    {                
         this.CreateStartPage();
         this.CreateStartConversationPage();
         this.CreateQuestionPage();
@@ -516,7 +485,7 @@ class SceneMain extends Phaser.Scene
         this.ExtraWork();
 
         // this.ShowPage("StartPage");
-        this.ShowPage("ConsultationPage");
+        this.ShowPage("QuestionPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
