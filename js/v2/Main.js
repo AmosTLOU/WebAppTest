@@ -4,10 +4,8 @@ var game;
 // window with and window height
 var prevWW_forDebug = undefined;
 var prevWH_forDebug = undefined;
-var ww = window.innerWidth;
-var wh = window.innerHeight;
-// ww = 390;
-// wh = 700;
+var ww = undefined;
+var wh = undefined;
 
 window.onload = function() 
 {
@@ -19,11 +17,11 @@ window.onload = function()
     // non-mobile
     if (isMobile == -1) 
     {
+        ww = 550;
+        wh = 900;
         var config = 
         {
             type: Phaser.AUTO,
-            // width: 480,
-            // height: 640,
             width: ww,
             height: wh,
             parent: 'phaser-game',
@@ -33,11 +31,11 @@ window.onload = function()
     // mobile
     else 
     {
+        ww = window.innerWidth;
+        wh = window.innerHeight;
         var config = 
         {
             type: Phaser.AUTO,
-            // width: window.innerWidth,
-            // height: window.innerHeight,
             width: ww,
             height: wh,
             // need to add the resolution config below, otherwise things will be blurry on mobile devices

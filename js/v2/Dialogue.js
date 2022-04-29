@@ -1,18 +1,3 @@
-// var rX_rightBnd = 0.9;
-// var rX_leftBnd = 0.5;
-// var rY_topBnd = 0.05;
-// var rY_bottomBnd = 0.65;
-// var padding_rX = 0.01;
-// var padding_rY = 0.01;
-// var padding_pX = padding_rX * ww;        
-// var padding_pY = padding_rY * wh;
-// var gapBetweenMsg_rY = 0.03;
-// // var pW_OriginalMsgBg = undefined;
-// var pH_OriginalMsgBg = undefined;
-// var pH_OriginalAvatarIcon = undefined;
-// var rY_ConAvatar = 0.04;
-// var rX_ConAvatar = (wh * rY_ConAvatar / ww);
-
 // The coordinates defing the box containing all dialogues.
 // The origin is at top-left
 rX_box = 0.12;
@@ -32,27 +17,7 @@ class Dialogue
         this.avatar = i_avatar;
         this.bg = i_bg;
         this.text = i_text;
-             
-        // this.pW = this.txt.width + 2*padding_pX;
-        // this.pH = this.txt.height + 2*padding_pY;
-        // this.rW = this.pW/ww;
-        // this.rH = this.pH/wh;
-        // this.avatar.setOrigin(0.5, ).setPosition(ww * (i_rX + i_rX + i_rW)*).setDisplaySize(wh * rY_ConAvatar, wh * rY_ConAvatar); 
-        // this.bg.setDisplaySize(this.pW, this.pH); 
-
-        // this.rX_left = undefined;
-        // if(this.side == 0)
-        // {
-        //     this.rX_left = rX_leftBnd + rX_ConAvatar + padding_rX;
-        // }
-        // else if(this.side == 1)
-        // {
-        //     this.rX_left = rX_rightBnd - this.rW  - rX_ConAvatar - padding_rX;
-        // }   
-        // this.rY_Top = undefined;              
     }
-
-
 
     ShowAll(i_visibility)
     {

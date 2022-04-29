@@ -282,7 +282,7 @@ class SceneMain extends Phaser.Scene
         el.style.paddingRight =  p_padding + "px";
 
         el.style.borderRadius = wh * 0.015 + "px";
-        el.style.fontSize = wh * 0.03 + "px";
+        el.style.fontSize = ww * 0.05 + "px";
         el.style.lineHeight = wh * 0.03 + "px";        
         el.value = text_prompt;
 
@@ -316,8 +316,6 @@ class SceneMain extends Phaser.Scene
         // static
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'consultationPage_bg').setDisplaySize(ww, wh));
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.85, 'consultationPage_inputFieldBG').setDisplaySize(ww*0.6, ww*0.1));
-        // this.consultationPage.elements.push(this.CreatePhaserText(0.5, 0.85, "Type in your questions", 
-        // 0.5, 0.5, ww*0.035+'px Arial', '#000000', 0.005, 0.4));
 
         // back button
         let img_back = this.add.image(ww * 0.05, wh * 0.02, 'consultationPage_back').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0).setInteractive();
@@ -327,7 +325,6 @@ class SceneMain extends Phaser.Scene
         let img_submit = this.add.image(ww * 0.92, wh * 0.89, 'questionPage_submit').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1).setInteractive();
         this.consultationPage.elements.push(img_submit);
         img_submit.on('pointerup', () => { this.ShowPage("SolutionPage"); });
-        
 
         // for(let i = 1; i <= 7; i++)
         // {
@@ -471,7 +468,7 @@ class SceneMain extends Phaser.Scene
         this.ExtraWork();
 
         this.ShowPage("StartPage");
-        // this.ShowPage("QuestionPage");
+        // this.ShowPage("ConsultationPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
@@ -494,22 +491,6 @@ class SceneMain extends Phaser.Scene
 
     update() 
     {
-        // landscape
-        if(window.innerHeight < window.innerWidth)
-        {
-            if(prevWH_forDebug == window.innerHeight && prevWW_forDebug == window.innerWidth)
-                return;
-            prevWH_forDebug = window.innerHeight;
-            prevWW_forDebug = window.innerWidth;
-            this.ShowPage("nothing");
-            alert("Please access this website in potrait mode!");
-        }
-        // portrait
-        else
-        {
-                   
-        }
-
         if(b_Debug)
         {
             phaserText_Debug.text = "pX: " +  ww + 
@@ -518,7 +499,33 @@ class SceneMain extends Phaser.Scene
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
                         "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-        }     
+        }  
+
+        if(isMobile)
+        {
+
+        }
+        else
+        {
+            // landscape
+            // if(window.innerHeight < window.innerWidth)
+            // {                
+            //     if(prevWH_forDebug == window.innerHeight && prevWW_forDebug == window.innerWidth)
+            //         return;
+            //     prevWH_forDebug = window.innerHeight;
+            //     prevWW_forDebug = window.innerWidth;
+            //     this.ShowPage("nothing");
+            //     alert("Please access this website in potrait mode!");
+            // }            
+            // // portrait
+            // else
+            // {
+                    
+            // }
+        }
+        
+
+           
     }
 
 
