@@ -1,4 +1,4 @@
-var b_Debug = true;
+var b_Debug = false;
 var phaserText_MousePosition;
 
 var prevPage = undefined;
