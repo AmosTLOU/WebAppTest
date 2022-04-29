@@ -13,62 +13,75 @@
 // var rY_ConAvatar = 0.04;
 // var rX_ConAvatar = (wh * rY_ConAvatar / ww);
 
-
-rX_box = undefined;
-rY_box = undefined;
-rW_box = undefined;
-rH_box = undefined;
-rW_avatar = undefined;
-rH_gapDialogues = undefined
+// The coordinates defing the box containing all dialogues.
+// The origin is at top-left
+rX_box = 0.12;
+rY_box = 0.12;
+rW_box = 0.8;
+rH_box = 0.56;
+rW_avatar = 0.15;
+rW_bufferAroundAvatar = rW_avatar * 0.2;
+rH_gapDialogues = 0.02;
+rFontSize = 0.04;
 
 // represents a dialogue
 class Dialogue
 {
     constructor(i_avatar, i_bg, i_text) 
     {      
-        this.bg = i_bg;
         this.avatar = i_avatar;
+        this.bg = i_bg;
         this.text = i_text;
+
+        this.visibility = true;
              
         // this.pW = this.txt.width + 2*padding_pX;
         // this.pH = this.txt.height + 2*padding_pY;
         // this.rW = this.pW/ww;
         // this.rH = this.pH/wh;
-        this.avatar.setOrigin(0.5, ).setPosition(ww * (i_rX + i_rX + i_rW)*).setDisplaySize(wh * rY_ConAvatar, wh * rY_ConAvatar); 
-        this.bg.setDisplaySize(this.pW, this.pH); 
+        // this.avatar.setOrigin(0.5, ).setPosition(ww * (i_rX + i_rX + i_rW)*).setDisplaySize(wh * rY_ConAvatar, wh * rY_ConAvatar); 
+        // this.bg.setDisplaySize(this.pW, this.pH); 
 
-        this.rX_left = undefined;
-        if(this.side == 0)
-        {
-            this.rX_left = rX_leftBnd + rX_ConAvatar + padding_rX;
-        }
-        else if(this.side == 1)
-        {
-            this.rX_left = rX_rightBnd - this.rW  - rX_ConAvatar - padding_rX;
-        }   
-        this.rY_Top = undefined;              
+        // this.rX_left = undefined;
+        // if(this.side == 0)
+        // {
+        //     this.rX_left = rX_leftBnd + rX_ConAvatar + padding_rX;
+        // }
+        // else if(this.side == 1)
+        // {
+        //     this.rX_left = rX_rightBnd - this.rW  - rX_ConAvatar - padding_rX;
+        // }   
+        // this.rY_Top = undefined;              
     }
 
-    RY_Top()
-    {
-        return this.rY_Top;
-    }    
 
-    RY_Bottom()
+
+    ShowAll(i_visibility)
     {
-        return this.rY_Top + this.rH;
+        if(this.visibility == i_visibility)
+            return;
+
+        this.avatar.visible = i_visibility;
+        this.bg.visible = i_visibility;
+        this.text.visible = i_visibility;
+
+        this.visibility = i_visibility;
     }
 
-    RH()
-    {
-        return this.rH;
-    }
 
-    Show(is_visible) 
+    SetPosRY(i_rY)
     {
-        this.txt.visible = is_visible;
-        this.bg.visible = is_visible;    
-        this.imgAvatar.visible = is_visible;    
+        let old_pY_avatar = this.avatar.y;
+        let new_pY_avatar = wh * i_rY;
+        let offset_pY = new_pY_avatar - old_pY_avatar;
+
+        this.avatar.setY(new_pY_avatar);
+        this.bg.setY(this.bg.y + offset_pY);
+        this.text.setY(this.text.y + offset_pY);
+
+        this.CropByRange(this.avatar);
+        this.CropByRange(this.bg);
+        this.CropByRange(this.text);
     }
 
     UpdatePosByTopY(i_rY)
@@ -144,25 +157,47 @@ class Dialogue
             }            
             
         }
-        
-        // console.log(pX_center + "  " + pY_center);
+    }
+
+
+    // phEl == phaser element
+    CropByRange(phEl)
+    {
+        let pY_min_el = phEl.y - phEl.displayHeight * phEl.originY;
+        let pY_max_el = phEl.y + phEl.displayHeight * (1-phEl.originY);
+        let pY_min_visible = Math.max(pY_min_el, wh * rY_box);
+        let pY_max_visible = Math.min(pY_max_el, wh * (rY_box + rH_box));
+        if(pY_min_visible < pY_max_visible)
+        {
+            let pY_startingCropping = 0;
+            if(pY_min_el < wh * rY_box)
+                pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
+            phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
+        }
+        else
+        {
+            phEl.setCrop(0,0,0,0);
+        }        
     }
 
     Translate(rOffset)
     {
-        this.UpdatePosByTopY(this.rY_Top + rOffset);
+        this.SetPosRY(this.avatar.y/wh + rOffset);        
     }
 
-    IsVisibleInBox()
-    {        
-        return ((rY_topBnd < this.rY_Top) && (this.rY_Top < rY_bottomBnd)) ||
-                ((rY_topBnd < this.RY_Bottom()) && (this.RY_Bottom() < rY_bottomBnd)) ||
-                ((this.rY_Top <= rY_topBnd) && (rY_bottomBnd <= this.RY_Bottom()));
-    }
-
-    IsEntirelyVisibleInBox()
+    IsVisible()
     {
-        return (rY_topBnd <= this.rY_Top) && (this.RY_Bottom() <= rY_bottomBnd);
+        let rY_min = (this.bg.y - this.bg.displayHeight/2) / wh;
+        let rY_max = (this.bg.y + this.bg.displayHeight/2) / wh;
+        return (rY_box <= rY_max && rY_min <= rY_box + rH_box)
+    }
+
+
+    IsEntirelyVisible()
+    {
+        let rY_min = (this.bg.y - this.bg.displayHeight/2) / wh;
+        let rY_max = (this.bg.y + this.bg.displayHeight/2) / wh;
+        return (rY_box <= rY_min && rY_max <= rY_box + rH_box);
     }
 }
 
@@ -178,37 +213,43 @@ class DialogueManager
         this.keyTextBG = i_KeyTextBG;
 
         this.visibility = true;
-
-        // this.ArrMsg = new Array();
         this.dialogues = new Array();
     }
 
-    // MsgCount()
-    // {
-    //     return this.ArrMsg.length;
-    // }
 
     Push(i_side, i_text)
     {
+        let img_textBG = this.scene.add.image(0, 0, this.keyTextBG);
+        // the value is not important
+        let pY_avatar = wh*0.3;
         let img_avatar = undefined;
-        if(i_side == "left")
-            img_avatar = this.scene.add.image(ww * 0.22, wh * 0.2,  this.keyAvatar1).setDisplaySize(ww*0.15, ww*0.15);
-        else if(i_side == "right")
-            img_avatar = this.scene.add.image(ww * 0.22, wh * 0.2,  this.keyAvatar2).setDisplaySize(ww*0.15, ww*0.15);
+        let text = undefined;
+        if(i_side == "l" || i_side == "L")
+        {
+            img_avatar = this.scene.add.image(ww * (rX_box + rW_bufferAroundAvatar + rW_avatar/2), pY_avatar,  this.keyAvatar1).setOrigin(0.5, 0).setDisplaySize(ww*rW_avatar, ww*rW_avatar);
+            text = this.scene.CreatePhaserText(img_avatar.x/ww + rW_avatar/2 + rW_bufferAroundAvatar, img_avatar.y/wh, i_text, 
+            0, 0, 'bold '+ ww * rFontSize + 'px Arial', '#000000', 0, rW_box * 0.5);
+            img_textBG.setPosition(text.x + text.width/2, text.y + text.height/2).setDisplaySize(text.width + ww * rW_bufferAroundAvatar, text.height + ww * rW_bufferAroundAvatar);
+        }            
+        else if(i_side == "r" || i_side == "R")
+        {
+            img_avatar = this.scene.add.image(ww * (rX_box + rW_box - rW_bufferAroundAvatar - rW_avatar/2), pY_avatar,  this.keyAvatar2).setOrigin(0.5, 0).setDisplaySize(ww*rW_avatar, ww*rW_avatar);
+            text = this.scene.CreatePhaserText(img_avatar.x/ww - rW_avatar/2 - rW_bufferAroundAvatar, img_avatar.y/wh, i_text, 
+            1, 0, 'bold '+ ww * rFontSize + 'px Arial', '#000000', 0, rW_box * 0.5);
+            img_textBG.setPosition(text.x - text.width/2, text.y + text.height/2).setDisplaySize(text.width + ww * rW_bufferAroundAvatar, text.height + ww * rW_bufferAroundAvatar);
+        }
         else
             alert("The input i_side to DialogueManager.Push() funciton is invalid");
 
-        let img_textBG = this.scene.add.image(ww * 0.35, wh * 0.15, this.keyTextBG).setOrigin(0).setDisplaySize(ww*0.45, ww*0.15);
-        let text = this.scene.CreatePhaserText(0.37, 0.17, i_text, 
-        0, 0, 'bold '+ ww* rW_box * 0.1 + 'px Arial', '#000000', rW_box * 0.005, rW_box * 0.5);
-
+        if(img_textBG.displayHeight < ww*rW_avatar)
+        {
+            img_textBG.setDisplaySize(img_textBG.displayWidth, ww*rW_avatar);
+            img_textBG.setY(text.y - ww * rW_bufferAroundAvatar * 0.5 + img_textBG.displayHeight*0.5);
+        }
+        img_avatar.y = img_textBG.y - img_textBG.displayHeight/2;
+        // after the above setting, the relative distance and scale of avatar, text_bg and text would be correct.
         this.dialogues.push(new Dialogue(img_avatar, img_textBG, text));
     }
-
-    // AddMsg(conMsg)
-    // {
-    //     this.ArrMsg[this.ArrMsg.length] = conMsg;
-    // }
 
     ShowAll(i_visibility)
     {
@@ -218,8 +259,9 @@ class DialogueManager
         for(let i = 0; i < this.dialogues.length ; i++)
         {         
             this.dialogues[i].ShowAll(i_visibility);
-        }        
-        this.ResetDlgPos();
+        }  
+        if(i_visibility)      
+            this.ResetDlgPos();
         this.visibility = i_visibility;    
     }
 
@@ -229,8 +271,8 @@ class DialogueManager
         let rY = rY_box + rH_box;
         let Placing_StartByFirstOne = false;
         for(let i = this.dialogues.length-1; 0 <= i ; i--)
-        {         
-            rY = rY_box - rH_gapDialogues - this.dialogues[i].bg.height;
+        {        
+            rY -= rH_gapDialogues + this.dialogues[i].bg.displayHeight/wh;
             this.dialogues[i].SetPosRY(rY);
             if(i == 0 && this.dialogues[i].IsEntirelyVisible())
             {
@@ -246,56 +288,64 @@ class DialogueManager
             {         
                 rY += rH_gapDialogues;
                 this.dialogues[i].SetPosRY(rY);
-                rY += this.dialogues[i].bg.height;
+                rY += this.dialogues[i].bg.displayHeight/wh;
             }
         }
     }
 
-    // Scroll(rOffset)
-    // {
-    //     if(this.ArrMsg.length <= 0)
-    //     {            
-    //         return;
-    //     }            
+    Scroll(rOffset)
+    {
 
-    //     let IsEntireVisible_FirstOne = this.ArrMsg[0].IsEntirelyVisibleInBox();
-    //     let IsEntireVisible_LastOne = this.ArrMsg[this.ArrMsg.length-1].IsEntirelyVisibleInBox();
-    //     // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
-    //     if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
-    //         return;
-    //     // when move up, the last one couldn't move above the bottom range
-    //     if(rOffset < 0)
-    //     {   
-    //         let ind = this.ArrMsg.length-1;
-    //         let prospective_rY_Bottom_lastOne = this.ArrMsg[ind].RY_Bottom() + rOffset;
-    //         if(IsEntireVisible_LastOne || this.ArrMsg[ind].RY_Bottom() <= rY_bottomBnd)
-    //         {
-    //             console.log("Bottom msg cannot move up anymore");
-    //             return;
-    //         }
-    //         else if(this.ArrMsg[ind].IsVisibleInBox() && prospective_rY_Bottom_lastOne < rY_bottomBnd)
-    //         {
-    //             rOffset = rY_bottomBnd - this.ArrMsg[ind].RY_Bottom();
-    //         }       
-    //     }
-    //     // when move down, the first one couldn't move below the top range
-    //     else if(0 < rOffset)
-    //     {            
-    //         let prospective_rY_Top_firstOne = this.ArrMsg[0].RY_Top() + rOffset;
-    //         if(IsEntireVisible_FirstOne || rY_topBnd <= this.ArrMsg[0].RY_Top())
-    //         {
-    //             console.log("Top msg cannot move down anymore");
-    //             return;
-    //         }
-    //         else if(this.ArrMsg[0].IsVisibleInBox() && rY_topBnd < prospective_rY_Top_firstOne)
-    //         {
-    //             rOffset = rY_topBnd - this.ArrMsg[0].RY_Top();
-    //         }
-    //     }
+        if(this.dialogues.length <= 0)
+        {            
+            return;
+        }            
 
-    //     for(let i = this.ArrMsg.length-1; 0 <= i ; i--)
-    //     {
-    //         this.ArrMsg[i].Translate(rOffset);
-    //     }
-    // }
+        let IsEntireVisible_FirstOne = this.dialogues[0].IsEntirelyVisible();
+        let IsEntireVisible_LastOne = this.dialogues[this.dialogues.length-1].IsEntirelyVisible();
+        // no matter offset is positive or negative, if the first and the last one are both entirely visible, then don't allow scrolling
+        if(IsEntireVisible_FirstOne && IsEntireVisible_LastOne)
+        {
+            console.log("All dialogues are visible, scrolling is not allowed.");
+            return;
+        }
+            
+        // when move up, the last one couldn't move above the bottom range
+        if(rOffset < 0)
+        {   
+            let ind = this.dialogues.length-1;
+            let rY_bottom_lastOne = (this.dialogues[ind].bg.y + this.dialogues[ind].bg.height*0.5)/wh;
+            let prospective_rY_bottom_lastOne = rY_bottom_lastOne + rOffset;
+            if(IsEntireVisible_LastOne || rY_bottom_lastOne <= rY_box + rH_box)
+            {
+                console.log("Bottom msg cannot move up anymore");
+                return;
+            }
+            else if(this.dialogues[ind].IsVisible() && prospective_rY_bottom_lastOne < rY_box + rH_box)
+            {
+                rOffset = rY_box + rH_box - rY_bottom_lastOne;
+            }       
+        }
+        // when move down, the first one couldn't move below the top range
+        else if(0 < rOffset)
+        {            
+            let ind = 0;
+            let rY_top_firstOne = (this.dialogues[ind].bg.y - this.dialogues[ind].bg.height*0.5)/wh;
+            let prospective_rY_top_firstOne = rY_top_firstOne + rOffset;
+            if(IsEntireVisible_FirstOne || rY_box <= rY_top_firstOne)
+            {
+                console.log("Top msg cannot move down anymore");
+                return;
+            }
+            else if(this.dialogues[ind].IsVisible() && rY_box < prospective_rY_top_firstOne)
+            {
+                rOffset = rY_box - rY_top_firstOne;
+            }
+        }
+
+        for(let i = 0; i < this.dialogues.length ; i++)
+        {
+            this.dialogues[i].Translate(rOffset);
+        }
+    }
 }

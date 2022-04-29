@@ -1,8 +1,10 @@
-var b_Debug = false;
+var b_Debug = true;
 var phaserText_MousePosition;
 
 var prevPage = undefined;
 var curPage = undefined;
+
+var nameInputField = "inputField_v2";
 
 class SceneMain extends Phaser.Scene 
 {
@@ -14,6 +16,7 @@ class SceneMain extends Phaser.Scene
         this.solutionPage = undefined;
         this.startConversationPage = undefined;
         this.consultationPage = undefined;
+        this.qaSystem = new QASystem();
         this.pages = new Array();
     }
 
@@ -290,17 +293,70 @@ class SceneMain extends Phaser.Scene
         }
     }
 
+    WheelResponse(event) 
+    {
+        if(curPage == "ConsultationPage")
+        {
+            let rOffset = 0.02;
+            if(0 < event.deltaY)
+                rOffset = -rOffset;
+            this.consultationPage.dialogueManager.Scroll(rOffset); 
+        }           
+    }
+
+    CreateDOMInputField()
+    {
+        let text_prompt = "Type in your questions";
+        let el = document.getElementById(nameInputField);
+
+        el.style.position = "absolute"
+        el.style.top = wh * (rY_box + rH_box) + "px";
+        el.style.left = ww * rX_box + "px";
+        // Padding is used to create buffer area between the text and the edge.
+        // But after adding padding, the actual w and h of the text area would become the sum of width and padding/height of padding,
+        // So we need to substract the padding from width and height first.
+        let p_padding = 10;
+        el.style.width = ww * rW_box - 2*p_padding + "px";
+        el.style.height = 100 - 2*p_padding + "px";
+        
+        el.style.paddingTop =  p_padding + "px";
+        el.style.paddingBottom =  p_padding + "px";
+        el.style.paddingLeft =  p_padding + "px";
+        el.style.paddingRight =  p_padding + "px";
+
+        el.style.borderRadius = wh * 0.015 + "px";
+        el.style.fontSize = wh * 0.02 + "px";
+        el.style.lineHeight = wh * 0.03 + "px";        
+        el.value = text_prompt;
+
+        // el.onchange = function(){ scene_self.RaiseQuestion(nameInputField); };
+        el.onfocus = function()
+        { 
+            if(el.value === text_prompt)
+                el.value = ""; 
+        };
+        // el.oninput = () => console.log(el.value);
+        // el.onmouseout = () => el.blur();
+        let scene = this;
+        el.onkeydown = function(event)
+        {             
+            // console.log(event.key);
+            if(event.key == "Enter")
+            {                    
+                event.preventDefault();
+                scene.qaSystem.RaiseQuestion();
+            }
+        };
+        return el;
+    }
+
     CreateConsultationPage()
     {
         this.consultationPage = new ConsultationPage();
-        this.consultationPage.dialogueManager = new DialogueManager();
+        this.consultationPage.dialogueManager = new DialogueManager(this, 'consultationPage_doctorAvatar', 'consultationPage_userAvatar', 'consultationPage_textBG');
         this.pages.push(this.consultationPage);
         // static
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'consultationPage_bg').setDisplaySize(ww, wh));
-        this.consultationPage.elements.push(this.add.image(ww * 0.22, wh * 0.2, 'consultationPage_doctorAvatar').setDisplaySize(ww*0.15, ww*0.15));
-        this.consultationPage.elements.push(this.add.image(ww * 0.35, wh * 0.15, 'consultationPage_textBG').setDisplaySize(ww*0.45, ww*0.15).setOrigin(0));
-        this.consultationPage.elements.push(this.CreatePhaserText(0.37, 0.17, "Do you have any question about Statins?", 
-        0, 0, 'bold '+ww*0.03+'px Arial', '#000000', 0.005, 0.4));
         this.consultationPage.elements.push(this.add.image(ww * 0.5, wh * 0.85, 'consultationPage_inputFieldBG').setDisplaySize(ww*0.6, ww*0.1));
         this.consultationPage.elements.push(this.CreatePhaserText(0.5, 0.85, "Type in your questions", 
         0.5, 0.5, ww*0.035+'px Arial', '#000000', 0.005, 0.4));
@@ -314,6 +370,21 @@ class SceneMain extends Phaser.Scene
         this.consultationPage.elements.push(img_submit);
         img_submit.on('pointerup', () => { this.ShowPage("SolutionPage"); });
         
+
+        for(let i = 1; i <= 8; i++)
+        {
+            let side = (i&1) == 1 ? 'L' : 'R';
+            this.consultationPage.dialogueManager.Push(side, "Dialogue" + i);
+        }
+        // this.consultationPage.dialogueManager.Push("l", "Do you have any question about Statins?");
+        // this.consultationPage.dialogueManager.Push("r", "Hello Doctor!");
+        this.consultationPage.dialogueManager.ResetDlgPos();
+
+        // phaser built-in wheel is not working, have to use js built-in wheel instead
+        let scene = this;
+        window.onwheel = function(event){ scene.WheelResponse(event); };
+
+        this.consultationPage.textArea = this.CreateDOMInputField();
     }
 
     CreateSolutionPage()
@@ -421,14 +492,14 @@ class SceneMain extends Phaser.Scene
                 fontSize:  (ww * 0.03) + 'px'      
             }).setOrigin(0.5);
 
-            let img_startPage = this.add.image(ww * 0.3, wh * 0.07, 'startPage_b1').setDisplaySize(wh*0.025, wh*0.025).setInteractive(); 
-            img_startPage.on('pointerup', () => { this.ShowPage(0); });  
+            // let img_startPage = this.add.image(ww * 0.3, wh * 0.07, 'startPage_b1').setDisplaySize(wh*0.025, wh*0.025).setInteractive(); 
+            // img_startPage.on('pointerup', () => { this.ShowPage(0); });  
 
-            let img_questionPage = this.add.image(ww * 0.4, wh * 0.07, 'questionPage_b1').setDisplaySize(wh*0.025, wh*0.025).setInteractive();
-            img_questionPage.on('pointerup', () => { this.ShowPage(1); });  
+            // let img_questionPage = this.add.image(ww * 0.4, wh * 0.07, 'questionPage_b1').setDisplaySize(wh*0.025, wh*0.025).setInteractive();
+            // img_questionPage.on('pointerup', () => { this.ShowPage(1); });  
 
-            let img_solutionPage = this.add.image(ww * 0.5, wh * 0.07, 'solutionPage_bg1').setDisplaySize(wh*0.025, wh*0.025).setInteractive();
-            img_solutionPage.on('pointerup', () => { this.ShowPage(2); });  
+            // let img_solutionPage = this.add.image(ww * 0.5, wh * 0.07, 'solutionPage_bg1').setDisplaySize(wh*0.025, wh*0.025).setInteractive();
+            // img_solutionPage.on('pointerup', () => { this.ShowPage(2); });  
         }    
          
     }    
@@ -444,7 +515,8 @@ class SceneMain extends Phaser.Scene
         this.CreateSolutionPage();        
         this.ExtraWork();
 
-        this.ShowPage("StartPage");
+        // this.ShowPage("StartPage");
+        this.ShowPage("ConsultationPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
@@ -483,8 +555,12 @@ class SceneMain extends Phaser.Scene
         {
             if(b_Debug)
             {
-                phaserText_MousePosition.text = "pX: " + ww + 
-                            "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
+                // phaserText_MousePosition.text = "pX: " + ww + 
+                //             "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
+                phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
+                            "\t\tpY: " + this.input.mousePointer.y + "\n" +
+                            "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+                            "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
             }            
         }
     }

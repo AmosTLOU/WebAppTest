@@ -3,7 +3,7 @@ body
     margin: 0;
 }
 
-#inputField_v0
+#inputField_v2
 {
     position: absolute;
     resize: none;  
@@ -17,7 +17,7 @@ body
     -moz-box-shadow: none;
     box-shadow: none;
 
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     font-family:'open sans';
 }
 

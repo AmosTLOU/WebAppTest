@@ -84,6 +84,7 @@ class ConsultationPage extends BasePage
     {   
         super("ConsultationPage");
         this.dialogueManager = undefined;
+        this.textArea = undefined;
     }
 
     ShowAll(i_visibility)
@@ -94,6 +95,16 @@ class ConsultationPage extends BasePage
         for(let i = 0; i < this.elements.length; i++)
             this.elements[i].visible = i_visibility;
         this.dialogueManager.ShowAll(i_visibility);
+        if(i_visibility)
+        {
+            this.textArea.disabled = false;
+            this.textArea.style.visibility = "visible";
+        }
+        else
+        {
+            this.textArea.disabled = true;
+            this.textArea.style.visibility = "hidden";            
+        }
 
         this.visibility = i_visibility;
     }
