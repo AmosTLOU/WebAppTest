@@ -1,5 +1,5 @@
 var b_Debug = false;
-var phaserText_MousePosition;
+var phaserText_Debug;
 
 var prevPage = undefined;
 var curPage = undefined;
@@ -16,7 +16,6 @@ class SceneMain extends Phaser.Scene
         this.solutionPage = undefined;
         this.startConversationPage = undefined;
         this.consultationPage = undefined;
-        this.qaSystem = undefined;
         this.pages = new Array();
     }
 
@@ -202,17 +201,14 @@ class SceneMain extends Phaser.Scene
 
     CreateQuestionPage()
     {
-        this.questionPage = new QuestionPage();
+        this.questionPage = new QuestionPage(this);
+        this.questionPage.GetJSONData();
         this.pages.push(this.questionPage);
-        // static content
+        // static background
         this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.5, 'questionPage_bg').setDisplaySize(ww, wh));    
         this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'questionPage_b1').setDisplaySize(ww*0.8, wh*0.7).setOrigin(0.5, 0));
         this.questionPage.elements.push(this.add.image(ww * 0.5, wh * 0.1, 'questionPage_b2').setDisplaySize(ww*0.8, wh*0.2).setOrigin(0.5, 0));
         this.questionPage.elements.push(this.add.image(ww * 0.2, wh * 0.12, 'questionPage_userAvatar').setDisplaySize(ww*0.1, ww*0.1).setOrigin(0.5, 0));
-        this.questionPage.elements.push( this.CreatePhaserText(0.3, 0.12, "Statin medications are effective in reducing the risk of heart disease and stroke.", 
-            0, 0, 'bold '+ww*0.04+'px Arial', '#FFFFFF', 0.005, 0.58) );
-        this.questionPage.elements.push( this.CreatePhaserText(0.5, 0.23, "Please indicate how you agree with the above statement.", 
-            0.5, 0, ww*0.0325+'px Arial', '#FFFFFF', 0, 0.7) );
         this.questionPage.elements.push(this.add.image(ww * 0.02, wh * 0.9, 'questionPage_doctorAvatar').setDisplaySize(ww*0.2, ww*0.2).setOrigin(0, 0.5));
         this.questionPage.elements.push(this.add.image(ww * 0.25, wh * 0.9, 'questionPage_doctorTextBG').setDisplaySize(ww*0.4, wh*0.1).setOrigin(0, 0.5));
         this.questionPage.elements.push( this.CreatePhaserText(0.27, 0.87, "How are you today?", 
@@ -224,32 +220,21 @@ class SceneMain extends Phaser.Scene
         // submit buttion
         let img_submit = this.add.image(ww * 0.9, wh * 0.9, 'questionPage_submit').setDisplaySize(ww*0.2, ww*0.2).setOrigin(1, 0.5).setInteractive();  
         img_submit.on('pointerup', () => { 
-            let result = this.questionPage.mulSelector.GetAnswer();
-            let str = "";
-            for(let i = 0; i < result.length; i++)
-            {
-                if(0 < i)
-                    str += " ";
-                str += result[i];
-            }
-            console.log(str);
-            // alert(str);
-            this.ShowPage("SolutionPage");
+            this.questionPage.SubmitChoice();
         });  
         this.questionPage.elements.push(img_submit);   
 
-        // dynamic content
+        // multi-select content
+        this.questionPage.mulSelector.titles.push( this.CreatePhaserText(0.3, 0.12, "Title1", 
+        0, 0, 'bold '+ww*0.04+'px Arial', '#FFFFFF', 0.005, 0.58) );
+        this.questionPage.mulSelector.titles.push( this.CreatePhaserText(0.5, 0.23, "Title2", 
+        0.5, 0, ww*0.0325+'px Arial', '#FFFFFF', 0, 0.7) );
+
+        let maxQuestionsInOneLayer = 5;
         let rH_option = 0.075;
         let rH_gapOptions = 0.012;
         let rY_option = 0.33;
-        let TextOfOptions = [
-            "Totally agree",
-            "Agree",
-            "Neutral",
-            "Disagree",
-            "Totally disagree"
-        ]
-        for(let i = 0; i < TextOfOptions.length; i++)
+        for(let i = 0; i < maxQuestionsInOneLayer; i++)
         {            
             if(0 < i)
                 rY_option += rH_option + rH_gapOptions;
@@ -258,10 +243,11 @@ class SceneMain extends Phaser.Scene
             let fg_option = this.add.image(ww * 0.5, wh * rY_option, 'questionPage_b3_pressed').setDisplaySize(ww*0.7, wh*rH_option).setOrigin(0.5, 0).setInteractive();
             fg_option.visible = false;
             fg_option.on('pointerdown', () => { this.questionPage.mulSelector.ChangeVal(i); });    
-            let txt_option = this.CreatePhaserText(0.5, (rY_option + rH_option*0.5), TextOfOptions[i], 
+            let txt_option = this.CreatePhaserText(0.5, (rY_option + rH_option*0.5), "Prepared Question " + (i+1), 
                 0.5, 0.5,  ww*0.0325+'px Arial', '#000000', 0.005);    
             this.questionPage.mulSelector.AddVisualOption(bg_option, fg_option, txt_option);
         }
+        this.questionPage.SetContentByLayerName("FirstLayer");
     }
 
     WheelResponse(event) 
@@ -282,12 +268,12 @@ class SceneMain extends Phaser.Scene
 
         el.style.position = "absolute"
         el.style.top = wh * 0.82 + "px";
-        el.style.left = ww * 0.28 + "px";
+        el.style.left = ww * 0.26 + "px";
         // Padding is used to create buffer area between the text and the edge.
         // But after adding padding, the actual w and h of the text area would become the sum of width and padding/height of padding,
         // So we need to substract the padding from width and height first.
         let p_padding = 10;
-        el.style.width = ww * rW_box*0.8 - 2*p_padding + "px";
+        el.style.width = ww * rW_box*0.7 - 2*p_padding + "px";
         el.style.height = 50 - 2*p_padding + "px";
         
         el.style.paddingTop =  p_padding + "px";
@@ -315,7 +301,7 @@ class SceneMain extends Phaser.Scene
             if(event.key == "Enter")
             {                    
                 event.preventDefault();
-                scene.qaSystem.RaiseQuestion();
+                scene.consultationPage.qaTypeIn_System.RaiseQuestion();
             }
         };
         return el;
@@ -324,7 +310,7 @@ class SceneMain extends Phaser.Scene
     CreateConsultationPage()
     {
         this.consultationPage = new ConsultationPage();
-        this.qaSystem = new QASystem(this);
+        this.consultationPage.qaTypeIn_System = new QATypeIn_System(this);
         this.consultationPage.dialogueManager = new DialogueManager(this, 'consultationPage_doctorAvatar', 'consultationPage_userAvatar', 'consultationPage_textBG');
         this.pages.push(this.consultationPage);
         // static
@@ -458,7 +444,7 @@ class SceneMain extends Phaser.Scene
         if(b_Debug)
         {
             /* display mouse position for debugging */
-            phaserText_MousePosition = this.add.text(ww * 0.5, wh * 0.035, "0123456789\n0123456789\n0123456789\n0123456789", {
+            phaserText_Debug = this.add.text(ww * 0.5, wh * 0.035, "0123456789\n0123456789\n0123456789\n0123456789", {
                 color: '#000000',
                 fontSize:  (ww * 0.03) + 'px'      
             }).setOrigin(0.5);
@@ -484,8 +470,8 @@ class SceneMain extends Phaser.Scene
         this.CreateSolutionPage();        
         this.ExtraWork();
 
-        this.ShowPage("StartPage");
-        // this.ShowPage("QuestionPage");
+        // this.ShowPage("StartPage");
+        this.ShowPage("QuestionPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
@@ -508,30 +494,31 @@ class SceneMain extends Phaser.Scene
 
     update() 
     {
+        // landscape
         if(window.innerHeight < window.innerWidth)
         {
-            if(b_Debug)
-            {
-                phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
-                            "\t\tpY: " + this.input.mousePointer.y + "\n" +
-                            "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                            "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-            }
+            if(prevWH_forDebug == window.innerHeight && prevWW_forDebug == window.innerWidth)
+                return;
+            prevWH_forDebug = window.innerHeight;
+            prevWW_forDebug = window.innerWidth;
             this.ShowPage("nothing");
             alert("Please access this website in potrait mode!");
         }
+        // portrait
         else
         {
-            if(b_Debug)
-            {
-                // phaserText_MousePosition.text = "pX: " + ww + 
-                //             "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio;
-                phaserText_MousePosition.text = "pX: " + this.input.mousePointer.x + 
-                            "\t\tpY: " + this.input.mousePointer.y + "\n" +
-                            "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                            "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
-            }            
+                   
         }
+
+        if(b_Debug)
+        {
+            phaserText_Debug.text = "pX: " +  ww + 
+                        "\t\tpY: " + wh + "\t\tres: " + window.devicePixelRatio + '\n' +
+                        "pX: " + this.input.mousePointer.x + 
+                        "\t\tpY: " + this.input.mousePointer.y + "\n" +
+                        "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2);
+        }     
     }
 
 

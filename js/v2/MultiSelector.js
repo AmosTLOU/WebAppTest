@@ -12,8 +12,7 @@ class MultiSelector
         this.visualOptions = new Array();
         this.maxCnt = 0;
         this.cnt = 0;
-        this.onlyOneChoice = i_onlyOneChoice;
-        this.visibility = true;        
+        this.onlyOneChoice = i_onlyOneChoice;       
     }
 
     ChangeVal(index)
@@ -75,10 +74,7 @@ class MultiSelector
     }
 
     ShowAll(i_visibility)
-    {
-        if(this.visibility == i_visibility)
-            return;        
-        
+    {     
         for(let i = 0; i < this.visualOptions.length; i++)
         {
             this.selector[i] = false;
@@ -97,6 +93,9 @@ class MultiSelector
                 }                    
             }            
         }
-        this.visibility = i_visibility;
+        for(let i = 0; i < this.titles.length; i++)
+        {
+            this.titles[i].visible = i_visibility;
+        }
     }
 }

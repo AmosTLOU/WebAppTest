@@ -32,8 +32,6 @@ class Dialogue
         this.avatar = i_avatar;
         this.bg = i_bg;
         this.text = i_text;
-
-        this.visibility = true;
              
         // this.pW = this.txt.width + 2*padding_pX;
         // this.pH = this.txt.height + 2*padding_pY;
@@ -58,14 +56,9 @@ class Dialogue
 
     ShowAll(i_visibility)
     {
-        if(this.visibility == i_visibility)
-            return;
-
         this.avatar.visible = i_visibility;
         this.bg.visible = i_visibility;
         this.text.visible = i_visibility;
-
-        this.visibility = i_visibility;
     }
 
 
@@ -211,8 +204,6 @@ class DialogueManager
         this.keyAvatar1 = i_KeyAvatar1;
         this.keyAvatar2 = i_KeyAvatar2;
         this.keyTextBG = i_KeyTextBG;
-
-        this.visibility = true;
         this.dialogues = new Array();
     }
 
@@ -253,16 +244,12 @@ class DialogueManager
 
     ShowAll(i_visibility)
     {
-        if(this.visibility == i_visibility)
-            return;    
-
         for(let i = 0; i < this.dialogues.length ; i++)
         {         
             this.dialogues[i].ShowAll(i_visibility);
         }  
         if(i_visibility)      
-            this.ResetDlgPos();
-        this.visibility = i_visibility;    
+            this.ResetDlgPos(); 
     }
 
     // reset dialogue positions

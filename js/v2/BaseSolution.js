@@ -12,7 +12,6 @@ class BaseSolution
         this.rW = i_rW;
         this.rH = i_rH;
         this.ArrangePos();
-        this.visibility = true;
     }
 
     ArrangePos()
@@ -36,16 +35,11 @@ class BaseSolution
     }
 
     ShowAll(i_visibility)
-    {
-        if(this.visibility == i_visibility)
-            return;        
-        
+    { 
         this.bg.visible = i_visibility; 
         this.icon.visible = i_visibility; 
         this.title1.visible = i_visibility; 
         this.title2.visible = i_visibility; 
         this.dsp.visible = i_visibility; 
-
-        this.visibility = i_visibility;
     }
 }

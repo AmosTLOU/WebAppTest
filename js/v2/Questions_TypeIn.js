@@ -5,7 +5,7 @@ var ListAnswers = undefined;
 var dct_synonym = { "bad": "side", "benefits": "good", "benefit": "good", "help": "good", "helps": "good", "popular": "good", "effects": "effect", "statins": "statin" }
 var dct_useless = { "is": 0, "it": 0, "to": 0 , "the": 0, "a": 0, "and": 0, "me": 0, "you": 0};
 
-class QASystem
+class QATypeIn_System
 {
     constructor(i_scene)
     {
@@ -23,7 +23,8 @@ class QASystem
         // Get json from files
         // pathJSON = "JSON/data_V0.json";
         pathJSON = "JSON/data_V1.json";
-        
+
+        $.ajaxSettings.async = false;
         if(formatQA == 0)
         {
             $.getJSON(pathJSON, function(json) 
@@ -47,6 +48,7 @@ class QASystem
                 ListAnswers = Content_AnswersToQuickQuestions;
             });
         }       
+        $.ajaxSettings.async = true;
         
     }
 

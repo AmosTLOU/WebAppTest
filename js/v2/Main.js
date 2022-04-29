@@ -2,10 +2,12 @@ var isMobile;
 var game;
 
 // window with and window height
+var prevWW_forDebug = undefined;
+var prevWH_forDebug = undefined;
 var ww = window.innerWidth;
 var wh = window.innerHeight;
-// var ww = 390;
-// var wh = 700;
+// ww = 390;
+// wh = 700;
 
 window.onload = function() 
 {
