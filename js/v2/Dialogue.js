@@ -39,7 +39,13 @@ class Dialogue
 
         this.CropByRange(this.avatar);
         this.CropByRange(this.bg);
-        // this.CropByRange(this.text);
+        // non-mobile
+        if(isMobile == -1)
+            this.CropByRange(this.text);
+        // mobile
+        // dont know why, setCrop would make the font size look wrong on mobile devices
+        else
+            this.text.visible = this.IsEntirelyVisible();        
     }
 
     // UpdatePosByTopY(i_rY)
@@ -135,7 +141,7 @@ class Dialogue
         else
         {
             phEl.setCrop(0,0,0,0);
-        }        
+        }                
     }
 
     Translate(rOffset)
