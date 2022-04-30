@@ -107,7 +107,7 @@ class SceneMain extends Phaser.Scene
     SetInputField()
     {
         let scene_self = this;
-        let nameInputField = "inputField_v0";
+        let nameInputField = "inputField_v1";
         let el = document.getElementById(nameInputField);
 
         let pX_left = ww * rX_leftBnd;
