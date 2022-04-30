@@ -1,4 +1,4 @@
-var b_Debug = true;
+var b_Debug = false;
 var phaserText_Debug;
 
 var prevPage = undefined;
@@ -485,7 +485,7 @@ class SceneMain extends Phaser.Scene
         {
             if(Math.abs(this.input.activePointer.upY - this.input.activePointer.downY) >= 50) 
             {
-                let rOffset = 0.03;
+                let rOffset = 0.02;
                 if(this.input.activePointer.upY < this.input.activePointer.downY) 
                 {                    
                     this.consultationPage.dialogueManager.Scroll(-rOffset);
