@@ -121,21 +121,21 @@ class Dialogue
     // phEl == phaser element
     CropByRange(phEl)
     {
-        // let pY_min_el = phEl.y - phEl.displayHeight * phEl.originY;
-        // let pY_max_el = phEl.y + phEl.displayHeight * (1-phEl.originY);
-        // let pY_min_visible = Math.max(pY_min_el, wh * rY_box);
-        // let pY_max_visible = Math.min(pY_max_el, wh * (rY_box + rH_box));
-        // if(pY_min_visible < pY_max_visible)
-        // {
-        //     let pY_startingCropping = 0;
-        //     if(pY_min_el < wh * rY_box)
-        //         pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
-        //     phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
-        // }
-        // else
-        // {
-        //     phEl.setCrop(0,0,0,0);
-        // }        
+        let pY_min_el = phEl.y - phEl.displayHeight * phEl.originY;
+        let pY_max_el = phEl.y + phEl.displayHeight * (1-phEl.originY);
+        let pY_min_visible = Math.max(pY_min_el, wh * rY_box);
+        let pY_max_visible = Math.min(pY_max_el, wh * (rY_box + rH_box));
+        if(pY_min_visible < pY_max_visible)
+        {
+            let pY_startingCropping = 0;
+            if(pY_min_el < wh * rY_box)
+                pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
+            phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
+        }
+        else
+        {
+            phEl.setCrop(0,0,0,0);
+        }        
     }
 
     Translate(rOffset)
