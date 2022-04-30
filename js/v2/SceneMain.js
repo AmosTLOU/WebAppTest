@@ -399,6 +399,7 @@ class SceneMain extends Phaser.Scene
             0.18
         ));
 
+        // back button
         let img_back = this.add.image(ww * 0.92, wh * 0.89, 'solutionPage_back').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1).setInteractive();
         this.solutionPage.elements.push(img_back);
         img_back.on('pointerup', () => {
@@ -457,7 +458,7 @@ class SceneMain extends Phaser.Scene
         this.ExtraWork();
 
         this.ShowPage("StartPage");
-        this.ShowPage("SolutionPage");
+        this.ShowPage("ConsultationPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
