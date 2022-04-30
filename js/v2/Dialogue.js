@@ -184,15 +184,12 @@ class DialogueManager
         {
             img_avatar = this.scene.add.image(ww * (rX_box + rW_bufferAroundAvatar + rW_avatar/2), pY_avatar,  this.keyAvatar1).setOrigin(0.5, 0).setDisplaySize(ww*rW_avatar, ww*rW_avatar);
             text = this.scene.CreatePhaserText(img_avatar.x/ww + rW_avatar/2 + rW_bufferAroundAvatar, img_avatar.y/wh, i_text, 
-            0, 0, 'bold '+Math.round(ww*0.04)+'px Arial', '#000000', 0, rW_box * 0.5);
+            0, 0, 'bold '+14+'px Arial', '#000000', 0, rW_box * 0.5);
             img_textBG.setPosition(text.x + text.width/2, text.y + text.height/2).setDisplaySize(text.width + ww * rW_bufferAroundAvatar, text.height + ww * rW_bufferAroundAvatar);
         }            
         else if(i_side == "r" || i_side == "R")
         {
             img_avatar = this.scene.add.image(ww * (rX_box + rW_box - rW_bufferAroundAvatar - rW_avatar/2), pY_avatar,  this.keyAvatar2).setOrigin(0.5, 0).setDisplaySize(ww*rW_avatar, ww*rW_avatar);
-
-            // this.CreatePhaserText(0.3, 0.12, "What was the reason for stopping your statin last time?", 
-            // 0, 0, 'bold '+ww*0.047+'px Arial', '#FFFFFF', 0.005, 0.6)
 
             text = this.scene.CreatePhaserText(img_avatar.x/ww - rW_avatar/2 - rW_bufferAroundAvatar, img_avatar.y/wh, i_text, 
             1, 0, 'bold '+Math.round(ww*0.04)+'px Arial', '#000000', 0, rW_box * 0.5);
