@@ -488,7 +488,7 @@ class SceneMain extends Phaser.Scene
                         "pX: " + this.input.mousePointer.x + 
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n53";
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n55";
         }  
 
         
@@ -509,6 +509,14 @@ class SceneMain extends Phaser.Scene
         // mobile
         else
         {             
+            if(curPage == "ConsultationPage" && this.input.activePointer.isDown)
+            {
+                let rOffset = 0.02;
+                this.consultationPage.dialogueManager.Scroll(rOffset); 
+                alert("finger down");
+            }
+            
+
             // landscape
             if(window.innerHeight < window.innerWidth)
             {            
