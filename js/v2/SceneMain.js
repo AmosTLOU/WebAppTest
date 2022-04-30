@@ -485,7 +485,7 @@ class SceneMain extends Phaser.Scene
         {
             if(Math.abs(this.input.activePointer.upY - this.input.activePointer.downY) >= 50) 
             {
-                let rOffset = 0.06;
+                let rOffset = 0.03;
                 if(this.input.activePointer.upY < this.input.activePointer.downY) 
                 {                    
                     this.consultationPage.dialogueManager.Scroll(-rOffset);
@@ -509,7 +509,7 @@ class SceneMain extends Phaser.Scene
                         "pX: " + this.input.mousePointer.x + 
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n58";
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n59";
         }  
 
         
