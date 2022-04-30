@@ -17,6 +17,7 @@ class Dialogue
         this.avatar = i_avatar;
         this.bg = i_bg;
         this.text = i_text;
+        this.text.setFontSize(Math.round(ww*rFontSize));
     }
 
     ShowAll(i_visibility)
@@ -35,7 +36,7 @@ class Dialogue
 
         this.avatar.setY(new_pY_avatar);
         this.bg.setY(this.bg.y + offset_pY);
-        this.text.setY(this.text.y + offset_pY);
+        this.text.setY(this.text.y + offset_pY);        
 
         this.CropByRange(this.avatar);
         this.CropByRange(this.bg);
