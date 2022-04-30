@@ -431,7 +431,7 @@ class SceneMain extends Phaser.Scene
         if(b_Debug)
         {
             /* display mouse position for debugging */
-            phaserText_Debug = this.add.text(ww * 0.5, wh * 0.035, "0123456789\n0123456789\n0123456789\n0123456789", {
+            phaserText_Debug = this.add.text(ww * 0.5, wh * 0.1, "0123456789", {
                 color: '#000000',
                 fontSize:  (ww * 0.03) + 'px'      
             }).setOrigin(0.5);
@@ -488,7 +488,7 @@ class SceneMain extends Phaser.Scene
                         "pX: " + this.input.mousePointer.x + 
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n50";
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n52";
         }  
 
         

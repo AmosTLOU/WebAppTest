@@ -17,7 +17,6 @@ class Dialogue
         this.avatar = i_avatar;
         this.bg = i_bg;
         this.text = i_text;
-        this.text.setFontSize(Math.round(ww*rFontSize));
     }
 
     ShowAll(i_visibility)
@@ -128,11 +127,6 @@ class Dialogue
         let pY_max_visible = Math.min(pY_max_el, wh * (rY_box + rH_box));
         if(pY_min_visible < pY_max_visible)
         {
-            if(pY_min_visible == pY_min_el && pY_max_el == pY_max_visible)
-            {
-                phEl.setCrop(0, 0, phEl.width, phEl.height);
-                return;
-            }
             let pY_startingCropping = 0;
             if(pY_min_el < wh * rY_box)
                 pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
