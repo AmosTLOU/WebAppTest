@@ -45,8 +45,7 @@ class Dialogue
         // mobile
         // dont know why, setCrop would make the font size look wrong on mobile devices
         else
-            // this.text.visible = this.IsEntirelyVisible();   
-            this.CropByRange(this.text);     
+            this.text.visible = this.IsEntirelyVisible();   
     }
 
     // UpdatePosByTopY(i_rY)
@@ -137,13 +136,7 @@ class Dialogue
             let pY_startingCropping = 0;
             if(pY_min_el < wh * rY_box)
                 pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
-            if(phEl.text != undefined)
-            {
-                console.log("exist");
-                phEl.setCrop(0, wh * rY_box - pY_min_el, phEl.width, pY_max_visible - pY_min_visible);
-            }
-            else
-                phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
+            phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
         }
         else
         {
