@@ -42,100 +42,100 @@ class Dialogue
         this.CropByRange(this.text);
     }
 
-    UpdatePosByTopY(i_rY)
-    {
-        this.rY_Top = i_rY;
+    // UpdatePosByTopY(i_rY)
+    // {
+    //     this.rY_Top = i_rY;
         
-        let pX_center = this.rX_left * ww + this.pW * 0.5;
-        let pY_center = this.rY_Top * wh + this.pH * 0.5;
-        this.txt.setPosition(pX_center, pY_center).setOrigin(0.5);
-        this.bg.setPosition(pX_center, pY_center);
-        if(this.side == 0)
-            this.imgAvatar.setPosition(ww * (rX_leftBnd + rX_ConAvatar*0.5 + padding_rX*0.5), wh*(this.rY_Top + rY_ConAvatar*0.5));
-        else if(this.side == 1)
-            this.imgAvatar.setPosition(ww * (rX_rightBnd - rX_ConAvatar*0.5 - padding_rX*0.5), wh*(this.rY_Top + rY_ConAvatar*0.5));
+    //     let pX_center = this.rX_left * ww + this.pW * 0.5;
+    //     let pY_center = this.rY_Top * wh + this.pH * 0.5;
+    //     this.txt.setPosition(pX_center, pY_center).setOrigin(0.5);
+    //     this.bg.setPosition(pX_center, pY_center);
+    //     if(this.side == 0)
+    //         this.imgAvatar.setPosition(ww * (rX_leftBnd + rX_ConAvatar*0.5 + padding_rX*0.5), wh*(this.rY_Top + rY_ConAvatar*0.5));
+    //     else if(this.side == 1)
+    //         this.imgAvatar.setPosition(ww * (rX_rightBnd - rX_ConAvatar*0.5 - padding_rX*0.5), wh*(this.rY_Top + rY_ConAvatar*0.5));
 
-        // completely invisible in the box
-        if(this.RY_Bottom() < rY_topBnd || rY_bottomBnd < this.rY_Top)
-        {
-            this.Show(false);
-        }
-        // visible in the box(at least partially)
-        else
-        {
-            this.Show(true);
+    //     // completely invisible in the box
+    //     if(this.RY_Bottom() < rY_topBnd || rY_bottomBnd < this.rY_Top)
+    //     {
+    //         this.Show(false);
+    //     }
+    //     // visible in the box(at least partially)
+    //     else
+    //     {
+    //         this.Show(true);
 
-            let partOfTopInvisible = false;
-            let partOfBottomInvisible = false;
-            let rY_visible_Top = this.rY_Top;
-            let rY_visible_Bottom = this.RY_Bottom();
-            let pY_startingCropping = 0;
-            // part of top is invisible
-            if(this.rY_Top < rY_topBnd)
-            {
-                rY_visible_Top = rY_topBnd;
-                pY_startingCropping = (rY_topBnd - this.rY_Top) * wh;
-                partOfTopInvisible = true;
-            }
-            // part of bottom is invisible
-            if(rY_bottomBnd < this.RY_Bottom())
-            {                
-                rY_visible_Bottom = rY_bottomBnd;
-                partOfBottomInvisible = true;
-            }
+    //         let partOfTopInvisible = false;
+    //         let partOfBottomInvisible = false;
+    //         let rY_visible_Top = this.rY_Top;
+    //         let rY_visible_Bottom = this.RY_Bottom();
+    //         let pY_startingCropping = 0;
+    //         // part of top is invisible
+    //         if(this.rY_Top < rY_topBnd)
+    //         {
+    //             rY_visible_Top = rY_topBnd;
+    //             pY_startingCropping = (rY_topBnd - this.rY_Top) * wh;
+    //             partOfTopInvisible = true;
+    //         }
+    //         // part of bottom is invisible
+    //         if(rY_bottomBnd < this.RY_Bottom())
+    //         {                
+    //             rY_visible_Bottom = rY_bottomBnd;
+    //             partOfBottomInvisible = true;
+    //         }
 
-            let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
-            let pH_VisibleRange = wh * (rY_visible_Bottom - rY_visible_Top);
-            if(partOfTopInvisible || partOfBottomInvisible)
-            {                
-                this.bg.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.bg.width, pH_VisibleRange * ratio_OrginialToDisplay);
-                this.txt.setCrop(0, pY_startingCropping, this.txt.width, pH_VisibleRange - padding_pY);
-            }
-            else{
-                this.bg.setCrop(0, 0, this.bg.width, this.bg.height);
-                this.txt.setCrop(0, 0, this.txt.width, this.txt.height);
-            }
+    //         let ratio_OrginialToDisplay = pH_OriginalMsgBg / this.pH;
+    //         let pH_VisibleRange = wh * (rY_visible_Bottom - rY_visible_Top);
+    //         if(partOfTopInvisible || partOfBottomInvisible)
+    //         {                
+    //             this.bg.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.bg.width, pH_VisibleRange * ratio_OrginialToDisplay);
+    //             this.txt.setCrop(0, pY_startingCropping, this.txt.width, pH_VisibleRange - padding_pY);
+    //         }
+    //         else{
+    //             this.bg.setCrop(0, 0, this.bg.width, this.bg.height);
+    //             this.txt.setCrop(0, 0, this.txt.width, this.txt.height);
+    //         }
 
-            // deal with the occulusion of the avatar icon
-            ratio_OrginialToDisplay = pH_OriginalAvatarIcon / (wh * rY_ConAvatar);            
-            if(this.rY_Top < rY_topBnd)
-            {
-                pY_startingCropping = wh * (rY_topBnd - this.rY_Top);
-                pH_VisibleRange = (wh * rY_ConAvatar) - pY_startingCropping;
-                this.imgAvatar.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.imgAvatar.width, pH_VisibleRange * ratio_OrginialToDisplay);
-            }
-            else if(rY_bottomBnd < this.rY_Top + rY_ConAvatar)
-            {
-                pH_VisibleRange = wh * (rY_bottomBnd - this.rY_Top);
-                this.imgAvatar.setCrop(0, 0, this.imgAvatar.width, pH_VisibleRange * ratio_OrginialToDisplay);
-            }
-            else
-            {
-                this.imgAvatar.setCrop(0, 0, this.imgAvatar.width, this.imgAvatar.height);
-            }            
+    //         // deal with the occulusion of the avatar icon
+    //         ratio_OrginialToDisplay = pH_OriginalAvatarIcon / (wh * rY_ConAvatar);            
+    //         if(this.rY_Top < rY_topBnd)
+    //         {
+    //             pY_startingCropping = wh * (rY_topBnd - this.rY_Top);
+    //             pH_VisibleRange = (wh * rY_ConAvatar) - pY_startingCropping;
+    //             this.imgAvatar.setCrop(0, pY_startingCropping * ratio_OrginialToDisplay, this.imgAvatar.width, pH_VisibleRange * ratio_OrginialToDisplay);
+    //         }
+    //         else if(rY_bottomBnd < this.rY_Top + rY_ConAvatar)
+    //         {
+    //             pH_VisibleRange = wh * (rY_bottomBnd - this.rY_Top);
+    //             this.imgAvatar.setCrop(0, 0, this.imgAvatar.width, pH_VisibleRange * ratio_OrginialToDisplay);
+    //         }
+    //         else
+    //         {
+    //             this.imgAvatar.setCrop(0, 0, this.imgAvatar.width, this.imgAvatar.height);
+    //         }            
             
-        }
-    }
+    //     }
+    // }
 
 
     // phEl == phaser element
     CropByRange(phEl)
     {
-        let pY_min_el = phEl.y - phEl.displayHeight * phEl.originY;
-        let pY_max_el = phEl.y + phEl.displayHeight * (1-phEl.originY);
-        let pY_min_visible = Math.max(pY_min_el, wh * rY_box);
-        let pY_max_visible = Math.min(pY_max_el, wh * (rY_box + rH_box));
-        if(pY_min_visible < pY_max_visible)
-        {
-            let pY_startingCropping = 0;
-            if(pY_min_el < wh * rY_box)
-                pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
-            phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
-        }
-        else
-        {
-            phEl.setCrop(0,0,0,0);
-        }        
+        // let pY_min_el = phEl.y - phEl.displayHeight * phEl.originY;
+        // let pY_max_el = phEl.y + phEl.displayHeight * (1-phEl.originY);
+        // let pY_min_visible = Math.max(pY_min_el, wh * rY_box);
+        // let pY_max_visible = Math.min(pY_max_el, wh * (rY_box + rH_box));
+        // if(pY_min_visible < pY_max_visible)
+        // {
+        //     let pY_startingCropping = 0;
+        //     if(pY_min_el < wh * rY_box)
+        //         pY_startingCropping = (wh * rY_box - pY_min_el) * phEl.height/phEl.displayHeight;
+        //     phEl.setCrop(0, pY_startingCropping, phEl.width, (pY_max_visible - pY_min_visible) * phEl.height/phEl.displayHeight);
+        // }
+        // else
+        // {
+        //     phEl.setCrop(0,0,0,0);
+        // }        
     }
 
     Translate(rOffset)
