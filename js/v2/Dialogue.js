@@ -39,7 +39,7 @@ class Dialogue
 
         this.CropByRange(this.avatar);
         this.CropByRange(this.bg);
-        this.CropByRange(this.text);
+        // this.CropByRange(this.text);
     }
 
     // UpdatePosByTopY(i_rY)
