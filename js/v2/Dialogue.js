@@ -7,7 +7,7 @@ var rH_box = 0.56;
 var rW_avatar = 0.15;
 var rW_bufferAroundAvatar = rW_avatar * 0.2;
 var rH_gapDialogues = 0.02;
-// var rFontSize = 0.04;
+var rFontSize = 0.04;
 
 // represents a dialogue
 class Dialogue
@@ -184,7 +184,7 @@ class DialogueManager
         {
             img_avatar = this.scene.add.image(ww * (rX_box + rW_bufferAroundAvatar + rW_avatar/2), pY_avatar,  this.keyAvatar1).setOrigin(0.5, 0).setDisplaySize(ww*rW_avatar, ww*rW_avatar);
             text = this.scene.CreatePhaserText(img_avatar.x/ww + rW_avatar/2 + rW_bufferAroundAvatar, img_avatar.y/wh, i_text, 
-            0, 0, 'bold '+14+'px Arial', '#000000', 0, rW_box * 0.5);
+            0, 0, 'bold '+Math.round(ww*rFontSize)+'px Arial', '#000000', 0, rW_box * 0.5);
             img_textBG.setPosition(text.x + text.width/2, text.y + text.height/2).setDisplaySize(text.width + ww * rW_bufferAroundAvatar, text.height + ww * rW_bufferAroundAvatar);
         }            
         else if(i_side == "r" || i_side == "R")
@@ -192,7 +192,7 @@ class DialogueManager
             img_avatar = this.scene.add.image(ww * (rX_box + rW_box - rW_bufferAroundAvatar - rW_avatar/2), pY_avatar,  this.keyAvatar2).setOrigin(0.5, 0).setDisplaySize(ww*rW_avatar, ww*rW_avatar);
 
             text = this.scene.CreatePhaserText(img_avatar.x/ww - rW_avatar/2 - rW_bufferAroundAvatar, img_avatar.y/wh, i_text, 
-            1, 0, 'bold '+Math.round(ww*0.04)+'px Arial', '#000000', 0, rW_box * 0.5);
+            1, 0, 'bold '+Math.round(ww*rFontSize)+'px Arial', '#000000', 0, rW_box * 0.5);
             img_textBG.setPosition(text.x - text.width/2, text.y + text.height/2).setDisplaySize(text.width + ww * rW_bufferAroundAvatar, text.height + ww * rW_bufferAroundAvatar);
         }
         else
@@ -248,7 +248,6 @@ class DialogueManager
 
     Scroll(rOffset)
     {
-
         if(this.dialogues.length <= 0)
         {            
             return;

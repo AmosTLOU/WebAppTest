@@ -56,6 +56,11 @@ class QATypeIn_System
     {
         let el = document.getElementById(nameInputField);
     	let text = el.value; 
+        if(text == "")
+        {
+            alert("Please type in the question!");
+            return;
+        }
         
         this.scene.consultationPage.dialogueManager.Push('r', text);
 

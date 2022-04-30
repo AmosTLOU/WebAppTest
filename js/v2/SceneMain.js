@@ -1,4 +1,4 @@
-var b_Debug = true;
+var b_Debug = false;
 var phaserText_Debug;
 
 var prevPage = undefined;
@@ -332,7 +332,7 @@ class SceneMain extends Phaser.Scene
         // submit button
         let img_submit = this.add.image(ww * 0.92, wh * 0.89, 'questionPage_submit').setDisplaySize(ww*0.12, ww*0.12).setOrigin(0.5, 1).setInteractive();
         this.consultationPage.elements.push(img_submit);
-        img_submit.on('pointerup', () => { this.ShowPage("SolutionPage"); });
+        img_submit.on('pointerup', () => { this.consultationPage.qaTypeIn_System.RaiseQuestion(); });
 
         // for(let i = 1; i <= 7; i++)
         // {
@@ -458,7 +458,7 @@ class SceneMain extends Phaser.Scene
         this.ExtraWork();
 
         this.ShowPage("StartPage");
-        this.ShowPage("ConsultationPage");
+        // this.ShowPage("ConsultationPage");
     }     
 
     CreateMessageText(content, rX=0, rY=0)
