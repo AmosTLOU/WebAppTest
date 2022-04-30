@@ -479,6 +479,27 @@ class SceneMain extends Phaser.Scene
         return img;
     }
 
+    ReactToFingerSwipe()
+    {            
+        if(curPage == "ConsultationPage" && this.input.activePointer.isDown) 
+        {
+            if(Math.abs(this.input.activePointer.upY - this.input.activePointer.downY) >= 50) 
+            {
+                let rOffset = 0.02;
+                if(this.input.activePointer.upY < this.input.activePointer.downY) 
+                {                    
+                    this.consultationPage.dialogueManager.Scroll(rOffset);
+                    alert("finger scrolling up");
+                } 
+                else if(this.input.activePointer.upY > this.input.activePointer.downY) 
+                {                    
+                    this.consultationPage.dialogueManager.Scroll(rOffset);
+                    alert("finger scrolling down");
+                }
+            }
+        }
+    }
+
     update() 
     {
         if(b_Debug)
@@ -488,7 +509,7 @@ class SceneMain extends Phaser.Scene
                         "pX: " + this.input.mousePointer.x + 
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n55";
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n56";
         }  
 
         
@@ -509,13 +530,7 @@ class SceneMain extends Phaser.Scene
         // mobile
         else
         {             
-            if(curPage == "ConsultationPage" && this.input.activePointer.isDown)
-            {
-                let rOffset = 0.02;
-                this.consultationPage.dialogueManager.Scroll(rOffset); 
-                alert("finger down");
-            }
-            
+            this.ReactToFingerSwipe();
 
             // landscape
             if(window.innerHeight < window.innerWidth)
