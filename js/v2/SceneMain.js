@@ -509,7 +509,7 @@ class SceneMain extends Phaser.Scene
                         "pX: " + this.input.mousePointer.x + 
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n60";
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n61";
         }  
 
         

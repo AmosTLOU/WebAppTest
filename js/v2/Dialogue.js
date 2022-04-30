@@ -45,7 +45,8 @@ class Dialogue
         // mobile
         // dont know why, setCrop would make the font size look wrong on mobile devices
         else
-            this.text.visible = this.IsEntirelyVisible();        
+            // this.text.visible = this.IsEntirelyVisible();   
+            this.CropByRange(this.text);     
     }
 
     // UpdatePosByTopY(i_rY)
