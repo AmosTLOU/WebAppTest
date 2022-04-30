@@ -488,13 +488,13 @@ class SceneMain extends Phaser.Scene
                 let rOffset = 0.02;
                 if(this.input.activePointer.upY < this.input.activePointer.downY) 
                 {                    
-                    this.consultationPage.dialogueManager.Scroll(rOffset);
-                    alert("finger scrolling up");
+                    this.consultationPage.dialogueManager.Scroll(-rOffset);
+                    // alert("finger scrolling up");
                 } 
                 else if(this.input.activePointer.upY > this.input.activePointer.downY) 
                 {                    
                     this.consultationPage.dialogueManager.Scroll(rOffset);
-                    alert("finger scrolling down");
+                    // alert("finger scrolling down");
                 }
             }
         }
@@ -509,7 +509,7 @@ class SceneMain extends Phaser.Scene
                         "pX: " + this.input.mousePointer.x + 
                         "\t\tpY: " + this.input.mousePointer.y + "\n" +
                         "rX: " + (this.input.mousePointer.x/ww).toFixed(2) + 
-                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n56";
+                        "\t\trY: " + (this.input.mousePointer.y/wh).toFixed(2) + "\n57";
         }  
 
         
